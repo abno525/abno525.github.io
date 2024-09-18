@@ -1,1 +1,0 @@
-# abno's blog
