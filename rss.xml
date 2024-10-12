@@ -4,9 +4,138 @@
         <title></title>
         <link>undefined</link>
         <description>undefined</description>
-        <lastBuildDate>Wed, 18 Sep 2024 22:23:24 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 12 Oct 2024 12:34:25 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[Valentine]]></title>
+            <guid>07cc2e031d394951b83b760f7e8af61f</guid>
+            <pubDate>Sat, 12 Oct 2024 09:17:03 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>No domain this time.<br />
+<img src="/_resources/e85d38d643914433a21539961ce0faca.png" /></p>
+<div><pre class="hljs"><code>$nmap -p- -A <span class="hljs-number">10.129</span><span class="hljs-number">.168</span><span class="hljs-number">.63</span>
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( https://nmap.org ) <span class="hljs-built_in">at</span> <span class="hljs-number">2024</span><span class="hljs-number">-10</span><span class="hljs-number">-12</span> <span class="hljs-number">09</span>:<span class="hljs-number">20</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.168</span><span class="hljs-number">.63</span>
+Host is up (<span class="hljs-number">0.053</span>s latency).
+Not shown: <span class="hljs-number">65532</span> closed tcp ports (conn-refused)
+PORT    STATE SERVICE  VERSION
+<span class="hljs-number">22</span>/tcp  open  ssh      OpenSSH <span class="hljs-number">5.9</span>p1 Debian <span class="hljs-number">5</span>ubuntu1<span class="hljs-number">.10</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| <span class="hljs-type">ssh</span>-hostkey: 
+|   <span class="hljs-type">1024</span> <span class="hljs-number">96</span>:<span class="hljs-number">4</span>c:<span class="hljs-number">51</span>:<span class="hljs-number">42</span>:<span class="hljs-number">3</span>c:ba:<span class="hljs-number">22</span>:<span class="hljs-number">49</span>:<span class="hljs-number">20</span>:<span class="hljs-number">4</span>d:<span class="hljs-number">3</span>e:ec:<span class="hljs-number">90</span>:cc:fd:<span class="hljs-number">0</span>e (DSA)
+|   <span class="hljs-type">2048</span> <span class="hljs-number">46</span>:bf:<span class="hljs-number">1</span>f:cc:<span class="hljs-number">92</span>:<span class="hljs-number">4</span>f:<span class="hljs-number">1</span>d:a0:<span class="hljs-number">42</span>:b3:d2:<span class="hljs-number">16</span>:a8:<span class="hljs-number">58</span>:<span class="hljs-number">31</span>:<span class="hljs-number">33</span> (RSA)
+|<span class="hljs-type">_</span>  <span class="hljs-number">256</span> e6:<span class="hljs-number">2</span>b:<span class="hljs-number">25</span>:<span class="hljs-number">19</span>:cb:<span class="hljs-number">7</span>e:<span class="hljs-number">54</span>:cb:<span class="hljs-number">0</span>a:b9:ac:<span class="hljs-number">16</span>:<span class="hljs-number">98</span>:c6:<span class="hljs-number">7</span>d:a9 (ECDSA)
+<span class="hljs-number">80</span>/tcp  open  http     Apache httpd <span class="hljs-number">2.2</span><span class="hljs-number">.22</span> ((Ubuntu))
+|<span class="hljs-type">_http</span>-title: Site doesn't have a title (text/html).
+|<span class="hljs-type">_http</span>-server-header: Apache/<span class="hljs-number">2.2</span><span class="hljs-number">.22</span> (Ubuntu)
+<span class="hljs-number">443</span>/tcp open  ssl/http Apache httpd <span class="hljs-number">2.2</span><span class="hljs-number">.22</span> ((Ubuntu))
+|<span class="hljs-type">_http</span>-title: Site doesn't have a title (text/html).
+|<span class="hljs-type">_ssl</span>-date: <span class="hljs-number">2024</span><span class="hljs-number">-10</span><span class="hljs-number">-12</span>T09:<span class="hljs-number">20</span>:<span class="hljs-number">50</span>+<span class="hljs-number">00</span>:<span class="hljs-number">00</span>; <span class="hljs-number">-5</span>s from scanner <span class="hljs-built_in">time</span>.
+|<span class="hljs-type">_http</span>-server-header: Apache/<span class="hljs-number">2.2</span><span class="hljs-number">.22</span> (Ubuntu)
+| <span class="hljs-type">ssl</span>-cert: Subject: commonName=valentine.htb/organizationName=valentine.htb/stateOrProvinceName=FL/countryName=US
+| <span class="hljs-type">Not</span> valid <span class="hljs-built_in">before</span>: <span class="hljs-number">2018</span><span class="hljs-number">-02</span><span class="hljs-number">-06</span>T00:<span class="hljs-number">45</span>:<span class="hljs-number">25</span>
+|<span class="hljs-type">_Not</span> valid <span class="hljs-built_in">after</span>:  <span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-06</span>T00:<span class="hljs-number">45</span>:<span class="hljs-number">25</span>
+Service <span class="hljs-keyword">Info</span>: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<p>Running with --script vuln, shows that we can use heartbleed attack.</p>
+<div><pre class="hljs"><code>dirsearch -u http:<span class="hljs-comment">//10.129.168.63/</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">243</span>B  - /<span class="hljs-selector-class">.ht_wsr</span><span class="hljs-selector-class">.txt</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">243</span>B  - /<span class="hljs-selector-class">.htaccess</span><span class="hljs-selector-class">.sample</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">243</span>B  - /<span class="hljs-selector-class">.htaccess_orig</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">242</span>B  - /<span class="hljs-selector-class">.htaccess_sc</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">241</span>B  - /<span class="hljs-selector-class">.htaccessBAK</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">241</span>B  - /<span class="hljs-selector-class">.htaccessOLD2</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">242</span>B  - /<span class="hljs-selector-class">.htaccess</span><span class="hljs-selector-class">.bak1</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">242</span>B  - /<span class="hljs-selector-class">.htaccess</span><span class="hljs-selector-class">.orig</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">244</span>B  - /<span class="hljs-selector-class">.htaccess_extra</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">241</span>B  - /<span class="hljs-selector-class">.htaccessOLD</span>
+<span class="hljs-selector-attr">[09:22:48]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">241</span>B  - /<span class="hljs-selector-class">.htaccess</span><span class="hljs-selector-class">.save</span>
+<span class="hljs-selector-attr">[09:22:49]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">237</span>B  - /<span class="hljs-selector-class">.htm</span>
+<span class="hljs-selector-attr">[09:22:49]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">237</span>B  - /<span class="hljs-selector-class">.html</span>
+<span class="hljs-selector-attr">[09:22:49]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">246</span>B  - /<span class="hljs-selector-class">.htpasswd_test</span>
+<span class="hljs-selector-attr">[09:22:49]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">241</span>B  - /<span class="hljs-selector-class">.htpasswds</span>
+<span class="hljs-selector-attr">[09:22:49]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">241</span>B  - /<span class="hljs-selector-class">.httr-oauth</span>
+<span class="hljs-selector-attr">[09:22:59]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">241</span>B  - /cgi-bin/
+<span class="hljs-selector-attr">[09:23:03]</span> <span class="hljs-number">301</span> -  <span class="hljs-number">245</span>B  - /dev  -&gt;  http:<span class="hljs-comment">//10.129.168.63/dev/  (!)</span>
+<span class="hljs-selector-attr">[09:23:03]</span> <span class="hljs-number">200</span> -  <span class="hljs-number">493</span>B  - /dev/
+<span class="hljs-selector-attr">[09:23:03]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">237</span>B  - /doc/
+<span class="hljs-selector-attr">[09:23:03]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">244</span>B  - /doc/stable<span class="hljs-selector-class">.version</span>
+<span class="hljs-selector-attr">[09:23:03]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">245</span>B  - /doc/html/index<span class="hljs-selector-class">.html</span>
+<span class="hljs-selector-attr">[09:23:03]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">240</span>B  - /doc/api/
+<span class="hljs-selector-attr">[09:23:03]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">247</span>B  - /doc/en/changes<span class="hljs-selector-class">.html</span>
+<span class="hljs-selector-attr">[09:23:16]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">240</span>B  - /server-status/
+<span class="hljs-selector-attr">[09:23:16]</span> <span class="hljs-number">403</span> -  <span class="hljs-number">240</span>B  - /server-status</code></pre></div>
+<p><img src="/_resources/e7520e590a114cb78c5a4e2b416707df.png" /></p>
+<p>Notes.txt:</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">To</span> do:
+
+<span class="hljs-number">1</span>) Coffee.
+<span class="hljs-number">2</span>) Research.
+<span class="hljs-number">3</span>) Fix decoder/encoder before going live.
+<span class="hljs-number">4</span>) Make sure encoding/decoding <span class="hljs-keyword">is</span> only done client-<span class="hljs-literal">side</span>.
+<span class="hljs-number">5</span>) Don<span class="hljs-symbol">'t</span> <span class="hljs-keyword">use</span> the decoder/encoder <span class="hljs-keyword">until</span> any <span class="hljs-keyword">of</span> this <span class="hljs-keyword">is</span> done.
+<span class="hljs-number">6</span>) Find a better way <span class="hljs-keyword">to</span> take notes.</code></pre></div>
+<p>Ok, so we can assume that in this box we will abuse server-side encoding.</p>
+<p>Hype key is something in hex:<br />
+<img src="/_resources/9d1447356be942218636fcfeefbdd673.png" /></p>
+<p>Decoding it in cybercheff we get:</p>
+<div><pre class="hljs"><code>-----<span class="hljs-keyword">BEGIN</span> RSA PRIVATE KEY-----
+Proc-Type: <span class="hljs-number">4</span>,ENCRYPTED
+DEK-Info: AES-<span class="hljs-number">128</span>-CBC,AEB88C140F69BF2074788DE24AE48D46
+
+DbPrO78kegNuk1DAqlAN5jbjXv0PPsog3jdbMFS8iE9p3UOL0lF0xf7PzmrkDa8R
+<span class="hljs-number">5</span>y<span class="hljs-regexp">/b46+9nEpCMfTPhNuJRcW2U2gJcOFH+9RJDBC5UJMUS1/g</span>jB<span class="hljs-regexp">/7/</span>My00Mwx+aI6
+<span class="hljs-number">0</span>EI0SbOYUAV1W4EV7m96QsZjrwJvnjVafm6VsKaTPBHpugcASvMqz76W6abRZeXi
+Ebw66hjFmAu4AzqcM<span class="hljs-regexp">/kigNRFPYuNiXrXs1w/</span>deLCqCJ+Ea1T8zlas6fcmhM8A+<span class="hljs-number">8</span>P
+OXBKNe6l17hKaT6wFnp5eXOaUIHvHnvO6ScHVWRrZ70fcpcpimL1w13Tgdd2AiGd
+pHLJpYUII5PuO6x+LS8n1r<span class="hljs-regexp">/GWMqSOEimNRD1j/</span><span class="hljs-number">59</span>/<span class="hljs-number">4</span>u3ROrTCKeo9DsTRqs2k1SH
+QdWwFwaXbYyT1uxAMSl5Hq9OD5HJ8G0R6JI5RvCNUQjwx0FITjjMjnLIpxjvfq+E
+p0gD0UcylKm6rCZqacwnSddHW8W3LxJmCxdxW5lt5dPjAkBYRUnl91ESCiD4Z+uC
+Ol6jLFD2kaOLfuyee0fYCb7GTqOe7EmMB3fGIwSdW8OC8NWTkwpjc0ELblUa6ulO
+t9grSosRTCsZd14OPts4bLspKxMMOsgnKloXvnlPOSwSpWy9Wp6y8XX8+F40rxl5
+XqhDUBhyk1C3YPOiDuPOnMXaIpe1dgb0NdD1M9ZQSNULw1DHCGPP4JSSxX7BWdDK
+aAnWJvFglA4oFBBVA8uAPMfV2XFQnjwUT5bPLC65tFstoRtTZ1uSruai27kxTnLQ
++wQ87lMadds1GQNeGsKSf8R/rsRKeeKcilDePCjeaLqtqxnhNoFtg0Mxt6r2gb1E
+AloQ6jg5Tbj5J7quYXZPylBljNp9GVpinPc3KpHttvgbptfiWEEsZYn5yZPhUr9Q
+r08pkOxArXE2dj7eX+bq65635OJ6TqHbAlTQ1Rs9PulrS7K4SLX7nY89/RZ5oSQe
+<span class="hljs-number">2</span>VWRyTZ1FfngJSsv9+Mfvz341lbzOIWmk7WfEcWcHc16n9V0IbSNALnjThvEcPky
+e1BsfSbsf9FguUZkgHAnnfRKkGVG1OVyuwc/LVjmbhZzKwLhaZRNd8HEM86fNojP
+<span class="hljs-number">09</span>nVjTaYtWUXk0Si1W02wbu1NzL+<span class="hljs-number">1</span>Tg9IpNyISFCFYjSqiyG+WU7IwK3YU5kp3CC
+dYScz63Q2pQafxfSbuv4CMnNpdirVKEo5nRRfK/iaL3X1R3DxV8eSYFKFL6pqpuX
+cY5YZJGAp+JxsnIQ9CFyxIt92frXznsjhlYa8svbVNNfk/<span class="hljs-number">9</span>fyX6op24rL2DyESpY
+pnsukBCFBkZHWNNyeN7b5GhTVCodHhzHVFehTuBrp+VuPqaqDvMCVe1DZCb4MjAj
+Mslf+<span class="hljs-number">9</span>xK+TXEL3icmIOBRdPyw6e<span class="hljs-regexp">/JlQlVRlmShFpI8eb/</span><span class="hljs-number">8</span>VsTyJSe+b853zuV2qL
+suLaBMxYKm3+zEDIDveKPNaaWZgEcqxylCC/wUyUXlMJ50Nw6JNVMM8LeCii3OEW
+l0ln9L1b<span class="hljs-regexp">/NXpHjGa8WHHTjoIilB5qNUyywSeTBF2awRlXH9BrkZG4Fc4gdmW/</span>IzT
+RUgZkbMQZNIIfzj1QuilRVBm<span class="hljs-regexp">/F76Y/</span>YMrmnM9k/<span class="hljs-number">1</span>xSGIskwCUQ+<span class="hljs-number">95</span>CGHJE8MkhD3
+-----<span class="hljs-keyword">END</span> RSA PRIVATE KEY-----</code></pre></div>
+<p>Trying to log in with this key, we get a prompt asking for passphrase. Lets try the hearthbleed attack.</p>
+<p>Running the hearthbleed attack from metasploit (and setting the action to DUMP) we get:<br />
+<img src="/_resources/0f559dcb6f734349affc8b4e891d7fd7.png" /></p>
+<p>Decoding from base64 we get: heartbleedbelievethehype.</p>
+<p>Now we can log in using the ssh to user hype.<br />
+One thing that is config specific. I had to enable rsa logging in, as it was disabled by default. To do so, add to ~/.ssh/config:</p>
+<div><pre class="hljs"><code>Host *
+    <span class="hljs-attribute">PubkeyAcceptedKeyTypes</span>=+ssh-rsa
+    <span class="hljs-attribute">HostKeyAlgorithms</span>=+ssh-rsa</code></pre></div>
+<p>We are in.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Running linenum shows us that we have access to user history.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">exit</span>
+exot
+<span class="hljs-keyword">exit</span>
+ls -la
+cd /
+ls -la
+cd .devs
+ls -la
+tmux -L dev_sess 
+tmux a -t dev_sess 
+tmux --help
+tmux -S <span class="hljs-regexp">/.devs/</span>dev_sess 
+<span class="hljs-keyword">exit</span></code></pre></div>
+<p>running <code>tmux -S /.devs/dev_sess </code>, gets us last users session. It’s root. Nice.</p>
+]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Meta]]></title>
             <guid>a3180ea6ec5d43a9894e3a9e9924b688</guid>
