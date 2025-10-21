@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy -  Planning - abno&#39;s blog</title>
+  </head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy -  Planning</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1747223492806"
+                  >2025-05-14 13:51</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1748423081534"
+                  >2025-05-28 11:04</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>We start the box with creds <code>admin / 0D5oT70Fq13EvB5r</code>.</p>
+<p><img src="/_resources/8fb1e76036a84f4d9c3933a4daf85a3d.png" /></p>
+<p>Nmap finds only ports 22 and 80, for ssh and http service. Provided credentials do not work for ssh.<br />
+Running gobuster finds us graphana subdomain which accepts privded credentials.</p>
+<h1 id="graphana">Graphana</h1>
+<p><img src="/_resources/aea5bd36712a4f34b9f9105486581acc.png" /></p>
+<p>Our app is on version 11.0.0</p>
+<p><img src="/_resources/6b4f623ba10d45c1aa60b529e86b6cb4.png" /></p>
+<p>Looking online we can quickly find oficial notice about <a title="https://grafana.com/blog/2024/10/17/grafana-security-release-critical-severity-fix-for-cve-2024-9264/" href="https://grafana.com/blog/2024/10/17/grafana-security-release-critical-severity-fix-for-cve-2024-9264/">CVE-2024-9264</a> and a <a title="https://github.com/z3k0sec/File-Read-CVE-2024-9264/" href="https://github.com/z3k0sec/File-Read-CVE-2024-9264/">POC on github</a>. Anotherone is <a title="https://github.com/z3k0sec/CVE-2024-9264-RCE-Exploit/blob/main/poc.py" href="https://github.com/z3k0sec/CVE-2024-9264-RCE-Exploit/blob/main/poc.py">already setup to establish reverse shell</a>. It is using an authenticated user to perform a DuckDB SQL query and read an arbitrary file on the filesystem or execute arbitrary code remotely.</p>
+<p><img src="/_resources/545bac33bb2a4d2bb6ccaba33774cd2e.png" /></p>
+<p><img src="/_resources/210caf00ff3d4f799a63e96ad0805112.png" /></p>
+<p><img src="/_resources/04a443320f6c46a7b2bd808b7a610c24.png" /></p>
+<h1 id="docker">Docker</h1>
+<p>There is home folder only for <code>graphana</code> user and a <code>run.sh</code> file in root, so it looks like this is a docker container.</p>
+<p><img src="/_resources/0c46e1831f7945a2b103e4cc61078165.png" /></p>
+<p>Running <code>linpeas.sh</code> we can find creds that were set as env variables. They do work for ssh. Creds: <code>enzo:RioTecRANDEntANT!</code></p>
+<p><img src="/_resources/4326c61ad1e04128aee77d5029e37230.png" /></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Starting with the biggest priv esc hits, <code>ss -tulpn</code> shows new service on port 8000, <code>sudo -u</code> either, but <code>/opt</code> has something.</p>
+<p><img src="/_resources/2b3dd85372214134a9a8524cfca2c102.png" /></p>
+<p><img src="/_resources/5f33694210554b4fa2755f1ed2e90262.png" /></p>
+<p>Password: <code>P4ssw0rdS0pRi0T3c</code></p>
+<p>We can forward port 8000 back to us and try to log in using new creds.</p>
+<p><img src="/_resources/19b949638f1144d1b0ba8958da6ca15e.png" /></p>
+<p>It gives us a cronjob ui panel which gives us basicly root. We can do whatever we want from now, just cat the flag or give enzo sudo.</p>
+<p><img src="/_resources/24d8fcd393ed46f9b36d53ce93f9074d.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

