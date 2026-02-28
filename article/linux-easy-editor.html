@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Easy - Editor - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Easy - Editor</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1754470335932"
+                  >2025-08-06 10:52</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1754572066323"
+                  >2025-08-07 15:07</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/33052e1c382b43e6ad6cf609aa35712a.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A editor.htb
+PORT     STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp   open  ssh     OpenSSH <span class="hljs-number">8.9</span>p1 Ubuntu <span class="hljs-number">3</span>ubuntu0.<span class="hljs-number">13</span> (Ubuntu Linux; protocol <span class="hljs-number">2.0</span>)
+| ssh-hostkey: 
+|   <span class="hljs-number">256</span> <span class="hljs-number">3</span>e:ea:<span class="hljs-number">45</span>:<span class="hljs-number">4</span>b:c5:d1:<span class="hljs-number">6</span>d:<span class="hljs-number">6</span>f:e2:d4:d1:<span class="hljs-number">3</span>b:<span class="hljs-number">0</span>a:<span class="hljs-number">3</span>d:a9:<span class="hljs-number">4</span>f (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-number">64</span>:cc:<span class="hljs-number">75</span>:de:<span class="hljs-number">4</span>a:e6:a5:b4:<span class="hljs-number">73</span>:eb:<span class="hljs-number">3</span>f:<span class="hljs-number">1</span>b:cf:b4:e3:<span class="hljs-number">94</span> (ED25519)
+<span class="hljs-number">80</span>/tcp   open  http    nginx <span class="hljs-number">1.18</span>.<span class="hljs-number">0</span> (Ubuntu)
+|_http-server-header: nginx/<span class="hljs-number">1.18</span>.<span class="hljs-number">0</span> (Ubuntu)
+|_http-title: Editor - SimplistCode Pro
+<span class="hljs-number">8080</span>/tcp open  http    Jetty <span class="hljs-number">10.0</span>.<span class="hljs-number">20</span>
+| http-title: XWiki - Main - Intro
+|_Requested resource was http:<span class="hljs-regexp">//</span>editor.htb:<span class="hljs-number">8080</span><span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/view/</span>Main/
+|_http-open-proxy: Proxy might be redirecting requests
+| http-cookie-flags: 
+|   /: 
+|     JSESSIONID: 
+|_      httponly flag not set
+| http-methods: 
+|_  Potentially risky methods: PROPFIND LOCK UNLOCK
+|_http-server-header: Jetty(<span class="hljs-number">10.0</span>.<span class="hljs-number">20</span>)
+| http-robots.txt: <span class="hljs-number">50</span> disallowed entries (<span class="hljs-number">15</span> shown)
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/viewattachrev/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/viewrev/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/pdf/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/edit/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/create/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/inline/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/preview/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/save/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/saveandcontinue/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/rollback/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/deleteversions/</span> 
+| <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/cancel/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/delete/</span> <span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/deletespace/</span> 
+|_<span class="hljs-regexp">/xwiki/</span>bin<span class="hljs-regexp">/undelete/</span>
+| http-webdav-scan: 
+|   Allowed Methods: OPTIONS, GET, HEAD, PROPFIND, LOCK, UNLOCK
+|   Server Type: Jetty(<span class="hljs-number">10.0</span>.<span class="hljs-number">20</span>)
+|_  WebDAV type: Unknown
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
+<p><img src="/_resources/3659d847b16c4ccb86f9746264be1d63.png" /></p>
+<p>Clicking docs on the main page leads us to XWiki Debian 15.10.8, which is vulnerable.</p>
+<p><img src="/_resources/5148d9e2b0894befab6e5cc5a2e22d8c.png" /></p>
+<p><a title="https://github.com/dollarboysushil/CVE-2025-24893-XWiki-Unauthenticated-RCE-Exploit-POC" href="https://github.com/dollarboysushil/CVE-2025-24893-XWiki-Unauthenticated-RCE-Exploit-POC">https://github.com/dollarboysushil/CVE-2025-24893-XWiki-Unauthenticated-RCE-Exploit-POC</a></p>
+<p><img src="/_resources/1a8fd8d35d3c4b02a573c0ffe9640092.png" /></p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<p><img src="/_resources/9900f8738d23443c8309cd8cbbd0afbd.png" /></p>
+<p>After doing enumeration we can find user password.</p>
+<div><pre class="hljs"><code><span class="hljs-keyword">find</span> <span class="hljs-regexp">/etc/</span>xwiki -type f -name <span class="hljs-string">"*.xml"</span> -exec <span class="hljs-keyword">grep</span> -iE <span class="hljs-string">".*pass.*"</span> {} + <span class="hljs-number">2</span>&gt;<span class="hljs-regexp">/dev/</span><span class="hljs-keyword">null</span></code></pre></div>
+<p>pass: theEd1t0rTeam99</p>
+<p>IMPORATANT: <code>su oliver</code> wont work, we have to ssh into it.</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We can check that on port 19999 is netdata with version 1.45.2.<br />
+We can quickly find CVE with POC for it.</p>
+<p><a title="https://securityvulnerability.io/vulnerability/CVE-2024-32019" href="https://securityvulnerability.io/vulnerability/CVE-2024-32019">https://securityvulnerability.io/vulnerability/CVE-2024-32019</a><br />
+<a title="https://github.com/AzureADTrent/CVE-2024-32019-POC" href="https://github.com/AzureADTrent/CVE-2024-32019-POC">https://github.com/AzureADTrent/CVE-2024-32019-POC</a></p>
+<p>Following the step by step guide we get root.</p>
+<p><img src="/_resources/8893ec77c7484c0d864aa9fa6af02bd5.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

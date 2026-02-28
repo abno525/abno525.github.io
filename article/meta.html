@@ -101,17 +101,17 @@ Starting gobuster in directory enumeration mode
 /assets               (Status: 301) [Size: 234] [--&gt; http://artcorp.htb/assets/]
 /css                  (Status: 301) [Size: 231] [--&gt; http://artcorp.htb/css/]</code></pre></div>
 <p>Checking out the main site gives us not much of value. Links don’t go anywhere, so we have to focus on the interesting subdomain.</p>
-<p><img src="/_resources/252b9dae160c44b8a36135d6e499b945.png" /></p>
+<p><img src=":/252b9dae160c44b8a36135d6e499b945" alt="04b2445c2f9c66cd4d4f9a6ebe014541.png" /></p>
 <p>The subdomain:</p>
-<p><img src="/_resources/b7768414e8ed4664824c526d2ec6e457.png" /></p>
+<p><img src=":/b7768414e8ed4664824c526d2ec6e457" alt="02e9cd7c13250aa17195bb5df0a92e47.png" /></p>
 <p>Link goes to:</p>
-<p><img src="/_resources/de6f1113fb8243bdb016c21b67ec647c.png" /></p>
+<p><img src=":/de6f1113fb8243bdb016c21b67ec647c" alt="b0f6b79078f456c9ea3ae7bdc6ac4f0d.png" /></p>
 <h1 id="cve-2021-22204">CVE-2021-22204</h1>
 <p>If the site is analyzing metadata, then the first thought is exploiting metadata analyzer.</p>
 <p>The first result is: <a title="https://github.com/OneSecCyber/JPEG_RCE" href="https://github.com/OneSecCyber/JPEG_RCE">https://github.com/OneSecCyber/JPEG_RCE</a>, so why not give it a go.<br />
 Exploit works exactly as in POC, but for some reason reverse shell from it doesnt work.<br />
 Searching github for CVE-2021-22204 fortunetly gets us more options.</p>
-<p><img src="/_resources/944c1ffbd54f4f34a4866beca9efcf82.png" /></p>
+<p><img src=":/944c1ffbd54f4f34a4866beca9efcf82" alt="f6a90ef37f8a2826ef63c7e69411272b.png" /></p>
 <p>And we are in.<br />
 For QoL, we can get shell stablisation.</p>
 <div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>

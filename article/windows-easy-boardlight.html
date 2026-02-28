@@ -49,7 +49,7 @@
 |_http-title: Site doesn<span class="hljs-string">'t have a title (text/html; charset=UTF-8).
 |_http-server-header: Apache/2.4.41 (Ubuntu)
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></code></pre></div>
-<p><img src="/_resources/a38b89ec4442440ca2c07bf37ffe9dda.png" /></p>
+<p><img src=":/a38b89ec4442440ca2c07bf37ffe9dda" alt="600807d874fa0577ef0e3ff9c86f4c8f.png" /></p>
 <div><pre class="hljs"><code>- Nikto v2.5.0
 ---------------------------------------------------------------------------
 + Target IP:          10.129.231.37
@@ -68,7 +68,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></code></pre></div
 ---------------------------------------------------------------------------
 + 1 host(s) tested</code></pre></div>
 <p>After stumbling for way too long, we can find board.htb domain at the bottom of the page.</p>
-<p><img src="/_resources/6a617d86b940490e813b81fd3ae9ad79.png" /></p>
+<p><img src=":/6a617d86b940490e813b81fd3ae9ad79" alt="0905c7eac5c995a36cf6be4b6c3486d8.png" /></p>
 <p>Then we can do subdomain enumeration using gobuster, after adding this domain to dnsmasq.conf file.</p>
 <div><pre class="hljs"><code><span class="hljs-variable">$gobuster</span> vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://board.htb  --append-domain -t 150
 ===============================================================
@@ -87,11 +87,11 @@ Starting gobuster <span class="hljs-keyword">in</span> VHOST enumeration mode
 ===============================================================
 Found: crm.board.htb Status: 200 [Size: 6360]</code></pre></div>
 <p>After going to the site, we can see Dolibar 17.0.0</p>
-<p><img src="/_resources/8bc6d541bcfa49cd896d5ce87451d7ca.png" /></p>
+<p><img src=":/8bc6d541bcfa49cd896d5ce87451d7ca" alt="69419defad4f26881fb80453a7ae2e21.png" /></p>
 <p>And fortunetly there is an exploit for that.<br />
 <a title="https://github.com/nikn0laty/Exploit-for-Dolibarr-17.0.0-CVE-2023-30253" href="https://github.com/nikn0laty/Exploit-for-Dolibarr-17.0.0-CVE-2023-30253">https://github.com/nikn0laty/Exploit-for-Dolibarr-17.0.0-CVE-2023-30253</a></p>
-<p><img src="/_resources/b83d5ab6c1cb44b1b1cc1234b5721752.png" /></p>
-<p><img src="/_resources/14b8150a4e354513a8d51d830908538b.png" /></p>
+<p><img src=":/b83d5ab6c1cb44b1b1cc1234b5721752" alt="b114f5f623fea6f01cef33c0d15feb1f.png" /></p>
+<p><img src=":/14b8150a4e354513a8d51d830908538b" alt="af9a03badda52ffc7fb1d692ab7d6df3.png" /></p>
 <p>For QoL, we can get shell stablisation.</p>
 <div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("/bin/bash")'</span>
 <span class="hljs-built_in">export</span> TERM=xterm
@@ -186,7 +186,7 @@ password: serverfun2$2023!!</p>
 <p>All of the enlighten modules are suspicous. Quick github search gives us:<br />
 <a title="https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit" href="https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit">https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit</a></p>
 <p>It works.<br />
-<img src="/_resources/2c4258e7af5d44a4a249737ad07d6059.png" /></p>
+<img src=":/2c4258e7af5d44a4a249737ad07d6059" alt="89f37859b016b0e12ba2756877e61c5c.png" /></p>
 </div>
       </article>
     </div>

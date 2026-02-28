@@ -69,17 +69,17 @@ Progress: 3000000 / 3000001 (100.00%)
 ===============================================================
 Finished
 ===============================================================</code></pre></div>
-<p><img src="/_resources/94fbe7835fb44100972f6d48f35ddec1.png" /></p>
+<p><img src=":/94fbe7835fb44100972f6d48f35ddec1" alt="24078862452f496efd1430b93fc213d4.png" /></p>
 <p>Our prime suspect for now looks like this:</p>
-<p><img src="/_resources/28609709bde4477bac457afd7bad82ee.png" /></p>
+<p><img src=":/28609709bde4477bac457afd7bad82ee" alt="bfe7c8b60ffb92a9b51cd860cb6b2b7c.png" /></p>
 <p>We can get two responses depending on our uploads:<br />
 /static/images/unsplash_photo_1630734277837_ebe62757b6e0.jpeg<br />
 /static/uploads/6fb354f6-6c83-424b-b513-f2bce21f6aec</p>
-<p><img src="/_resources/473a80487fc041a7adb63d2d57408aa8.png" /></p>
-<p><img src="/_resources/aa01e959a84748459882a7f8cdc09e0c.png" /></p>
+<p><img src=":/473a80487fc041a7adb63d2d57408aa8" alt="992fd2b53cd15e2fd4f326f18106bf6b.png" /></p>
+<p><img src=":/aa01e959a84748459882a7f8cdc09e0c" alt="81b9345ed81a374c227145a4ac7f53ee.png" /></p>
 <p>Going to <a title="http://editorial.htb/static/uploads/cd349514-acea-43e9-8463-b46c3ef54440" href="http://editorial.htb/static/uploads/cd349514-acea-43e9-8463-b46c3ef54440">http://editorial.htb/static/uploads/cd349514-acea-43e9-8463-b46c3ef54440</a> lets us download the image, but it seems to get deleted after a short amount of time.</p>
 <p>Replacing the url, also returns us standard error image.</p>
-<p><img src="/_resources/10309115ca704185a0aedcebf0b5411f.png" /></p>
+<p><img src=":/10309115ca704185a0aedcebf0b5411f" alt="41f9d0870fc5ad726f983c992ae40ff0.png" /></p>
 <p>We can check if there is anything on other ports.</p>
 <div><pre class="hljs"><code>seq 1 65535 &gt; numbered_file.txt</code></pre></div>
 <p>Then we create a req.txt file with which we will be fuzzing.</p>
@@ -157,11 +157,11 @@ ________________________________________________
 
 5000                    [Status: 200, Size: 51, Words: 1, Lines: 1, Duration: 88ms]
 </span></code></pre></div>
-<p><img src="/_resources/41d993f2a1db4591a06ed11f8b54d275.png" /></p>
+<p><img src=":/41d993f2a1db4591a06ed11f8b54d275" alt="7d0733e87cdfc8e561f5e7dcaa6632fe.png" /></p>
 <p>Going to the response, we can get finally some interesting content.</p>
-<p><img src="/_resources/0e7e69c9a33e43829f325cbc08ae8482.png" /></p>
+<p><img src=":/0e7e69c9a33e43829f325cbc08ae8482" alt="5e89eee7d27a048935fa4ee072d92f26.png" /></p>
 <p>Finally requesting <a title="http://127.0.0.1:5000/api/latest/metadata/messages/authors" href="http://127.0.0.1:5000/api/latest/metadata/messages/authors">http://127.0.0.1:5000/api/latest/metadata/messages/authors</a>, returns us:</p>
-<p><img src="/_resources/4742a30e5a104de3b19db9624ea484cc.png" /></p>
+<p><img src=":/4742a30e5a104de3b19db9624ea484cc" alt="b7db1f3a3e3e34e67e27ae434f1f00e3.png" /></p>
 <p>username: dev<br />
 password: dev080217_devAPI!@</p>
 <p>Which gets us nice ssh and a user flag.</p>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="stylesheet" href="/_assets/main.css" />
+
+    <title>Linux - Hard - Dump - abno&#39;s blog</title>
+  <link rel="stylesheet" href="/_markdown_plugin_assets/highlight.js/atom-one-light.css" /></head>
+  <body>
+    <div class="main">
+      <nav class="navigation">
+        <a href="/">abno&#39;s blog</a>
+      </nav>
+      <article>
+        <header>
+          <h1 class="article-title">Linux - Hard - Dump</h1>
+          <div class="article-info">
+            <div>
+              <span
+                >Created At：<time datetime="1772279859905"
+                  >2026-02-28 12:57</time
+                ></span
+              >
+              <span
+                >Updated At：<time datetime="1772302079798"
+                  >2026-02-28 19:07</time
+                ></span
+              >
+            </div>
+            
+          </div>
+        </header>
+        <div class="article-content markdown-body"><h1 id="recon">Recon</h1>
+<p>Not much recon, we just go with the webapp.<br />
+<img src="/_resources/6e2d6c18932044ed8541a8b065cb74e4.png" /></p>
+<p>We can create new account on the site to get in.s<br />
+<img src="/_resources/d66895eb70304ffe964d3fcbe5400026.png" /></p>
+<p>Trying to create another account with the same name gives us explicit sql error, which suggests that we might use sqli in this box.<br />
+<img src="/_resources/4243858c6c564e62bb6b62398551a1b1.png" /></p>
+<p>After loggin in, we get a ctf custom site for packet capture.<br />
+<img src="/_resources/50486cce33c6480dbb4c28150219fc56.png" /></p>
+<h1 id="downloading-some-packets">Downloading some packets</h1>
+<p>We can walk around the site a bit to discover all of the functionality.<br />
+<img src="/_resources/e3791650f1d84fd39030ecdeb70dc6cf.png" /></p>
+<p>When trying to download files, we can see that the response from the server is nonstandard.<br />
+<img src="/_resources/957c7348b28e4002a80c0f9bb3443b45.png" /></p>
+<p>Trying to export nothing reveals the path where the zip files are beign stored on the machine.<br />
+<img src="/_resources/e8eed1dc54b94e07b12dd3d442365aa4.png" /></p>
+<p>We can also upload arbitrary files, but none of them can be seen.<br />
+<img src="/_resources/056ce6c197394826998a90aeadbfa851.png" /></p>
+<p><img src="/_resources/df6167545b354b218d0efc356acabb6d.png" /></p>
+<p>It’s expected, as if we test viewing the uuid4 files, they error out anyways.<br />
+<img src="/_resources/c8251925d3944c93bc7e15203723e744.png" /></p>
+<p>What’s interesting, is that we can download our uploaded files.<br />
+<img src="/_resources/ce3504d302244fe988afdf4998fb1a2b.png" /></p>
+<p>We can test if there is proper name validation.<br />
+<img src="/_resources/11c26c60d43a4850874074cf1516c3cb.png" /></p>
+<p>We can see that we can suscessfuly influence executed command.<br />
+<img src="/_resources/e83b24fef10a4005b24389d838bf9105.png" /></p>
+<p>Unfortunetly passing a semicollon does not seem to terminate the command.<br />
+<img src="/_resources/d79067168a854b5aacd5e049393a01e2.png" /></p>
+<p>Looking at man for zip, we can find cmd execution.<br />
+<img src="/_resources/272578eef5b842a8946bdbb8e0f316a4.png" /></p>
+<p>Sending all of the flags at once causes some parsing error.<br />
+<img src="/_resources/38b16287334b4a81ba2cc79eadb11bed.png" /></p>
+<p>Sending it as separate files works. Running with -TT passes name of the zip file to the command given in as a param, that is why we see whoami error message.<br />
+<img src="/_resources/5932b1d1733d41c18e9d7c69f08340d2.png" /></p>
+<p><img src="/_resources/e909c2d6a45e4bc2ba50c1c0ee1f86c5.png" /></p>
+<p>I tried for a while to put as a filename revshell, but there where multiple syntax issues. All of this can be bypassed, if we download the file first as part of the command and then execute it from a file.<br />
+<img src="/_resources/92c16872a4f04f75b6ef84963091662c.png" /></p>
+<p>It was also crashing when trying to add any path to the server. Also, adding -nd is neccessary, so it is not stored in a separate directory.<br />
+<img src="/_resources/e52526fd601f4c6d806b72929695a549.png" /></p>
+<p>Finaly working version:<br />
+<img src="/_resources/7afcb8ed02f94580a4590d36d86cdf99.png" /></p>
+<p><img src="/_resources/4bd3c22db52d452897d272aeb27ffb6c.png" /></p>
+<p><img src="/_resources/6152825904444944b113aad1fb1cf5e2.png" /></p>
+<p><img src="/_resources/6dab4e25b685423b9ae87179c9079a1c.png" /></p>
+<p>We get a shell as www-data. On entrance we can get a databse with passwords that are not hashed.</p>
+<p><img src="/_resources/895d03608fd14347b32c4b0f97ff22e1.png" /></p>
+<p><code>fritz:Passw0rdH4shingIsforNoobZ!</code></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>Fritz doesnt seem to have any interesting options.<br />
+<img src="/_resources/f1dd388618c441a09f2ce780646d860c.png" /></p>
+<p>Going back to www-data, we can see that for some reason it has sudo enabled.<br />
+<img src="/_resources/f8db4ee769da4c71a24a63345ed46176.png" /></p>
+<p><a title="https://gtfobins.org/gtfobins/tcpdump/#sudo" href="https://gtfobins.org/gtfobins/tcpdump/#sudo">Gtfo-bins</a> have a page dedicated to tcpdump. We cant use it like on the site, as we need to match the regex.<br />
+<img src="/_resources/1ed66f3ca60c4c09811a0b6bef6fb50a.png" /></p>
+<p>File execution is not allowed for some reason,  even though we are running with sudo. It is pressumably being blocked by selinux.<br />
+<img src="/_resources/b04a3fad6300489c86061a244c72c98e.png" /></p>
+<p>We can check permissions set in apparmor in <code>/etc/apparmor.d</code>. We can see that -Z flag allows us to only use gzip.</p>
+<div><pre class="hljs"><code>  <span class="hljs-comment"># for -z</span>
+  <span class="hljs-regexp">/{usr/</span>,}bin/gzip ixr,
+  <span class="hljs-regexp">/{usr/</span>,}bin/bzip2 ixr,</code></pre></div>
+<p><img src="/_resources/af84d0f397ba44b7adc967b51cd15ab0.png" /></p>
+<p>Orginaly I planned to abuse symlinks somehow, but root can be achived using motd. For some reason, motd on linux runs as root and runs scripts contained in <code>/etc/update-motd.d</code> folder.<br />
+<img src="/_resources/dd186f8d1e324300913940fe73d3c691.png" /></p>
+<p>We can use then tcpdump to create a file in this directory, one that we will have write permissions to as fritz.<br />
+<img src="/_resources/9b965afb57a14877a610e62a5db048bc.png" /></p>
+<p><img src="/_resources/26f87f67638d48869d221488d8170be8.png" /></p>
+<p>This finally gfives us the flag after another login, if we add <code>cat /root/root.txt</code> to the motd and make it executable.<br />
+<img src="/_resources/88b036ba91f74e7d8bbbc6bc37bbd1b5.png" /></p>
+<p>To get proper root access we can copy the shell to home folder with suid flag or add ourselves to the sudoers file.<br />
+<code>cp /usr/bin/bash /home/fritz/bash &amp;&amp; chmod u+s /home/fritz/bash</code></p>
+<p><img src="/_resources/26725caacaef4435af52d1fd1dc9d545.png" /></p>
+</div>
+      </article>
+    </div>
+  </body>
+</html>
