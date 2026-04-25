@@ -4,9 +4,139 @@
         <title></title>
         <link>undefined</link>
         <description>undefined</description>
-        <lastBuildDate>Sat, 28 Feb 2026 18:37:43 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 25 Apr 2026 14:22:49 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[Linux - Medium - Barrier]]></title>
+            <guid>93382543ebe54a8fb1b41ae7a35575ab</guid>
+            <pubDate>Sat, 25 Apr 2026 10:12:46 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<div><pre class="hljs"><code>└─$ nmap -p-  <span class="hljs-number">10.129</span><span class="hljs-number">.234</span><span class="hljs-number">.46</span>
+Starting Nmap <span class="hljs-number">7.98</span> ( <span class="hljs-keyword">https</span>://nmap.org ) <span class="hljs-keyword">at</span> <span class="hljs-number">2026</span><span class="hljs-number">-04</span><span class="hljs-number">-25</span> <span class="hljs-number">12</span>:<span class="hljs-number">24</span> +<span class="hljs-number">0100</span>
+Nmap scan report <span class="hljs-keyword">for</span> <span class="hljs-number">10.129</span><span class="hljs-number">.234</span><span class="hljs-number">.46</span>
+Host is up (<span class="hljs-number">0.037</span>s latency).
+Not shown: <span class="hljs-number">65529</span> closed tcp ports (reset)
+PORT     STATE SERVICE
+<span class="hljs-number">22</span>/tcp   <span class="hljs-built_in">open</span>  ssh
+<span class="hljs-number">80</span>/tcp   <span class="hljs-built_in">open</span>  <span class="hljs-keyword">http</span>
+<span class="hljs-number">443</span>/tcp  <span class="hljs-built_in">open</span>  <span class="hljs-keyword">https</span>
+<span class="hljs-number">8080</span>/tcp <span class="hljs-built_in">open</span>  <span class="hljs-keyword">http</span>-proxy
+<span class="hljs-number">9000</span>/tcp <span class="hljs-built_in">open</span>  cslistener
+<span class="hljs-number">9443</span>/tcp <span class="hljs-built_in">open</span>  tungsten-<span class="hljs-keyword">https</span></code></pre></div>
+<p>barrier.vl redirects to a gitlab subdomain.</p>
+<p><img src="/_resources/4d9615b1d31c4542ac8474d22f2ec282.png" /></p>
+<p>Port 8080 has apache congratulations panel.</p>
+<p><img src="/_resources/a43bec6b1a8643498f6a35689e9a1805.png" /></p>
+<p>Port 9000 is authentik.</p>
+<p><img src="/_resources/f7b9d2a755294836a34d0d81f27b81a6.png" /></p>
+<h2 id="gitlab">Gitlab</h2>
+<p>By pressing explore we can discover one project with a python script. It describes how API can be used.</p>
+<p><img src="/_resources/59b1ad92ab6145288d00982bbdc632c1.png" /></p>
+<p>If we check history, we can see that previously hardcoded password was commited. We get credentials <code>satoru:dGJ2V72SUEMsM3Ca</code>. With these credentials we can login into gitlab.</p>
+<p><img src="/_resources/a97bcd06e14043e09ad699b20edc1104.png" /></p>
+<p>By going to help panel, we can learn that this is gitlab community edition v17.3.2.</p>
+<p><img src="/_resources/2c8fc2e330fa4cbfbf34b5af1fecf41b.png" /></p>
+<p>We can also get list of other users in gitlab, by trying to add new users to our project. In our case, there is only one user called <code>akadmin</code>.</p>
+<p><img src="/_resources/3f64a700ba7d4425a2d6c9bbfff0a1df.png" /></p>
+<p>Lookinh online gitlab 17.3.2 has two critical vulns:<br />
+CVE-2024-45409 - Ruby-SAML Authentication Bypass<br />
+CVE-2024-9164  - Arbitrary Pipeline Execution</p>
+<p>SAML stands for Security Assertion Markup Language and is an open standard used for Single Sign-On (SSO). We know that authentic exists on this system, so hopefully thats what we can use for privilage escalation.</p>
+<h2 id="authentik">Authentik</h2>
+<p>There is credential reuse and we can login to authentik using <code>satoru:dGJ2V72SUEMsM3Ca</code>. After logging in, we can see that it also manages guacamole.</p>
+<p><img src="/_resources/33510776a268451092a2203d7daa09ba.png" /></p>
+<p>Guacamole seems to be some kind of remote connection tool, but right now it is empty.</p>
+<p><img src="/_resources/7f504b2d27f9479a8ab80f9b15b2834f.png" /></p>
+<h1 id="cve-2024-45409">CVE-2024-45409</h1>
+<p>We can catch the saml token in burp, when trying to access gitlab from authentik page.</p>
+<p><img src="/_resources/e9164e6dac1d488ca55d45e702eefaf3.png" /></p>
+<p>We can then paste it into cybercheff and decode it.</p>
+<p><img src="/_resources/6196eb15d8e14e4aa2d7e8700e7d9a53.png" /></p>
+<p>Then copy decoded version and run <a title="https://github.com/synacktiv/CVE-2024-45409" href="https://github.com/synacktiv/CVE-2024-45409">PoC from github</a> on it to generate new request.</p>
+<p><img src="/_resources/bc1d1b21bf3a45d18b06cdc4ccb803c1.png" /></p>
+<p>Lastly, replace the data in intercepted request with one from the response file. Passing it further gives us akadmin.</p>
+<p><img src="/_resources/01ec0d9052994d6597da944ccc2e920c.png" /></p>
+<h1 id="cicd">CI/CD</h1>
+<p>We can see that there is one runner on the system and it uses docker.<br />
+<img src="/_resources/ca71e79de3c548bea84b33cd7558b430.png" /></p>
+<p>We can see if any secrets are being stored by creating new project and then running it.</p>
+<p><img src="/_resources/6a7aa5682c93409e88dd606da1e4e886.png" /></p>
+<p>In order to run it, we have to create a file for ci pipeline mentioning this runners tag.</p>
+<p><img src="/_resources/df87ffc51bbf487386a7149a432e702c.png" /></p>
+<p>We can then go back to jobs pannel and see that one is being executed by our runner.</p>
+<p><img src="/_resources/aaa68f5ebe6b4e0f836a6ac476f48307.png" /></p>
+<p>In the output for this job we can find authentik token.</p>
+<p><img src="/_resources/585638605f014e9e8ff9e3cf117e9b48.png" /></p>
+<p><code>AUTHENTIK_TOKEN=MqL8GPTr7y4EDMWsp7gxb2YiKEzuNpLZ2QVia8HD4MLc93vgublgL5xQEvTc</code></p>
+<h1 id="authentik-api">Authentik api</h1>
+<p>We can now access authentik admin functionality via api.<br />
+I used <a title="https://api.goauthentik.io/reference/core-users-list/" href="https://api.goauthentik.io/reference/core-users-list/">official documentation</a> to see what can be done.</p>
+<p>Running <code>curl -L 'http://barrier.vl:9000/api/v3/core/users/' -H 'Authorization: Bearer MqL8GPTr7y4EDMWsp7gxb2YiKEzuNpLZ2QVia8HD4MLc93vgublgL5xQEvTc' | jq</code> lists all of the users.</p>
+<div><pre class="hljs"><code>    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">"pk"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"username"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"akadmin"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"authentik Default Admin"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"is_active"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"last_login"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2025-06-18T09:25:04.724776Z"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"is_superuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"groups"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-string">"a38fb983-8b71-4bf2-b5a7-42ab9fdd58e8"</span>
+      <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"groups_obj"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">"pk"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"a38fb983-8b71-4bf2-b5a7-42ab9fdd58e8"</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"num_pk"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">21741</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"name"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"authentik Admins"</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"is_superuser"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"parent"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"parent_name"</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"attributes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"email"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"admin@barrier.vl"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"avatar"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"data:image/svg+xml;base64,snip"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"attributes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"uid"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"c19f414ee26028d6fe42f90a393920de1c1f8b5428d3efe76b72f302efe78742"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"path"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"users"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"internal"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"uuid"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"4d9587ad-641d-4879-a8dd-edf2a24e1bf5"</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span></code></pre></div>
+<p>We can then reset password for akadmin.</p>
+<div><pre class="hljs"><code>curl -X POST <span class="hljs-string">"http://10.129.234.46:9000/api/v3/core/users/4/set_password/"</span> <span class="hljs-string">\</span> 
+  -H <span class="hljs-string">"Authorization: Bearer MqL8GPTr7y4EDMWsp7gxb2YiKEzuNpLZ2QVia8HD4MLc93vgublgL5xQEvTc"</span> <span class="hljs-string">\</span>
+  -H <span class="hljs-string">"Content-Type: application/json"</span> <span class="hljs-string">\</span>
+  -d <span class="hljs-string">'{
+    "password": "goodpassword"
+  }'</span></code></pre></div>
+<p>We can then login to the panel as akadmin.</p>
+<p><img src="/_resources/a93dddd6b9a44627a294fa80c491a57f.png" /></p>
+<h1 id="authentik-admin">authentik admin</h1>
+<p>We now have access to admin panel.</p>
+<p><img src="/_resources/2d72fdda88264ba58cd1221c7c1994f2.png" /></p>
+<p>Going to Users panel in Directory folder, we can impersonate any user we want.</p>
+<p><img src="/_resources/b7d2c4187a7345d19f2041f6903f89cd.png" /></p>
+<p>We can then connect to guacamole as maki. Important note: logout first from guacamole, if it is already opened in another tab.</p>
+<p><img src="/_resources/948389d359cd4359828e5c5c997ef138.png" /></p>
+<p>Connecting to maintenance finaly gives us user flag.</p>
+<p><img src="/_resources/ec82e1bf0105413c8295a65591e0a9cf.png" /></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>On the local machine we can check config file for guacamole. It contains password and login for the db.<br />
+<code>guac_user:guac2024</code></p>
+<p><img src="/_resources/93f2b767eba7485ca2910970cce92994.png" /></p>
+<p>We can then list all of the tables.</p>
+<p><img src="/_resources/2097ddc689794cbda8d7cfeb88d2a286.png" /></p>
+<p>One of them contains ssh private key for maki_adm. We also learn password <code>3V32FN6oViMPxyzC</code>.</p>
+<p><img src="/_resources/6d0afa98d35342beaa0dceacc5d48c6c.png" /><br />
+<img src="/_resources/b906f67a888640829dd0e941cc056110.png" /></p>
+<p>Using these findings we can connect via ssh.</p>
+<p><img src="/_resources/9eef2a0fce8f456ba5488b7b88c088c2.png" /></p>
+<p>After logging in, we can see that bash history has root’s password.</p>
+<p><img src="/_resources/9c7b192021394998b079d7a5b5cb898e.png" /></p>
+<p>We can finaly get the root flag.<br />
+<img src="/_resources/b50027c19c0345b4831ee574b61f8920.png" /></p>
+]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Linux - Hard - Dump]]></title>
             <guid>c946125ff2ac456c813c8eebead13cdb</guid>
@@ -1306,78 +1436,6 @@ eric@era:<span class="hljs-regexp">/tmp$ file /</span>opt<span class="hljs-regex
 }</code></pre></div>
 <p>x86_64-linux-gnu-gcc -o monitor reverse.c -static<br />
 ./elf-sign sha256 key.pem key.pem monitor</p>
-]]></content:encoded>
-        </item>
-        <item>
-            <title><![CDATA[Linux - Medium - Cypher]]></title>
-            <guid>1eed6899f0ca4a5d9379b5f752c8da28</guid>
-            <pubDate>Sun, 18 May 2025 18:37:49 GMT</pubDate>
-            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
-<p><img src="/_resources/b5827a79d1114d349dc185545fff0162.png" /></p>
-<div><pre class="hljs"><code>└──╼ <span class="hljs-variable">$nmap</span> -p- -A cypher.htb
-PORT   STATE SERVICE <span class="hljs-keyword">VERSION</span>
-22/tcp <span class="hljs-keyword">open</span>  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.8 (Ubuntu Linux; protocol 2.0)
-| ssh-hostkey: 
-|   256 be:68:<span class="hljs-keyword">db</span>:82:8e:63:32:45:54:46:b7:08:7b:3b:52:b0 (ECDSA)
-|_  256 e5:5b:34:f5:54:43:93:f8:7e:b6:69:4c:<span class="hljs-keyword">ac</span>:d6:3d:23 (ED25519)
-80/tcp <span class="hljs-keyword">open</span>  http    nginx 1.24.0 (Ubuntu)
-|_http-title: <span class="hljs-keyword">GRAPH</span> ASM
-|_http-server-header: nginx/1.24.0 (Ubuntu)
-Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre></div>
-<div><pre class="hljs"><code>└──╼ $whatweb http://cypher.htb/
-http://cypher.htb/ <span class="hljs-comment">[200 OK]</span> Bootstrap, Country<span class="hljs-comment">[RESERVED]</span><span class="hljs-comment">[ZZ]</span>, HTML5, HTTPServer<span class="hljs-comment">[Ubuntu Linux]</span><span class="hljs-comment">[nginx/1.24.0 (Ubuntu)]</span>, IP<span class="hljs-comment">[10.129.220.106]</span>, JQuery<span class="hljs-comment">[3.6.1]</span>, Script, Title<span class="hljs-comment">[GRAPH ASM]</span>, nginx<span class="hljs-comment">[1.24.0]</span></code></pre></div>
-<p><img src="/_resources/2cf08e75735f4649b280236f953cd65b.png" /></p>
-<p>Site doesnt have much to offer and <code>gobuster</code> doesnt find any subdomains. There is a login panel, but there is no account creation capability.</p>
-<p><img src="/_resources/51dc72bcd4204790937b72d7ac4efb3f.png" /></p>
-<p>Dirbuster finds <code>/testing</code> directory in which there is only one file, <code>custom-apoc-extension-1.0-SNAPSHOT.jar</code>.</p>
-<p><img src="/_resources/48f6bf17a28444bc9ee25eac74757b4b.png" /></p>
-<p>We can decompile it using <code>jd-gui</code>.</p>
-<p><img src="/_resources/93898343e02846668bde44e9dccf9a81.png" /></p>
-<p>Neo4j is a graph database — instead of storing data in rows and columns like SQL databases, it stores data as nodes, relationships, and properties. Neo4j uses a query language called Cypher, which explains the name of this box. It also has official support for GraphQL. Testing the login field, we can see that we can create an injection.</p>
-<p><img src="/_resources/e3e05b43e9c142ccb0c5d4212a02f1e5.png" /></p>
-<p>Testing it further and <a title="https://pentester.land/blog/cypher-injection-cheatsheet/" href="https://pentester.land/blog/cypher-injection-cheatsheet/">learning more about cypher</a> allowed me to call the custom java function discovered ealier. (<a title="https://www.varonis.com/blog/neo4jection-secrets-data-and-cloud-exploits" href="https://www.varonis.com/blog/neo4jection-secrets-data-and-cloud-exploits">another good resource here</a>)</p>
-<p><img src="/_resources/01e83f8efd1242f09a51949d14ce778d.png" /></p>
-<p>That was the hard part. Now we can terminate the function earlier and basicly have an RCE.</p>
-<p><img src="/_resources/a6bcffd660f54efeb35ed16ec7e6bc7e.png" /></p>
-<p><img src="/_resources/f9e30e67d265480195b813fea44553db.png" /></p>
-<p>Shell stabilisationfor Qol.</p>
-<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
-stty raw -<span class="hljs-built_in">echo</span> 
-^Z
-<span class="hljs-built_in">fg</span></code></pre></div>
-<p>Lurking on the system we can find the pass in <code>.bash_history</code>.</p>
-<div><pre class="hljs"><code>neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:~/data/dbms</span><span class="hljs-variable">$ </span>cat ~/.bash_history
-neo4j-admin dbms set-initial-password cU4btyib.<span class="hljs-number">20</span>xtCMCXkBmerhK
-
-neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>ls
-graphasm
-neo4j<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>su graphasm
-<span class="hljs-symbol">Password:</span> cU4btyib.<span class="hljs-number">20</span>xtCMCXkBmerhK
-
-graphasm<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:/home</span><span class="hljs-variable">$ </span>done <span class="hljs-symbol">:</span>)</code></pre></div>
-<p>We can add new public key to the <code>~/.ssh/authorized_keys</code> and go for root.</p>
-<h1 id="priv-esc">Priv esc</h1>
-<p>There is only one interesting file in the home folder. What’s strange, is that there is no <code>bbot_scans</code> dir.</p>
-<div><pre class="hljs"><code>graphasm@cypher:~$ cat bbot_preset.yml 
-<span class="hljs-symbol">targets:</span>
-  - ecorp.htb
-<span class="hljs-symbol">
-output_dir:</span> <span class="hljs-keyword">/home/</span>graphasm/bbot_scans
-<span class="hljs-symbol">
-config:</span>
-<span class="hljs-symbol">  modules:</span>
-<span class="hljs-symbol">    neo4j:</span>
-<span class="hljs-symbol">      username:</span> neo4j
-<span class="hljs-symbol">      password:</span> cU4btyib<span class="hljs-number">.20</span>xtCMCXkBmerhK</code></pre></div>
-<p>Looking online for bbot we can find that it’s probably <a title="https://github.com/blacklanternsecurity/bbot" href="https://github.com/blacklanternsecurity/bbot">Bighuge BLS OSINT Tool</a>, which is clearly in the top 10 best tool names.</p>
-<p>What’s even cooler, is that we can run it with sudo.</p>
-<div><pre class="hljs"><code>graphasm<span class="hljs-variable">@cypher</span><span class="hljs-symbol">:~</span><span class="hljs-variable">$ </span>sudo -l
-Matching Defaults entries <span class="hljs-keyword">for</span> graphasm on <span class="hljs-symbol">cypher:</span>
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\<span class="hljs-symbol">:/usr/local/bin</span>\<span class="hljs-symbol">:/usr/sbin</span>\<span class="hljs-symbol">:/usr/bin</span>\<span class="hljs-symbol">:/sbin</span>\<span class="hljs-symbol">:/bin</span>\<span class="hljs-symbol">:/snap/bin</span>, use_pty
-
-User graphasm may run the following commands on <span class="hljs-symbol">cypher:</span>
-    (ALL) <span class="hljs-symbol">NOPASSWD:</span> /usr/local/bin/bbot</code></pre></div>
-<p>We can get root flag by running <code>sudo bbot --custom-yara-rules /root/root.txt -vv -d</code>. It is possible to gain root shell, by creating a custom module and running again bbot with sudo.</p>
 ]]></content:encoded>
         </item>
     </channel>
